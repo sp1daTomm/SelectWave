@@ -28,6 +28,9 @@ export default {
         '01': '#1E1E1E',
       },
     },
+    fontFamily: {
+      sans: ['Noto Sans TC', 'sans-serif'],
+    },
     extend: {},
   },
   plugins: [
