@@ -11,6 +11,11 @@ const routes = [
     name: 'About',
     component: () => import('../views/AboutView.vue'),
   },
+  {
+    path: '/pullInfo',
+    name: 'PullInfo',
+    component: () => import('../views/PullInfo.vue'),
+  },
 ];
 
 const router = createRouter({

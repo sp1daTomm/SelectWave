@@ -22,6 +22,7 @@
     "lucide-vue-next": "^0.322.0",
     "pinia": "^2.1.7",
     "sweetalert2": "^11.10.5",
+    "swiper": "^11.0.6",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5",
     "vue-sweetalert2": "^5.0.5"
@@ -38,6 +39,7 @@
     "eslint-plugin-vue": "^9.20.1",
     "gh-pages": "^6.1.1",
     "postcss": "^8.4.33",
+    "prettier": "3.2.5",
     "sass": "^1.69.7",
     "tailwindcss": "^3.4.1",
     "vite": "^5.0.10",
