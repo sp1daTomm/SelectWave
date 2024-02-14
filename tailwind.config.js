@@ -8,20 +8,14 @@ export default {
     'node_modules/flowbite/**/*.{js,jsx,ts,tsx}',
   ],
   theme: {
-    listStyleType: {
-      none: 'none',
-      disc: 'disc',
-      decimal: 'decimal',
-      square: 'square',
-      chinese: 'cjk-ideographic',
-    },
     container: {
       center: true,
       padding: '0.75rem',
     },
     screens: {
       md: '768px',
-      lg: '1920px',
+      lg: '1024px',
+      xl: '1920px',
     },
     colors: {
       primary: {
