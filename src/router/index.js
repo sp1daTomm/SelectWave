@@ -14,7 +14,7 @@ const routes = [
   {
     path: '/pullInfo',
     name: 'PullInfo',
-    component: () => import('../views/PullInfo.vue'),
+    component: () => import('../views/pullInfo.vue'),
   },
 ];
 
