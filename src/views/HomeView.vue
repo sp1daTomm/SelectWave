@@ -1,22 +1,12 @@
 <template>
-  <div class="home">
-    <h1>Hello, This is Home Page.</h1>
-    <RouterLink to="/">Home</RouterLink> |
-    <RouterLink to="/about">About</RouterLink>
-    <hr>
-    <HelloWorld />
-  </div>
+  <Navbar />
+  <div style="height:200vh" class="max-w-screen-lg mx-auto">eujowo</div>
+  <TopGo />
+  <Footer />
 </template>
 
-<script>
-import HelloWorld from '@/components/HelloWorld.vue';
-
-export default {
-  components: {
-    HelloWorld,
-  },
-};
+<script setup>
+import Footer from '@/components/FooterEl.vue';
+import Navbar from '@/components/NavbarEl.vue';
+import TopGo from '@/components/TopGoEl.vue';
 </script>
-
-<style scoped>
-</style>
