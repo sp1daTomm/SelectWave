@@ -1,9 +1,7 @@
 <template>
   <header></header>
-  <div class="container m-auto">
-    <!-- <RouterLink to="/"></RouterLink>
-    <RouterLink to="/pullInfo"></RouterLink> -->
-    <pull>
+  <div class="container flex justify-center">
+    <div class="pull-content m-auto">
       <div>
         <filter></filter>
         <serch></serch>
@@ -77,128 +75,128 @@
     </div>
         </div>
       </div>
-      <pagination>
-      </pagination>
-    </pull>
+    <div class="pagination-container flex justify-center pt-3">
+        <fwb-pagination v-model="currentPage" :total-pages="100" show-icons></fwb-pagination>
+    </div>
+    </div>
   </div>
   <footer></footer>
 </template>
-<script type="module">
-export default {
-  data() {
-    return {
-      myCards: [
-        {
-          id: 1,
-          image: 'image1.jpg',
-          title: 'The Coldest Sunset',
-          description: 'luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
-          tags: ['p', 't', 'e'],
-        },
-        {
-          id: 2,
-          image: 'image2.jpg',
-          title: 'The Hottest Sunrise',
-          description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
-          tags: ['s', 'r', 'i'],
-        },
-        {
-          id: 3,
-          image: 'image3.jpg',
-          title: 'The Coolest Moonlight',
-          description: 'Cupiditate voluptates animi blanditiis error! Beatae, ullam commodi officiis culpa perferendis reprehenderit assumenda.',
-          tags: ['m', 'o', 'n'],
-        },
-      ],
-      allCards: [
-        {
-          id: 1,
-          image: 'image1.jpg',
-          title: 'The Coldest Sunset',
-          description: 'luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
-          tags: ['p', 't', 'e'],
-        },
-        {
-          id: 2,
-          image: 'image2.jpg',
-          title: 'The Hottest Sunrise',
-          description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
-          tags: ['s', 'r', 'i'],
-        },
-        {
-          id: 3,
-          image: 'image3.jpg',
-          title: 'The Coolest Moonlight',
-          description: 'Cupiditate voluptates animi blanditiis error! Beatae, ullam commodi officiis culpa perferendis reprehenderit assumenda.',
-          tags: ['m', 'o', 'n'],
-        },
-        {
-          id: 4,
-          image: 'image4.jpg',
-          title: 'The Warmest Day',
-          description: 'Consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
-          tags: ['w', 'a', 'r'],
-        },
-        {
-          id: 5,
-          image: 'image5.jpg',
-          title: 'The Brightest Sky',
-          description: 'Adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
-          tags: ['b', 'r', 'i'],
-        },
-        {
-          id: 6,
-          image: 'image6.jpg',
-          title: 'The Deepest Ocean',
-          description: 'Dolores ipsum iure nostrum exercitationem.',
-          tags: ['d', 'e', 'e'],
-        },
-        {
-          id: 7,
-          image: 'image6.jpg',
-          title: 'The Deepest Ocean',
-          description: 'Dolores ipsum iure nostrum exercitationem.',
-          tags: ['d', 'e', 'e'],
-        },
-        {
-          id: 8,
-          image: 'image6.jpg',
-          title: 'The Deepest Ocean',
-          description: 'Dolores ipsum iure nostrum exercitationem.',
-          tags: ['d', 'e', 'e'],
-        },
-        {
-          id: 9,
-          image: 'image6.jpg',
-          title: 'The Deepest Ocean',
-          description: 'Dolores ipsum iure nostrum exercitationem.',
-          tags: ['d', 'e', 'e'],
-        },
-        {
-          id: 10,
-          image: 'image6.jpg',
-          title: 'The Deepest Ocean',
-          description: 'Dolores ipsum iure nostrum exercitationem.',
-          tags: ['d', 'e', 'e'],
-        },
-        {
-          id: 11,
-          image: 'image6.jpg',
-          title: 'The Deepest Ocean',
-          description: 'Dolores ipsum iure nostrum exercitationem.',
-          tags: ['d', 'e', 'e'],
-        },
-        {
-          id: 12,
-          image: 'image6.jpg',
-          title: 'The Deepest Ocean',
-          description: 'Dolores ipsum iure nostrum exercitationem.',
-          tags: ['d', 'e', 'e'],
-        },
-      ],
-    };
+<script type="module" setup>
+import { ref } from 'vue';
+import { FwbPagination } from 'flowbite-vue';
+
+const currentPage = ref(1);
+const myCards = [
+  {
+    id: 1,
+    image: 'image1.jpg',
+    title: '喜歡的電視節目',
+    description: 'luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
+    tags: ['p', 't', 'e'],
   },
-};
+  {
+    id: 2,
+    image: 'image2.jpg',
+    title: '最喜歡的食物',
+    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
+    tags: ['s', 'r', 'i'],
+  },
+  {
+    id: 3,
+    image: 'image3.jpg',
+    title: '最想去的國家',
+    description: 'Cupiditate voluptates animi blanditiis error! Beatae, ullam commodi officiis culpa perferendis reprehenderit assumenda.',
+    tags: ['m', 'o', 'n'],
+  },
+];
+
+const allCards = [
+  {
+    id: 1,
+    image: 'image1.jpg',
+    title: '喜歡狗還是貓',
+    description: 'luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
+    tags: ['p', 't', 'e'],
+  },
+  {
+    id: 2,
+    image: 'image2.jpg',
+    title: '更喜歡健身房還是戶外運動',
+    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
+    tags: ['s', 'r', 'i'],
+  },
+  {
+    id: 3,
+    image: 'image3.jpg',
+    title: '喜歡使用 Instagram還是 Twitter',
+    description: 'Cupiditate voluptates animi blanditiis error! Beatae, ullam commodi officiis culpa perferendis reprehenderit assumenda.',
+    tags: ['m', 'o', 'n'],
+  },
+  {
+    id: 4,
+    image: 'image4.jpg',
+    title: '想要什麼超能力',
+    description: 'Consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
+    tags: ['w', 'a', 'r'],
+  },
+  {
+    id: 5,
+    image: 'image5.jpg',
+    title: '喜歡的音樂風格',
+    description: 'Adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
+    tags: ['b', 'r', 'i'],
+  },
+  {
+    id: 6,
+    image: 'image6.jpg',
+    title: '喜歡咖啡還是茶',
+    description: 'Dolores ipsum iure nostrum exercitationem.',
+    tags: ['d', 'e', 'e'],
+  },
+  {
+    id: 7,
+    image: 'image6.jpg',
+    title: '喜歡在週末做什麼',
+    description: 'Dolores ipsum iure nostrum exercitationem.',
+    tags: ['d', 'e', 'e'],
+  },
+  {
+    id: 8,
+    image: 'image6.jpg',
+    title: '戶外活動還是宅在家',
+    description: 'Dolores ipsum iure nostrum exercitationem.',
+    tags: ['d', 'e', 'e'],
+  },
+  {
+    id: 9,
+    image: 'image6.jpg',
+    title: '最喜歡的電影',
+    description: 'Dolores ipsum iure nostrum exercitationem.',
+    tags: ['d', 'e', 'e'],
+  },
+  {
+    id: 10,
+    image: 'image6.jpg',
+    title: '最喜歡的旅遊景點',
+    description: 'Dolores ipsum iure nostrum exercitationem.',
+    tags: ['d', 'e', 'e'],
+  },
+  {
+    id: 11,
+    image: 'image6.jpg',
+    title: '最喜歡的國家',
+    description: 'Dolores ipsum iure nostrum exercitationem.',
+    tags: ['d', 'e', 'e'],
+  },
+  {
+    id: 12,
+    image: 'image6.jpg',
+    title: '最喜歡的動漫角色',
+    description: 'Dolores ipsum iure nostrum exercitationem.',
+    tags: ['d', 'e', 'e'],
+  },
+];
 </script>
 
 <style scoped>
@@ -208,17 +206,16 @@ export default {
 .container {
   width: 1920px;
 }
+.pull-content {
+  width: 1341px;
+}
 .title {
   font-size: 32px;
 }
 .container-my {
-  /* border-color: black;
-  border: 1px solid; */
   width: 1341px;
 }
 .container-all {
-  /* border-color: black;
-  border: 1px solid; */
   width: 1341px;
 }
 .my-card {
@@ -243,11 +240,10 @@ export default {
   left: 130px;
   top: 130px;
 }
-/* @media screen and (max-width: 768px) {
+.pagination-container {
+}
+@media screen and (max-width: 768px) {
 }
 @media screen and (min-width: 769px) {
-  .my-card{
-    margin: auto;
-  }
-} */
+}
 </style>
