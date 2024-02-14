@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -13,7 +14,8 @@ export default {
     },
     screens: {
       md: '768px',
-      lg: '1920px',
+      lg: '1024px',
+      xl: '1920px',
     },
     colors: {
       primary: {
@@ -22,10 +24,11 @@ export default {
         dark: '#F49E00',
       },
       gray: {
-        '04': '#F5F5F5',
+        4: '#F5F5F5',
         DEFAULT: '#EAE8DC',
-        '02': '#888888',
-        '01': '#1E1E1E',
+        3: '#CBCAC8',
+        2: '#888888',
+        1: '#1E1E1E',
       },
     },
     fontFamily: {
