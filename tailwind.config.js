@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -7,6 +8,13 @@ export default {
     'node_modules/flowbite/**/*.{js,jsx,ts,tsx}',
   ],
   theme: {
+    listStyleType: {
+      none: 'none',
+      disc: 'disc',
+      decimal: 'decimal',
+      square: 'square',
+      chinese: 'cjk-ideographic',
+    },
     container: {
       center: true,
       padding: '0.75rem',
@@ -22,10 +30,10 @@ export default {
         dark: '#F49E00',
       },
       gray: {
-        '04': '#F5F5F5',
+        4: '#F5F5F5',
         DEFAULT: '#EAE8DC',
-        '02': '#888888',
-        '01': '#1E1E1E',
+        2: '#888888',
+        1: '#1E1E1E',
       },
     },
     fontFamily: {

@@ -1,0 +1,114 @@
+{
+  "headers": {
+    "title": "關於我們",
+  "content": "選集是一家致力於提供優質投票服務的科技公司。我們相信，投票是民主的重要基礎，每個人都應該擁有平等的發聲權。因此，我們致力於打造一個安全、公平、易用的投票平台，讓每個人都能輕鬆地參與投票。"
+  },
+  "features": [
+  {
+    "title": "我們的使命",
+    "imageUrl": "/icons/feature01.svg",
+    "content": "我們的使命是讓每個人都能平等地參與投票，並以此促進社會的民主進步。"
+  },
+  {
+    "title": "我們的願景",
+    "imageUrl": "/icons/feature02.svg",
+    "content": "我們的願景是成為全球領先的投票服務提供商，讓每個人都能在任何地方、任何時間輕鬆地參與投票。"
+  }
+],
+  "team": {
+    "title": "團隊介紹",
+    "content": "我們的團隊由一群熱愛技術、熱愛民主的年輕人組成。我們來自不同的背景，但有著共同的理想和目標。我們相信，科技可以讓民主更加公平、透明，讓每個人都能參與其中。",
+    "members": [
+    {
+      "name": "王小明",
+      "title": "創辦人兼 CEO",
+      "imageUrl": "https://images-ext-2.discordapp.net/external/8e8eTOitRKQTy6oLjm4cguM6tna-tLJHIbBc4B9NjmY/%3FshareUri%3Dk53rxSlf6nzc2FPQ%26c%3DColor_0%257E2945ff%26w%3D800%26h%3D800%26fm%3Dpng/https/blush.design/api/download?format=webp&width=647&height=647",
+      "content": "",
+      "socialMedia": [
+        {
+          "name": "LinkedIn",
+          "url": "https://www.linkedin.com/in/username"
+        },
+        {
+          "name": "Twitter",
+          "url": "https://twitter.com/username"
+        }
+      ]
+    },
+    {
+      "name": "陳小美",
+      "title": "創辦人兼 CTO",
+      "imageUrl": "https://media.discordapp.net/attachments/1203724362964803616/1203923150191198218/Shiny_Happy_-_Avatar_and_Backdrop.png?ex=65dc164e&is=65c9a14e&hm=b8818640403a274ab39824470cdb3be5ed1cad75b5a9147e8a8a5816401a3870&=&format=webp&quality=lossless",
+      "content": "",
+      "socialMedia": [
+        {
+          "name": "LinkedIn",
+          "url": "https://www.linkedin.com/in/username"
+        },
+        {
+          "name": "Twitter",
+          "url": "https://twitter.com/username"
+        }
+      ]
+    },
+    {
+      "name": "張小華",
+      "title": "創辦人兼 COO",
+      "imageUrl": "https://media.discordapp.net/attachments/1203724362964803616/1204022359036796938/Shiny_Happy_-_Avatar_and_Backdrop-2.png?ex=65dc72b4&is=65c9fdb4&hm=ba2324f68f725ebfb463deabf3f999d22e6cc4aa9d84dca0fec4ce67a9e24506&=&format=webp&quality=lossless",
+      "content": "",
+      "socialMedia": [
+        {
+          "name": "LinkedIn",
+          "url": "https://www.linkedin.com/in/username"
+        },
+        {
+          "name": "Twitter",
+          "url": "https://twitter.com/username"
+        }
+      ]
+    },
+    {
+      "name": "李小強",
+      "title": "創辦人兼 CMO",
+      "imageUrl": "https://blush.design/api/download?shareUri=x-NkEuESdyc4Yaa9&c=Color_0%7Eff2967&w=800&h=800&fm=png",
+      "content": "",
+      "socialMedia": [
+        {
+          "name": "LinkedIn",
+          "url": "https://www.linkedin.com/in/username"
+        },
+        {
+          "name": "Twitter",
+          "url": "https://twitter.com/username"
+        }
+      ]
+    }
+  ]
+  },
+  "services": [
+    {
+      "title": "我們的產品",
+      "imageUrl": "/icons/services01.svg",
+      "content": [
+        "選集網站：一個功能強大的投票平台，可用於舉辦各種投票活動。",
+        "選集行動應用程式：一個方便使用的投票應用程式，可在手機或平板電腦上使用。"
+      ]
+    },
+    {
+      "title": "我們的服務",
+      "imageUrl": "/icons/services02.svg",
+      "content": [
+        "投票平台設計和開發：我們為客戶提供定製的投票平台設計和開發服務。",
+        "投票活動策劃和執行：我們為客戶提供投票活動的策劃和執行服務。",
+        "投票數據分析：我們為客戶提供投票數據的分析和報告服務。"
+      ]
+    },
+    {
+      "title": "我們的未來",
+      "imageUrl": "/icons/services03.svg",
+      "content": [
+        "我們將繼續努力，打造一個更加完善、更加友好的投票平台，讓每個人都能享受投票的樂趣。"
+      ]
+    }
+  ]
+}

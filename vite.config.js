@@ -1,11 +1,8 @@
-import 'dotenv/config';
-import { fileURLToPath, URL } from 'node:url';
-
-import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-
-// eslint-disable-next-line import/no-extraneous-dependencies
+import { fileURLToPath, URL } from 'node:url';
+import { defineConfig } from 'vite';
 import eslintPlugin from 'vite-plugin-eslint';
+import 'dotenv/config';
 
 // https://vitejs.dev/config/
 export default defineConfig({
