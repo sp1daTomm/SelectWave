@@ -3,7 +3,7 @@
     <div class="flex justify-between max-w-screen-lg mx-auto">
       <div class="flex">
       <RouterLink to="/">
-        <img class=" w-12 md:w-16" src="../img_components/logo.svg" alt="選集">
+        <img class=" w-12 md:w-16" :src="logoImageUrl" alt="選集">
       </RouterLink>
       <ul class="gap-2 pl-6 hidden md:flex">
         <li class="group relative">
@@ -83,7 +83,7 @@
   <div v-show="isMenuModalOpen" :class="{ 'animate-fadeIn': isMenuModalOpen, }"
   class="fixed top-0 left-0 right-0 bottom-0 bg-white z-10 p-3">
     <div class="flex justify-between items-center py-3">
-      <img class=" w-12" src="../img_components/logo.svg" alt="選集">
+      <img class=" w-12" :src="logoImageUrl" alt="選集">
       <button @click="closeMenuModal" type="button">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
@@ -109,6 +109,7 @@ export default {
     return {
       isMenuListOpen: false,
       isMenuModalOpen: false,
+      logoImageUrl: '/img_components/logo.svg',
     };
   },
   methods: {
