@@ -34,7 +34,20 @@ export default {
     fontFamily: {
       sans: ['Noto Sans TC', 'sans-serif'],
     },
-    extend: {},
+    extend: {
+      dropShadow: {
+        '2xlg': '0 5px 10px rgba(0, 0, 0, 0.15)',
+      },
+      animation: {
+        fadeIn: 'fadeIn .5s ease-in-out',
+      },
+      keyframes: {
+        fadeIn: {
+          from: { opacity: 0 },
+          to: { opacity: 1 },
+        },
+      },
+    },
   },
   plugins: [
     require('@tailwindcss/typography'),

@@ -1,22 +1,3 @@
 <template>
-  <div class="home">
-    <h1>Hello, This is Home Page.</h1>
-    <RouterLink to="/">Home</RouterLink> |
-    <RouterLink to="/about">About</RouterLink>
-    <hr>
-    <HelloWorld />
-  </div>
+  <div style="height:200vh" class="max-w-screen-lg mx-auto">eujowo</div>
 </template>
-
-<script>
-import HelloWorld from '@/components/HelloWorld.vue';
-
-export default {
-  components: {
-    HelloWorld,
-  },
-};
-</script>
-
-<style scoped>
-</style>
