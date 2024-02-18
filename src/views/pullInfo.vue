@@ -12,19 +12,13 @@
           <div class="ml-4 pt-3">全部</div>
         </div>
         <div class="my-card">
-          <div
-            class="flex flex-row content-center justify-between container-my mx-2"
-          >
+          <div class="flex flex-row content-center justify-between container-my mx-2">
             <div
               v-for="card in myCards"
               :key="card.id"
               class="w-full mb-4 overflow-hidden card-size card-style"
             >
-              <img
-                class="w-full img-size"
-                src=""
-                alt="Sunset in the mountains"
-              />
+              <img class="w-full img-size" src="" alt="Sunset in the mountains" />
               <div class="px-6 py-4">
                 <div class="font-bold text-xl mb-2">{{ card.title }}</div>
                 <p class="text-gray-700 text-base">{{ card.description }}</p>
@@ -40,11 +34,7 @@
             </div>
             <div class="add-box img-size relative">
               <div class="add-group absolute">
-                <img
-                  src="../assets/addIcon.png"
-                  class="add-icon p-2"
-                  alt="icon"
-                />
+                <img src="../assets/addIcon.png" class="add-icon p-2" alt="icon" />
                 <div class="add-text">建立投票</div>
               </div>
             </div>
