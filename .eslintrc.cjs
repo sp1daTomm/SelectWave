@@ -8,6 +8,7 @@ module.exports = {
     'plugin:vue/vue3-essential',
     'eslint:recommended',
     'airbnb-base',
+    "prettier"
   ],
   overrides: [
   ],
@@ -31,6 +32,7 @@ module.exports = {
   },
   plugins: [
     'vue',
+    "prettier",
   ],
   rules: {
   },
