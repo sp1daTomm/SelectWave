@@ -37,6 +37,11 @@ const routes = [
     path: '/:pathMatch(.*)*',
     redirect: '/404',
   },
+  {
+    path: '/pullInfo',
+    name: 'PullInfo',
+    component: () => import('../views/pullInfo.vue'),
+  },
 ];
 
 const router = createRouter({
