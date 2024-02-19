@@ -100,8 +100,8 @@
 import { ref } from 'vue';
 import { FwbPagination } from 'flowbite-vue';
 import NavBar from '../components/NavbarEl.vue';
-import Footer from '../components/ComponentFooter.vue';
-import GoTop from '../components/TopGoEl.vue';
+// import Footer from '../components/ComponentFooter.vue';
+// import GoTop from '../components/TopGoEl.vue';
 
 const currentPage = ref(1);
 const myCards = [

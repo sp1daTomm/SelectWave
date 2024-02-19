@@ -35,7 +35,7 @@ module.exports = {
   },
   plugins: [
     'vue',
-    'simple-import-sort',
+    '.eslintrc.json-sort',
   ],
   rules: {
     'import/extensions': ['error', 'ignorePackages', {
