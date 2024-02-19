@@ -88,41 +88,52 @@
       </table>
     </div>
     <!-- 頁碼 -->
-    <nav aria-label="Page navigation example">
+    <nav>
       <ul class="inline-flex -space-x-px text-base h-10 w-full justify-center">
         <li>
-          <a href="#" class="flex items-center justify-center px-4 h-10 ms-0 leading-tight
-          text-gray-1 bg-white border border-e-0 border-gray-3 rounded-s-lg
-          hover:bg-gray-100 hover:text-gray-700">
-            <span class="sr-only">Previous</span>
-            <svg class="w-3 h-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-              viewBox="0 0 6 10">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M5 1 1 5l4 4" />
-            </svg>
+          <a href="#" class="pagination-w flex items-center justify-center p-2 leading-tight
+          text-gray-1 bg-white border border-gray-4 rounded-lg
+          hover:bg-primary-light hover:text-primary-dark mr-1.5">
+            <span class="sr-only">回到第一頁</span>
+            <ChevronsLeft />
           </a>
         </li>
         <li>
-          <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight
-          text-gray-1 bg-white border border-gray-3 hover:bg-gray-100 hover:text-gray-700">
+          <a href="#" class="pagination-w flex items-center justify-center p-2 leading-tight
+          text-gray-1 bg-white border border-gray-4 rounded-lg
+          hover:bg-primary-light hover:text-primary-dark mr-1.5">
+            <span class="sr-only">Previous</span>
+            <ChevronLeft />
+          </a>
+        </li>
+        <li>
+          <a href="#" class="pagination-w flex items-center justify-center p-2 leading-tight
+          text-gray-1 bg-white border border-gray-4 rounded-lg
+          hover:bg-primary-light hover:text-primary-dark mr-1.5">
             1
           </a>
         </li>
         <li>
-          <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight
-          text-gray-1 bg-white border border-gray-3 hover:bg-gray-100 hover:text-gray-700">
+          <a href="#" class="pagination-w flex items-center justify-center p-2 leading-tight
+          text-gray-1 bg-white border border-gray-4 rounded-lg
+          hover:bg-primary-light hover:text-primary-dark mr-1.5">
             2
           </a>
         </li>
         <li>
-          <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-1
-          bg-white border border-gray-3 rounded-e-lg hover:bg-gray-100 hover:text-gray-700">
+          <a href="#" class="pagination-w flex items-center justify-center p-2 leading-tight
+          text-gray-1 bg-white border border-gray-4 rounded-lg
+          hover:bg-primary-light hover:text-primary-dark mr-1.5">
             <span class="sr-only">Next</span>
-            <svg class="w-3 h-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-              viewBox="0 0 6 10">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="m1 9 4-4-4-4" />
-            </svg>
+            <ChevronRight />
+          </a>
+        </li>
+        <li>
+          <a href="#" class="pagination-w flex items-center justify-center p-2 leading-tight
+          text-gray-1 bg-white border border-gray-4 rounded-lg
+          hover:bg-primary-light hover:text-primary-dark">
+            <span class="sr-only">到最後一頁</span>
+            <ChevronsRight />
           </a>
         </li>
       </ul>
@@ -134,7 +145,10 @@
   <button type="button" @click="logout">登出</button>
 </template>
 <script>
-import { Pencil, Share2, Trash2 } from 'lucide-vue-next';
+import {
+  ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
+  Pencil, Share2, Trash2,
+} from 'lucide-vue-next';
 import DelModal from '@/components/backend/DelModal.vue';
 import NavbarBackend from '@/components/backend/NavbarBackend.vue';
 import NavbarVote from '@/components/backend/NavbarVote.vue';
@@ -153,6 +167,10 @@ export default {
     Trash2,
     Pencil,
     Share2,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
   },
   data() {
     return {
@@ -183,4 +201,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.pagination-w {
+  width: 32px;
+  height: 32px;
+}</style>
