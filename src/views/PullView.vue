@@ -1,5 +1,5 @@
 <template>
-  <header></header>
+  <NavBar />
   <div class="container flex justify-center">
     <div class="pull-content m-auto">
       <div>
@@ -90,14 +90,18 @@
           :total-pages="100"
           show-icons
         ></fwb-pagination>
+        <GoTop />
       </div>
     </div>
   </div>
-  <footer></footer>
+  <Footer />
 </template>
 <script type="module" setup>
 import { ref } from 'vue';
 import { FwbPagination } from 'flowbite-vue';
+import NavBar from '../components/NavbarEl.vue';
+import Footer from '../components/ComponentFooter.vue';
+import GoTop from '../components/TopGoEl.vue';
 
 const currentPage = ref(1);
 const myCards = [

@@ -38,9 +38,9 @@ const routes = [
     redirect: '/404',
   },
   {
-    path: '/pullInfo',
-    name: 'PullInfo',
-    component: () => import('../views/pullInfo.vue'),
+    path: '/pull',
+    name: 'Pull',
+    component: () => import('../views/PullView.vue'),
   },
 ];
 
