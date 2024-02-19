@@ -242,10 +242,10 @@ const allCards = [
 .container-all {
   width: 1341px;
 }
-.my-card {
-}
-.all-card {
-}
+/* .my-card {
+} */
+/* .all-card {
+} */
 .card-size {
   width: 314px;
   height: 412px;
@@ -255,8 +255,8 @@ const allCards = [
   width: 314px;
   background-color: #fcb738;
 }
-.card-style {
-}
+/* .card-style {
+} */
 .add-box {
   background-color: #fff4e0;
 }
@@ -264,8 +264,8 @@ const allCards = [
   left: 130px;
   top: 130px;
 }
-.pagination-container {
-}
+/* .pagination-container {
+} */
 @media screen and (max-width: 768px) {
 }
 @media screen and (min-width: 769px) {
