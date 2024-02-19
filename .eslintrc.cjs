@@ -62,7 +62,7 @@ module.exports = {
     ],
     'arrow-body-style': 'off',
     'prefer-arrow-callback': 'off',
-    'simple-import-sort/imports': [
+    '.eslintrc.json': [
       'error',
       {
         groups: [
