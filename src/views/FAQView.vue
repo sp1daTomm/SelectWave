@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
+import { toTypedSchema } from '@vee-validate/valibot';
 import {
   FwbAccordion,
   FwbAccordionContent,
@@ -9,7 +10,8 @@ import {
   FwbModal,
 } from 'flowbite-vue';
 import {
-  email, object, string,
+  email as emailValidator, minLength,
+  object, string,
 } from 'valibot';
 import { useForm } from 'vee-validate';
 import faqData from '@/data/faq.json';
@@ -25,15 +27,19 @@ function showModal() {
   isShowModal.value = true;
 }
 
-const userDataSchema = object({
-  name: string().required(),
-  email: string().email().required(),
-  message: string().required(),
-  questions: string().required(),
-  agree: string().required(),
-});
+const userDataSchema = toTypedSchema(
+  object({
+    name: string().required(),
+    email: string([minLength(1), emailValidator()]),
+    message: string().required(),
+    questions: string().required(),
+    agree: string().required(),
+  }),
+);
 
-const { values, errors, defineField } = useForm({
+const {
+  values, errors, defineField, handleSubmit,
+} = useForm({
   initialValues: {
     name: '',
     email: '',
