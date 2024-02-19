@@ -32,6 +32,8 @@
     "lucide-vue-next": "^0.322.0",
     "pinia": "^2.1.7",
     "sweetalert2": "^11.10.5",
+    "valibot": "^0.28.1",
+    "vee-validate": "^4.12.5",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5",
     "vue-sweetalert2": "^5.0.5"
