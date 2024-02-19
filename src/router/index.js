@@ -26,6 +26,11 @@ const routes = [
         name: 'Terms',
         component: () => import('../views/TermsView.vue'),
       },
+      {
+        path: '/faq',
+        name: 'FAQ',
+        component: () => import('../views/FAQView.vue'),
+      },
     ],
   },
   {
