@@ -31,6 +31,7 @@
     "lucide-vue-next": "^0.322.0",
     "pinia": "^2.1.7",
     "sweetalert2": "^11.10.5",
+    "tailwindcss-animated": "^1.0.1",
     "vue": "^3.3.11",
     "vue-axios": "^3.5.2",
     "vue-router": "^4.2.5",

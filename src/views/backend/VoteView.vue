@@ -6,11 +6,34 @@
     <div class="outline outline-1 outline-gray-3 rounded-2xl md:rounded-3xl
     pt-5 pb-10 md:pt-4 md:pb-16 px-3.5 md:px-5 mb-10">
       <div class="flex justify-between mb-7 md:mb-8">
-        <button type="button" class="px-6 py-3 flex items-center justify-center rounded-3xl bg-white
+        <div class="relative">
+          <button type="button" class="px-6 py-3 flex items-center justify-center rounded-3xl bg-white
           text-gray-1 text-base font-medium outline outline-2 outline-gray-1
-          hover:outline-primary hover:text-primary">
-          篩選
-        </button>
+          hover:outline-primary hover:text-primary" @click="collapseModal.toggle()">
+            篩選
+          </button>
+          <!-- Dropdown menu -->
+          <div ref="flowbiteCollapse"
+            class="absolute top-14 z-10 hidden font-normal bg-white divide-y rounded-2xl shadow-lg w-44 animate-fade-down animate-once animate-ease-in-out">
+            <ul class="py-3 text-sm text-gray-700">
+              <li>
+                <a href="#" class="block px-7 py-2 hover:bg-gray-100">所有投票</a>
+              </li>
+              <li>
+                <a href="#" class="block px-7 py-2 hover:bg-gray-100">投票狀態：私人</a>
+              </li>
+              <li>
+                <a href="#" class="block px-7 py-2 hover:bg-gray-100">投票狀態：公開</a>
+              </li>
+              <li>
+                <a href="#" class="block px-7 py-2 hover:bg-gray-100">投票進行中</a>
+              </li>
+              <li>
+                <a href="#" class="block px-7 py-2 hover:bg-gray-100">投票已結束</a>
+              </li>
+            </ul>
+          </div>
+        </div>
         <button type="button" class="px-6 py-3 flex items-center justify-center rounded-3xl bg-gray-1
           text-white text-base font-medium hover:bg-primary">
           建立新投票
@@ -155,8 +178,10 @@ import NavbarVote from '@/components/backend/NavbarVote.vue';
 import ShareModal from '@/components/backend/ShareModal.vue';
 import ComponentFooter from '@/components/ComponentFooter.vue';
 import Navbar from '@/components/NavbarEl.vue';
+import CollapseMixin from '@/mixins/CollapseMixin';
 
 export default {
+  mixins: [CollapseMixin],
   components: {
     Navbar,
     ComponentFooter,
@@ -174,6 +199,7 @@ export default {
   },
   data() {
     return {
+      collapseModal: null,
       delContent: '「xxx投票」',
     };
   },
@@ -205,4 +231,5 @@ export default {
 .pagination-w {
   width: 32px;
   height: 32px;
-}</style>
+}
+</style>
