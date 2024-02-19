@@ -1,5 +1,7 @@
 import { createApp } from 'vue';
+import VueAxios from 'vue-axios';
 import VueSweetalert2 from 'vue-sweetalert2';
+import axios from 'axios';
 import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
@@ -11,5 +13,5 @@ const app = createApp(App);
 app.use(VueSweetalert2);
 app.use(createPinia());
 app.use(router);
-
+app.use(VueAxios, axios);
 app.mount('#app');

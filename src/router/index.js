@@ -26,6 +26,16 @@ const routes = [
         name: 'Terms',
         component: () => import('../views/TermsView.vue'),
       },
+      {
+        path: '/signup',
+        name: 'Signup',
+        component: () => import('../views/SignupView.vue'),
+      },
+      {
+        path: '/login',
+        name: 'Login',
+        component: () => import('../views/LoginView.vue'),
+      },
     ],
   },
   {
@@ -36,6 +46,23 @@ const routes = [
   {
     path: '/:pathMatch(.*)*',
     redirect: '/404',
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: () => import('../views/backend/DashboardView.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Vote',
+        component: () => import('../views/backend/VoteView.vue'),
+      },
+      {
+        path: 'account',
+        name: 'Account',
+        component: () => import('../views/backend/AccountView.vue'),
+      },
+    ],
   },
 ];
 
