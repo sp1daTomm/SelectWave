@@ -35,7 +35,7 @@ module.exports = {
   },
   plugins: [
     'vue',
-    '.eslintrc.json-sort',
+    '.eslintrc.jsonlintrc.json-sort',
   ],
   rules: {
     'import/extensions': ['error', 'ignorePackages', {
@@ -62,7 +62,7 @@ module.exports = {
     ],
     'arrow-body-style': 'off',
     'prefer-arrow-callback': 'off',
-    '.eslintrc.json': [
+    '.eslintrc.jsonlintrc.json': [
       'error',
       {
         groups: [

@@ -90,7 +90,7 @@ npm run deploy
   - `App.vue`：根元件
   - `main.js`：進入點
 - `.env.example`：環境變數範本
-- `.eslintrc.js`：ESLint 設定檔
+- `.eslintrc.jsonlintrc.js`：ESLint 設定檔
 - `.gitignore`：Git 忽略檔案
 - `.nvmrc`：Node.js 版本
 - `index.html`：進入點 HTML
