@@ -1,5 +1,5 @@
 <template>
-  <nav class="py-3 px-3 sticky top-0 bg-white">
+  <nav class="py-3 px-3 sticky top-0 bg-white z-10">
     <div class="flex items-center justify-between max-w-screen-lg mx-auto">
       <div class="flex">
       <RouterLink to="/">
