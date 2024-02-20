@@ -17,13 +17,6 @@
               focus:ring-primary focus:border-primary block w-full px-3 py-4" placeholder="請輸入信箱" required
               v-model="user.email" />
           </div>
-          <!-- <div class="mb-4">
-            <label for="name" class="block mb-2 text-base font-medium text-gray-1">名稱</label>
-            <input type="text" id="name"
-              class="bg-white border border-gray-3 text-sm rounded-3xl
-              focus:ring-primary focus:border-primary block w-full px-3 py-4"
-              placeholder="請輸入你的名稱" required />
-          </div> -->
           <div class="mb-4">
             <label for="password" class="block mb-2 text-base font-medium text-gray-1">密碼</label>
             <input type="password" id="password" class="bg-white border border-gray-3 text-sm rounded-3xl
@@ -88,9 +81,6 @@ export default {
           }
         })
         .catch((err) => {
-          this.user.email = '';
-          this.user.password = '';
-          this.user.confirmPassword = '';
           this.$swal({
             title: `${err.response.data.message}`,
           });
