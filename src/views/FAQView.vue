@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import AccordionComponent from '@/components/AccordionComponent.vue';
 import ContactFormModal from '@/components/ContactFormModal.vue';
 import faqData from '@/data/faq.json';
 
@@ -13,6 +14,14 @@ function closeModal() {
 function showModal() {
   isShowModal.value = true;
 }
+
+const resultFaqs = computed(() => questions.map((faq) => {
+  return {
+    title: faq.title,
+    content: faq.content,
+    active: false,
+  };
+}));
 
 </script>
 
@@ -32,19 +41,17 @@ function showModal() {
           </div>
         </div>
       </section>
-      <fwb-accordion flush>
-      <fwb-accordion-panel v-for="item in questions" :key="item">
-        <fwb-accordion-header id="accordion-flush-heading-1">
-            <span>{{ item.title }}</span>
-        </fwb-accordion-header>
-        <fwb-accordion-content>
-          <p class="flex items-center gap-4 mb-2 text-gray-500 dark:text-gray-400" v-for="content in item.content" :key="content">
-            <i class="w-5 h-5 bi bi-asterisk shrink-0 text-primary" />
-            {{ content }}
-          </p>
-        </fwb-accordion-content>
-      </fwb-accordion-panel>
-      </fwb-accordion>
+
+        <template v-for="(faq, index) in resultFaqs" :key="faq.title">
+            <AccordionComponent :title="faq.title" :id="index" :active="faq.active">
+              <ul class="pt-4 space-y-4">
+                <li class="flex items-center gap-4" v-for="content in faq.content" :key="content">
+                  <i class="w-5 h-5 bi bi-asterisk shrink-0 text-primary" />
+                  <p class="text-lg leading-normal text-gray-1 dark:text-gray-2">{{ content }}</p>
+                </li>
+              </ul>
+            </AccordionComponent>
+        </template>
     </div>
   </main>
   <ContactFormModal :isShowModal="isShowModal" :closeModal="closeModal" />
