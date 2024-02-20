@@ -66,7 +66,7 @@
         </div>
         <button type="submit" class="text-white bg-gray-1 hover:bg-primary focus:ring-4
             focus:outline-none focus:ring-primary-light font-medium rounded-3xl
-            text-base w-full sm:w-auto px-5 py-2.5 text-center">
+            text-base w-full sm:w-auto py-3 text-center">
           更新
         </button>
       </form>
