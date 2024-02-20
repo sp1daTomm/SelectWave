@@ -59,7 +59,7 @@
               <div
                 v-for="card in allCards"
                 :key="card.id"
-                class="w-full mb-4 card-size overflow-hidden"
+                class="w-full mb-4 card-size overflow-hidden "
               >
                 <div class="max-w-sm rounded overflow-hidden shadow-lg">
                   <img class="w-full img-size" alt="Sunset in the mountains" />
@@ -99,9 +99,11 @@
 <script type="module" setup>
 import { ref } from 'vue';
 import { FwbPagination } from 'flowbite-vue';
-import NavBar from '../components/NavbarEl.vue';
-// import Footer from '../components/ComponentFooter.vue';
-// import GoTop from '../components/TopGoEl.vue';
+import NavBar from '@/components/NavbarEl.vue';
+import Footer from '../components/ComponentFooter.vue';
+import GoTop from '../components/TopGoEl.vue';
+// import { Swiper, SwiperSlide } from 'swiper/vue';
+// import 'swiper/css';
 
 const currentPage = ref(1);
 const myCards = [
