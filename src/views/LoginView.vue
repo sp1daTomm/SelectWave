@@ -6,7 +6,7 @@
       </div>
       <div class="basis-full md:basis-1/2 px-3">
         <div class="flex justify-center items-center h-full">
-          <form class="min-w-96 mx-auto" @submit.prevent="login">
+          <VForm v-slot="{ errors }" class="min-w-96 mx-auto" @submit="login">
             <div class="mb-4">
               <h2 class="text-2xl md:text-4xl font-bold mb-2 text-gray-1">登入</h2>
               <span class="text-gray-1">尚未成為會員？</span>
@@ -14,15 +14,22 @@
             </div>
             <div class="mb-4">
               <label for="email" class="block mb-2 text-base font-medium text-gray-1">Email</label>
-              <input type="email" id="email" class="bg-white border border-gray-3 text-sm rounded-3xl
-                focus:ring-primary focus:border-primary block w-full px-3 py-4" placeholder="請輸入信箱" required
-                v-model="user.email" />
+              <VField id="email" name="信箱" type="email"
+                class="bg-white border border-gray-3 text-sm rounded-3xl focus:ring-primary focus:border-primary block w-full px-3 py-4"
+                :class="{ 'is-invalid': errors['信箱'] }" placeholder="請輸入信箱" rules="email|required" v-model="user.email">
+              </VField>
+              <ErrorMessage name="信箱" class="text-red-600 text-sm"></ErrorMessage>
             </div>
-            <div class="mb-1">
+            <div class="mb-1 relative">
               <label for="password" class="block mb-2 text-base font-medium text-gray-1">密碼</label>
-              <input type="password" id="password" class="bg-white border border-gray-3 text-sm rounded-3xl
-                focus:ring-primary focus:border-primary block w-full px-3 py-4" placeholder="請輸入密碼" required
-                v-model="user.password" />
+              <VField id="password" name="密碼" :type="showPassword ? 'text' : 'password'"
+                class="bg-white border border-gray-3 text-sm rounded-3xl focus:ring-primary focus:border-primary block w-full px-3 py-4"
+                :class="{ 'is-invalid': errors['密碼'] }" placeholder="請輸入密碼"
+                rules="required|min:8|regex:(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\da-zA-Z])" v-model="user.password">
+              </VField>
+              <i class="absolute -right-8 top-11 text-xl cursor-pointer"
+                :class="showPassword ? 'bi bi-eye-fill' : 'bi bi-eye-slash'" @click="showPassword = !showPassword"></i>
+              <ErrorMessage name="密碼" class="text-red-600 text-sm"></ErrorMessage>
             </div>
             <router-link class="text-gray-2 mb-6 text-sm hover:text-primary block text-right" to="">
               忘記密碼 ?
@@ -58,7 +65,7 @@
                 <i class="bi bi-line"></i>
               </button>
             </div>
-          </form>
+          </VForm>
         </div>
       </div>
     </div>
@@ -73,6 +80,7 @@ export default {
         email: '',
         password: '',
       },
+      showPassword: false,
     };
   },
   methods: {
