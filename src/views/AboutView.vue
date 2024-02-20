@@ -64,7 +64,7 @@ const onSubmit = (async () => {
 </script>
 
 <template>
-  <main class="container py-6">
+  <main class="container py-6" :class="isShowModal && 'h-screen overflow-hidden'">
     <section class="py-12">
       <h1 class="mb-5 text-4xl font-bold">{{ headers.title }}</h1>
       <p class="mb-12 text-lg leading-normal">
