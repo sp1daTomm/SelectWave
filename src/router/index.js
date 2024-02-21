@@ -53,6 +53,11 @@ const routes = [
     redirect: '/404',
   },
   {
+    path: '/pull',
+    name: 'Pull',
+    component: () => import('../views/PullView.vue'),
+  },
+  {
     path: '/admin',
     name: 'Admin',
     component: () => import('../views/backend/DashboardView.vue'),
