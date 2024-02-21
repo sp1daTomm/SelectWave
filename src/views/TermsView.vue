@@ -1,5 +1,4 @@
 <script setup>
-import { Asterisk } from 'lucide-vue-next';
 import termsData from '@/data/terms.json';
 
 const {
@@ -20,7 +19,7 @@ const {
           <h2 class="text-xl font-bold ">{{ rule.title }}</h2>
           <div v-for="list in rule.list" :key="list" class="flex flex-col gap-4">
               <li class="flex items-center gap-4">
-                <Asterisk class="w-5 h-5 shrink-0 text-primary" />
+                <i class="w-5 h-5 bi bi-asterisk shrink-0 text-primary" />
                 <p class="text-lg ">{{ list }}</p>
               </li>
           </div>

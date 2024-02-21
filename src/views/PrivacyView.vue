@@ -1,5 +1,4 @@
 <script setup>
-import { Asterisk } from 'lucide-vue-next';
 import privacyData from '@/data/privacy.json';
 
 const {
@@ -25,7 +24,7 @@ const {
             <p v-if="(typeof list.list) === 'string'">{{ list.list }}</p>
             <ul v-else class="space-y-4">
               <li v-for="item in list.list" :key="item" class="flex items-center gap-4">
-                <Asterisk class="w-5 h-5 shrink-0 text-primary" />
+                <i class="w-5 h-5 bi bi-asterisk shrink-0 text-primary" />
                 <p class="text-lg">{{ item }}</p>
               </li>
             </ul>
@@ -38,7 +37,7 @@ const {
       <h1 class="text-2xl font-bold">{{ footer.title }}</h1>
       <ul class="flex flex-col gap-4 py-2" v-for="list in footer.list" :key="list">
         <li class="flex items-center gap-4" v-for="item in list.list" :key="item">
-          <Asterisk class="w-5 h-5 shrink-0 text-primary" />
+          <i class="w-5 h-5 bi bi-asterisk shrink-0 text-primary" />
           <p class="text-lg">{{ item }}</p>
         </li>
       </ul>
