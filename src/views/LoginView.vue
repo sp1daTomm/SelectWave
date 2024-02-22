@@ -15,21 +15,21 @@
             <div class="mb-4">
               <label for="email" class="block mb-2 text-base font-medium text-gray-1">Email</label>
               <VField id="email" name="信箱" type="email"
-                class="bg-white border border-gray-3 text-sm rounded-3xl focus:ring-primary focus:border-primary block w-full px-3 py-4"
+                class="bg-white border border-gray-3 text-sm rounded-full focus:ring-primary focus:border-primary block w-full px-3 py-4"
                 :class="{ 'is-invalid': errors['信箱'] }" placeholder="請輸入信箱" rules="email|required" v-model="user.email">
               </VField>
-              <ErrorMessage name="信箱" class="text-red-600 text-sm"></ErrorMessage>
+              <ErrorMessage name="信箱" class="text-primary-dark text-sm"></ErrorMessage>
             </div>
             <div class="mb-1 relative">
               <label for="password" class="block mb-2 text-base font-medium text-gray-1">密碼</label>
               <VField id="password" name="密碼" :type="showPassword ? 'text' : 'password'"
-                class="bg-white border border-gray-3 text-sm rounded-3xl focus:ring-primary focus:border-primary block w-full px-3 py-4"
+                class="bg-white border border-gray-3 text-sm rounded-full focus:ring-primary focus:border-primary block w-full px-3 py-4"
                 :class="{ 'is-invalid': errors['密碼'] }" placeholder="請輸入密碼"
                 rules="required|min:8|regex:(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\da-zA-Z])" v-model="user.password">
               </VField>
               <i class="absolute -right-8 top-11 text-xl cursor-pointer"
                 :class="showPassword ? 'bi bi-eye-fill' : 'bi bi-eye-slash'" @click="showPassword = !showPassword"></i>
-              <ErrorMessage name="密碼" class="text-red-600 text-sm"></ErrorMessage>
+              <ErrorMessage name="密碼" class="text-primary-dark text-sm"></ErrorMessage>
             </div>
             <router-link class="text-gray-2 mb-6 text-sm hover:text-primary block text-right" to="">
               忘記密碼 ?
@@ -46,21 +46,21 @@
               </label>
             </div>
             <button type="submit" class="text-white bg-gray-1 hover:bg-primary focus:ring-4
-              focus:outline-none focus:ring-primary-light font-medium rounded-3xl
+              focus:outline-none focus:ring-primary-light font-medium rounded-full
               text-base w-full sm:w-auto px-5 py-2.5 text-center mb-6">
               登入
             </button>
             <p class="mb-4">使用以下方式登入</p>
             <div class="flex justify-between">
-              <button type="button" class="text-white bg-gray-1 rounded-3xl
+              <button type="button" class="text-white bg-gray-1 rounded-full
               text-base w-1/4 sm:w-auto py-3.5 hover:bg-primary">
                 <i class="bi bi-google"></i>
               </button>
-              <button type="button" class="text-white bg-gray-1 rounded-3xl
+              <button type="button" class="text-white bg-gray-1 rounded-full
               text-base w-1/4 sm:w-auto py-3.5 hover:bg-primary">
                 <i class="bi bi-discord"></i>
               </button>
-              <button type="button" class="text-white bg-gray-1 rounded-3xl
+              <button type="button" class="text-white bg-gray-1 rounded-full
               text-base w-1/4 sm:w-auto py-3.5 hover:bg-primary">
                 <i class="bi bi-line"></i>
               </button>
