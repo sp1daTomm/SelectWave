@@ -1,5 +1,5 @@
 <template>
-  <footer class="p-3 md:p-10 max-w-screen-lg mx-auto">
+  <footer class="p-3 md:p-10 max-w-screen-xl mx-auto">
     <div class="bg-gray-4 pb-4 pt-6 mx-auto rounded-t-2xl">
       <img class="mx-auto w-12 mb-3 md:w-16" :src="logoImageUrl" alt="選集">
       <ul class="flex justify-center">
