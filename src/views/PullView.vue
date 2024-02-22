@@ -29,7 +29,7 @@ export default {
       myCards: [
         {
           id: 1,
-          image: 'image1.jpg',
+          image: '/src/assets/vote 01.png',
           deadline: '2024-03-10',
           title: '最喜歡的電視節目',
           description:
@@ -39,7 +39,7 @@ export default {
         },
         {
           id: 2,
-          image: 'image2.jpg',
+          image: '/src/assets/vote 05.png',
           deadline: '2024-03-10',
           title: '最喜歡的食物',
           description:
@@ -49,7 +49,7 @@ export default {
         },
         {
           id: 3,
-          image: 'image3.jpg',
+          image: '/src/assets/vote 06.png',
           deadline: '2024-03-10',
           title: '最想去的國家',
           description:
@@ -59,7 +59,7 @@ export default {
         },
         {
           id: 4,
-          image: 'image4.jpg',
+          image: '/src/assets/vote 07.png',
           deadline: '2024-03-10',
           title: '最喜歡的飲料',
           description:
@@ -81,7 +81,7 @@ export default {
       allCards: [
         {
           id: 1,
-          image: 'image1.jpg',
+          image: '/src/assets/vote 04.png',
           title: '喜歡狗還是貓',
           description:
             'luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
@@ -90,7 +90,7 @@ export default {
         },
         {
           id: 2,
-          image: 'image2.jpg',
+          image: '/src/assets/vote 08.png',
           title: '更喜歡健身房還是戶外運動',
           description:
             'Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
@@ -99,7 +99,7 @@ export default {
         },
         {
           id: 3,
-          image: 'image3.jpg',
+          image: '/src/assets/vote 09.png',
           title: '喜歡使用 Instagram還是 Twitter',
           description:
             'Cupiditate voluptates animi blanditiis error! Beatae, ullam commodi officiis culpa perferendis reprehenderit assumenda.',
@@ -108,7 +108,7 @@ export default {
         },
         {
           id: 4,
-          image: 'image4.jpg',
+          image: '/src/assets/vote 10.png',
           title: '想要什麼超能力',
           description:
             'Consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
@@ -117,7 +117,7 @@ export default {
         },
         {
           id: 5,
-          image: 'image5.jpg',
+          image: '/src/assets/vote 11.png',
           title: '喜歡的音樂風格',
           description:
             'Adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
@@ -126,7 +126,7 @@ export default {
         },
         {
           id: 6,
-          image: 'image6.jpg',
+          image: '/src/assets/vote 12.png',
           title: '喜歡咖啡還是茶',
           description: 'Dolores ipsum iure nostrum exercitationem.',
           tags: ['d', 'e', 'e'],
@@ -134,7 +134,7 @@ export default {
         },
         {
           id: 7,
-          image: 'image6.jpg',
+          image: '/src/assets/vote 13.png',
           title: '喜歡在週末做什麼',
           description: 'Dolores ipsum iure nostrum exercitationem.',
           tags: ['d', 'e', 'e'],
@@ -142,7 +142,7 @@ export default {
         },
         {
           id: 8,
-          image: 'image6.jpg',
+          image: '/src/assets/vote 14.png',
           title: '戶外活動還是宅在家',
           description: 'Dolores ipsum iure nostrum exercitationem.',
           tags: ['d', 'e', 'e'],
@@ -150,7 +150,7 @@ export default {
         },
         {
           id: 9,
-          image: 'image6.jpg',
+          image: '/src/assets/vote 15.png',
           title: '最喜歡的電影',
           description: 'Dolores ipsum iure nostrum exercitationem.',
           tags: ['d', 'e', 'e'],
@@ -158,7 +158,7 @@ export default {
         },
         {
           id: 10,
-          image: 'image6.jpg',
+          image: '/src/assets/vote 16.png',
           title: '最喜歡的旅遊景點',
           description: 'Dolores ipsum iure nostrum exercitationem.',
           tags: ['d', 'e', 'e'],
@@ -166,7 +166,7 @@ export default {
         },
         {
           id: 11,
-          image: 'image6.jpg',
+          image: '/src/assets/vote 17.png',
           title: '最喜歡的國家',
           description: 'Dolores ipsum iure nostrum exercitationem.',
           tags: ['d', 'e', 'e'],
@@ -174,7 +174,7 @@ export default {
         },
         {
           id: 12,
-          image: 'image6.jpg',
+          image: '/src/assets/vote 18.png',
           title: '最喜歡的動漫角色',
           description: 'Dolores ipsum iure nostrum exercitationem.',
           tags: ['d', 'e', 'e'],
@@ -232,12 +232,8 @@ export default {
           }"
         >
           <swiper-slide v-for="card in myCards" :key="card.id">
-            <div class="max-w-sm overflow-hidden shadow-lg rounded-3xl">
-                <img
-                  :src="card.image"
-                  class="w-full img-size"
-                  alt="Card Image"
-                />
+            <div class="max-w-sm overflow-hidden shadow-lg rounded-3xl flex flex-wrap">
+              <img :src="card.image" class="w-full img-size" alt="Card Image" />
               <div class="card-container relative">
                 <p class="card-deadline absolute bottom-3 left-7 text-white">
                   {{ formatDeadline(myCards[currentCardIndex].deadline) }}止
@@ -258,50 +254,7 @@ export default {
         </swiper>
       </div>
 
-      <!-- <div class="">
-        <div class="flex items-center">
-          <div class="title">我的投票</div>
-          <div class="ml-4 pt-3">全部</div>
-        </div>
-        <div class="my-card">
-          <div
-            class="flex flex-row content-center justify-between container-my mx-2"
-          >
-            <div
-              v-for="card in myCards"
-              :key="card.id"
-              class="w-full mb-4 overflow-hidden card-size card-style"
-            >
-              <img
-                class="w-full img-size"
-                src=""
-                alt="Sunset in the mountains"
-              />
-              <div class="px-6 py-4">
-                <div class="font-bold text-xl mb-2">{{ card.title }}</div>
-                <p class="text-gray-700 text-base">{{ card.description }}</p>
-              </div>
-              <div class="px-6 pt-4 pb-2">
-                <span
-                  v-for="tag in card.tags"
-                  :key="tag"
-                  class="inline-block bg-gray-200 rounded-full px-3 py-1 text-gray-700 mr-2 mb-2"
-                  >#{{ tag }}</span
-                >
-              </div>
-            </div>
-            <div class="add-box img-size relative">
-              <div class="add-group absolute">
-                <img
-                  src="../assets/addIcon.png"
-                  class="add-icon p-2"
-                  alt="icon"
-                />
-                <div class="add-text">建立投票</div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <!-- <div class="create-my-vote hidden">
       </div> -->
       <div>
         <div class="title">全部投票</div>
@@ -314,13 +267,14 @@ export default {
                 class="w-full card-size mb-12"
               >
                 <div
-                  class="max-w-sm rounded overflow-hidden shadow-lg rounded-3xl"
+                  class="max-w-sm overflow-hidden shadow-lg rounded-3xl"
                 >
-                    <img
-                      class="w-full img-size"
-                      alt="Sunset in the mountains"
-                    />
-                  <div class="card- container relative">
+                  <img
+                    :src="card.image"
+                    class="w-full img-size"
+                    alt="image"
+                  />
+                  <div class="card-container relative">
                     <p
                       class="card-deadline absolute bottom-3 left-7 text-white"
                     >
@@ -328,7 +282,7 @@ export default {
                     </p>
                   </div>
                   <div class="px-6 py-4">
-                    <div class="font-bold text-xl mb-2">{{ card.title }}</div>
+                    <div class="font-bold text-xl mb-2 h-12">{{ card.title }}</div>
                     <p class="text-gray-700 text-base"></p>
                   </div>
                   <div class="px-6 pt-4 pb-2">
