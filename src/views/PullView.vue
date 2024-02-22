@@ -1,129 +1,208 @@
 <script type="module">
-// import { ref } from 'vue';
-import { Swiper, SwiperSlide } from "swiper/vue";
-import NavBar from "@/components/NavbarEl.vue";
-import Footer from "../components/ComponentFooter.vue";
-import GoTop from "../components/TopGoEl.vue";
-import "swiper/css";
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import NavBar from '../components/NavbarEl.vue';
+import GoTop from '../components/TopGoEl.vue';
+// import PageFooter from '../components/ComponentFooter.vue';
+import 'swiper/css';
 
-export { Swiper, SwiperSlide };
-// const myCards = [
-//   {
-//     id: 1,
-//     image: 'image1.jpg',
-//     title: '喜歡的電視節目',
-//     description:
-//       'luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
-//     tags: ['p', 't', 'e'],
-//   },
-//   {
-//     id: 2,
-//     image: 'image2.jpg',
-//     title: '最喜歡的食物',
-//     description:
-//       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
-//     tags: ['s', 'r', 'i'],
-//   },
-//   {
-//     id: 3,
-//     image: 'image3.jpg',
-//     title: '最想去的國家',
-//     description:
-//       'Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.',
-//     tags: ['m', 'o', 'n'],
-//   },
-// ];
-
-export const allCards = [
-  {
-    id: 1,
-    image: "image1.jpg",
-    title: "喜歡狗還是貓",
-    description:
-      "luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.",
-    tags: ["p", "t", "e"],
+export default {
+  components: {
+    NavBar,
+    GoTop,
+    // PageFooter,
+    Swiper,
+    SwiperSlide,
   },
-  {
-    id: 2,
-    image: "image2.jpg",
-    title: "更喜歡健身房還是戶外運動",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.",
-    tags: ["s", "r", "i"],
+  setup() {
+    const onSwiper = (swiper) => {
+      console.log(swiper);
+    };
+    const onSlideChange = () => {};
+    return {
+      onSwiper,
+      onSlideChange,
+    };
   },
-  {
-    id: 3,
-    image: "image3.jpg",
-    title: "喜歡使用 Instagram還是 Twitter",
-    description:
-      "Cupiditate voluptates animi blanditiis error! Beatae, ullam commodi officiis culpa perferendis reprehenderit assumenda.",
-    tags: ["m", "o", "n"],
+  data() {
+    return {
+      currentCardIndex: 0,
+      myCards: [
+        {
+          id: 1,
+          image: 'image1.jpg',
+          deadline: '2024-03-10',
+          title: '最喜歡的電視節目',
+          description:
+            'luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
+          tags: ['p', 't', 'e'],
+          voteQty: '3000',
+        },
+        {
+          id: 2,
+          image: 'image2.jpg',
+          deadline: '2024-03-10',
+          title: '最喜歡的食物',
+          description:
+            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
+          tags: ['s', 'r', 'i'],
+          voteQty: '3000',
+        },
+        {
+          id: 3,
+          image: 'image3.jpg',
+          deadline: '2024-03-10',
+          title: '最想去的國家',
+          description:
+            'Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.',
+          tags: ['m', 'o', 'n'],
+          voteQty: '3000',
+        },
+        {
+          id: 4,
+          image: 'image4.jpg',
+          deadline: '2024-03-10',
+          title: '最喜歡的飲料',
+          description:
+            'Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.',
+          tags: ['m', 'o', 'n'],
+          voteQty: '3000',
+        },
+        {
+          id: 5,
+          image: 'image5.jpg',
+          deadline: '2024-03-10',
+          title: '最喜歡的飲料店',
+          description:
+            'Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.',
+          tags: ['m', 'o', 'n'],
+          voteQty: '3000',
+        },
+      ],
+      allCards: [
+        {
+          id: 1,
+          image: 'image1.jpg',
+          title: '喜歡狗還是貓',
+          description:
+            'luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
+          tags: ['p', 't', 'e'],
+          voteQty: '3000',
+        },
+        {
+          id: 2,
+          image: 'image2.jpg',
+          title: '更喜歡健身房還是戶外運動',
+          description:
+            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
+          tags: ['s', 'r', 'i'],
+          voteQty: '3000',
+        },
+        {
+          id: 3,
+          image: 'image3.jpg',
+          title: '喜歡使用 Instagram還是 Twitter',
+          description:
+            'Cupiditate voluptates animi blanditiis error! Beatae, ullam commodi officiis culpa perferendis reprehenderit assumenda.',
+          tags: ['m', 'o', 'n'],
+          voteQty: '3000',
+        },
+        {
+          id: 4,
+          image: 'image4.jpg',
+          title: '想要什麼超能力',
+          description:
+            'Consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
+          tags: ['w', 'a', 'r'],
+          voteQty: '3000',
+        },
+        {
+          id: 5,
+          image: 'image5.jpg',
+          title: '喜歡的音樂風格',
+          description:
+            'Adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
+          tags: ['b', 'r', 'i'],
+          voteQty: '3000',
+        },
+        {
+          id: 6,
+          image: 'image6.jpg',
+          title: '喜歡咖啡還是茶',
+          description: 'Dolores ipsum iure nostrum exercitationem.',
+          tags: ['d', 'e', 'e'],
+          voteQty: '3000',
+        },
+        {
+          id: 7,
+          image: 'image6.jpg',
+          title: '喜歡在週末做什麼',
+          description: 'Dolores ipsum iure nostrum exercitationem.',
+          tags: ['d', 'e', 'e'],
+          voteQty: '3000',
+        },
+        {
+          id: 8,
+          image: 'image6.jpg',
+          title: '戶外活動還是宅在家',
+          description: 'Dolores ipsum iure nostrum exercitationem.',
+          tags: ['d', 'e', 'e'],
+          voteQty: '3000',
+        },
+        {
+          id: 9,
+          image: 'image6.jpg',
+          title: '最喜歡的電影',
+          description: 'Dolores ipsum iure nostrum exercitationem.',
+          tags: ['d', 'e', 'e'],
+          voteQty: '3000',
+        },
+        {
+          id: 10,
+          image: 'image6.jpg',
+          title: '最喜歡的旅遊景點',
+          description: 'Dolores ipsum iure nostrum exercitationem.',
+          tags: ['d', 'e', 'e'],
+          voteQty: '3000',
+        },
+        {
+          id: 11,
+          image: 'image6.jpg',
+          title: '最喜歡的國家',
+          description: 'Dolores ipsum iure nostrum exercitationem.',
+          tags: ['d', 'e', 'e'],
+          voteQty: '3000',
+        },
+        {
+          id: 12,
+          image: 'image6.jpg',
+          title: '最喜歡的動漫角色',
+          description: 'Dolores ipsum iure nostrum exercitationem.',
+          tags: ['d', 'e', 'e'],
+          voteQty: '3000',
+        },
+      ],
+      currentDate: new Date(),
+    };
   },
-  {
-    id: 4,
-    image: "image4.jpg",
-    title: "想要什麼超能力",
-    description:
-      "Consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.",
-    tags: ["w", "a", "r"],
+  methods: {
+    prevSlide() {
+      this.$refs.swiper.swiper.slidePrev();
+    },
+    nextSlide() {
+      this.$refs.swiper.swiper.slideNext();
+    },
+    formatDeadline(deadline) {
+      const formattedDate = new Date(deadline);
+      const year = formattedDate.getFullYear();
+      const month = (formattedDate.getMonth() + 1).toString().padStart(2, '0');
+      const day = formattedDate.getDate().toString().padStart(2, '0');
+      return `${year}/${month}/${day}`;
+    },
   },
-  {
-    id: 5,
-    image: "image5.jpg",
-    title: "喜歡的音樂風格",
-    description: "Adipisicing elit. Dolores ipsum iure nostrum exercitationem.",
-    tags: ["b", "r", "i"],
+  mounted() {
+    console.log(this.$refs.swiper);
   },
-  {
-    id: 6,
-    image: "image6.jpg",
-    title: "喜歡咖啡還是茶",
-    description: "Dolores ipsum iure nostrum exercitationem.",
-    tags: ["d", "e", "e"],
-  },
-  {
-    id: 7,
-    image: "image6.jpg",
-    title: "喜歡在週末做什麼",
-    description: "Dolores ipsum iure nostrum exercitationem.",
-    tags: ["d", "e", "e"],
-  },
-  {
-    id: 8,
-    image: "image6.jpg",
-    title: "戶外活動還是宅在家",
-    description: "Dolores ipsum iure nostrum exercitationem.",
-    tags: ["d", "e", "e"],
-  },
-  {
-    id: 9,
-    image: "image6.jpg",
-    title: "最喜歡的電影",
-    description: "Dolores ipsum iure nostrum exercitationem.",
-    tags: ["d", "e", "e"],
-  },
-  {
-    id: 10,
-    image: "image6.jpg",
-    title: "最喜歡的旅遊景點",
-    description: "Dolores ipsum iure nostrum exercitationem.",
-    tags: ["d", "e", "e"],
-  },
-  {
-    id: 11,
-    image: "image6.jpg",
-    title: "最喜歡的國家",
-    description: "Dolores ipsum iure nostrum exercitationem.",
-    tags: ["d", "e", "e"],
-  },
-  {
-    id: 12,
-    image: "image6.jpg",
-    title: "最喜歡的動漫角色",
-    description: "Dolores ipsum iure nostrum exercitationem.",
-    tags: ["d", "e", "e"],
-  },
-];
+};
 </script>
 <template>
   <NavBar />
@@ -133,19 +212,52 @@ export const allCards = [
         <filter></filter>
         <serch></serch>
       </div>
-      <div>
+      <div class="container-my">
+        <div class="title">我的投票</div>
+        <div class="swiper-button-prev prev-left">
+          <img src="../assets/arrow.png" alt="Icon" />
+        </div>
+        <div class="swiper-button-next prev-right">
+          <img src="../assets/arrow-2.png" alt="Icon" />
+        </div>
         <swiper
-          :slides-per-view="3"
+          :slides-per-view="4"
           :space-between="50"
           @swiper="onSwiper"
           @slideChange="onSlideChange"
+          :pagination="{ clickable: true }"
+          :navigation="{
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          }"
         >
-          <swiper-slide>Slide 1</swiper-slide>
-          <swiper-slide>Slide 2</swiper-slide>
-          <swiper-slide>Slide 3</swiper-slide>
-          <swiper-slide>Slide 4</swiper-slide>
+          <swiper-slide v-for="card in myCards" :key="card.id">
+            <div class="max-w-sm overflow-hidden shadow-lg rounded-3xl">
+                <img
+                  :src="card.image"
+                  class="w-full img-size"
+                  alt="Card Image"
+                />
+              <div class="card-container relative">
+                <p class="card-deadline absolute bottom-3 left-7 text-white">
+                  {{ formatDeadline(myCards[currentCardIndex].deadline) }}止
+                </p>
+              </div>
+              <div class="px-6 py-4">
+                <div class="font-bold text-xl mb-2">{{ card.title }}</div>
+              </div>
+              <div class="px-6 pt-4 pb-2">
+                <span
+                  class="inline-block bg-gray-200 rounded-full px-3 py-1 text-gray-700 mr-2 mb-2"
+                >
+                  已有{{ card.voteQty }}人投票
+                </span>
+              </div>
+            </div>
+          </swiper-slide>
         </swiper>
       </div>
+
       <!-- <div class="">
         <div class="flex items-center">
           <div class="title">我的投票</div>
@@ -199,22 +311,30 @@ export const allCards = [
               <div
                 v-for="card in allCards"
                 :key="card.id"
-                class="w-full card-size rounded-3xl mb-12"
+                class="w-full card-size mb-12"
               >
-                <div class="max-w-sm rounded overflow-hidden shadow-lg">
-                  <img class="w-full img-size" alt="Sunset in the mountains" />
+                <div
+                  class="max-w-sm rounded overflow-hidden shadow-lg rounded-3xl"
+                >
+                    <img
+                      class="w-full img-size"
+                      alt="Sunset in the mountains"
+                    />
+                  <div class="card- container relative">
+                    <p
+                      class="card-deadline absolute bottom-3 left-7 text-white"
+                    >
+                      {{ formatDeadline(myCards[currentCardIndex].deadline) }}止
+                    </p>
+                  </div>
                   <div class="px-6 py-4">
                     <div class="font-bold text-xl mb-2">{{ card.title }}</div>
-                    <p class="text-gray-700 text-base">
-                      <!-- {{ card.description }} -->
-                    </p>
+                    <p class="text-gray-700 text-base"></p>
                   </div>
                   <div class="px-6 pt-4 pb-2">
                     <span
-                      v-for="tag in card.tags"
-                      :key="tag"
                       class="inline-block bg-gray-200 rounded-full px-3 py-1 text-gray-700 mr-2 mb-2"
-                      >#{{ tag }}
+                      >已有{{ card.voteQty }}人投票
                     </span>
                   </div>
                 </div>
@@ -228,7 +348,7 @@ export const allCards = [
       </div>
     </div>
   </div>
-  <Footer />
+  <PageFooter />
 </template>
 
 <style scoped>
@@ -246,6 +366,17 @@ export const allCards = [
 }
 .container-my {
   width: 1341px;
+  position: relative;
+}
+.prev-left {
+  position: absolute;
+  left: -50px;
+  top: 140px;
+}
+.prev-right {
+  position: absolute;
+  right: -50px;
+  top: 140px;
 }
 .container-all {
   width: 1341px;
