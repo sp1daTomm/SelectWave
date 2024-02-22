@@ -1,7 +1,7 @@
 <template>
   <Navbar />
   <div class="pt-6 pb-12">
-    <div class="flex calcHeight">
+    <div class="flex min-h-[calc(100vh-326.55px)] md:min-h-[calc(100vh-390px)]">
       <div class="basis-full  px-3">
         <div class="flex justify-center items-center h-full">
           <VForm v-slot="{ errors }" class="min-w-96 mx-auto" @submit="resetPassword">
@@ -72,13 +72,4 @@ export default {
 };
 </script>
 <style lang="css">
-.calcHeight {
-  min-height: calc(100vh - 326.55px);
-}
-
-@media(min-width:768px) {
-  .calcmin-Height {
-    height: calc(100vh - 390px);
-  }
-}
 </style>
