@@ -83,7 +83,8 @@ export default {
   },
   methods: {
     login() {
-      const api = `${process.env.NODE_ENV === 'production' ? import.meta.env.VITE_APP_API_URL : 'http://localhost:8081'}/api/auth/login`;
+      const apiUrl = import.meta.env.VITE_APP_API_URL;
+      const api = `${apiUrl}/api/auth/login`;
       this.$http.post(api, this.user)
         .then((res) => {
           console.log(res);
