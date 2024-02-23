@@ -7,7 +7,7 @@
     pt-5 pb-10 md:pt-4 md:pb-16 px-3.5 md:px-5 mb-10">
       <div class="flex justify-between mb-7 md:mb-8">
         <div class="relative">
-          <button type="button" class="px-6 py-3 flex items-center justify-center rounded-3xl bg-white
+          <button type="button" class="px-6 py-3 flex items-center justify-center rounded-full bg-white
           text-gray-1 text-base font-medium outline outline-2 outline-gray-1
           hover:outline-primary hover:text-primary" @click="collapseModal.toggle()">
             篩選
@@ -34,7 +34,7 @@
             </ul>
           </div>
         </div>
-        <button type="button" class="px-6 py-3 flex items-center justify-center rounded-3xl bg-gray-1
+        <button type="button" class="px-6 py-3 flex items-center justify-center rounded-full bg-gray-1
           text-white text-base font-medium hover:bg-primary">
           建立新投票
         </button>
