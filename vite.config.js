@@ -6,7 +6,7 @@ import 'dotenv/config';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? `/${process.env.REPOSITORY_NAME}/` : '/',
+  base: process.env.NODE_ENV === 'production' ? '/' : '/',
   plugins: [
     vue(),
     eslintPlugin({
