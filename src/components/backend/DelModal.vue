@@ -29,13 +29,13 @@
             </h3>
             <button type="button"
               class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none
-              focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-3xl text-sm inline-flex
+              focus:ring-red-300 font-medium rounded-full text-sm inline-flex
               items-center px-6 py-3 text-center me-2">
               確定刪除
             </button>
             <button type="button" ref="flowbiteModal"
               class="text-gray-500 bg-white hover:bg-gray-02 focus:ring-4 focus:outline-none
-              focus:ring-gray-02 rounded-3xl border border-gray-02 text-base font-medium px-6 py-3
+              focus:ring-gray-02 rounded-full border border-gray-02 text-base font-medium px-6 py-3
               hover:text-white hover:bg-gray-3 focus:z-10" @click.prevent="modal.hide()">取消</button>
           </div>
         </div>

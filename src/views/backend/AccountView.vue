@@ -4,7 +4,7 @@
   <NavbarVote />
   <div class="max-w-screen-lg mx-auto px-3">
     <div class="outline outline-1 outline-gray-3 rounded-2xl md:rounded-3xl
-    py-11 px-5 mb-10">
+    py-11 px-5 mb-10 md:min-h-[calc(100vh-488.08px)]">
       <div class="flex justify-between mb-7 md:mb-8 max-w-3xl mx-auto">
         <button type="button" class="px-6 py-3 flex items-center justify-center rounded-full bg-white
           text-gray-1 text-base font-medium outline outline-2 outline-gray-1
@@ -36,7 +36,7 @@
             <option selected>請選擇性別</option>
             <option value="male">男</option>
             <option value="female">女</option>
-            <option value="nodisclose">不方便透露</option>
+            <option value="x">不方便透露</option>
           </select>
         </div>
         <div class="mb-4">

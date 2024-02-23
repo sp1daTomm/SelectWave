@@ -35,7 +35,7 @@
           </div>
         </div>
         <button type="button" class="px-6 py-3 flex items-center justify-center rounded-full bg-gray-1
-          text-white text-base font-medium hover:bg-primary">
+          text-white text-base font-medium hover:bg-primary" @click="$refs.AddPullModal.openModal">
           建立新投票
         </button>
       </div>
@@ -89,20 +89,20 @@
               2024/2/28
             </td>
             <td class="px-6 py-4 hidden lg:table-cell">
-              <button type="button" class="hover:text-primary" @click="$refs.ShareModal.openModal()">
+              <button type="button" class="hover:text-primary" @click="$refs.ShareModal.openModal">
                 <i class="bi bi-share w-full text-xl"></i>
               </button>
             </td>
             <td class="px-6 py-4 flex flex-col justify-center
             lg:justify-between lg:flex-row">
               <button type="button" class="hover:text-primary lg:hidden mb-3.5 lg:mb-0"
-                @click="$refs.ShareModal.openModal()">
+                @click="$refs.ShareModal.openModal">
                 <i class="bi bi-share w-full text-xl"></i>
               </button>
-              <button type="button" class="hover:text-primary mb-3.5 lg:mb-0" @click="$refs.DelModal.openModal()">
+              <button type="button" class="hover:text-primary mb-3.5 lg:mb-0" @click="$refs.DelModal.openModal">
                 <i class="bi bi-trash3 w-full text-xl"></i>
               </button>
-              <button type="button" class="hover:text-primary mb-3.5 lg:mb-0">
+              <button type="button" class="hover:text-primary mb-3.5 lg:mb-0" @click="$refs.EditPullModal.openModal">
                 <i class="bi bi-pencil w-full text-xl"></i>
               </button>
             </td>
@@ -162,13 +162,16 @@
       </ul>
     </nav>
   </div>
+  <AddPullModal ref="AddPullModal" />
+  <EditPullModal ref="EditPullModal" />
   <DelModal ref="DelModal" :delContent="delContent"></DelModal>
   <shareModal ref="ShareModal"></shareModal>
   <ComponentFooter></ComponentFooter>
-  <button type="button" @click="logout">登出</button>
 </template>
 <script>
+import AddPullModal from '@/components/backend/AddPullModal.vue';
 import DelModal from '@/components/backend/DelModal.vue';
+import EditPullModal from '@/components/backend/EditPullModal.vue';
 import NavbarBackend from '@/components/backend/NavbarBackend.vue';
 import NavbarVote from '@/components/backend/NavbarVote.vue';
 import ShareModal from '@/components/backend/ShareModal.vue';
@@ -185,6 +188,8 @@ export default {
     ShareModal,
     NavbarBackend,
     NavbarVote,
+    AddPullModal,
+    EditPullModal,
   },
   data() {
     return {
@@ -192,27 +197,7 @@ export default {
       delContent: '「xxx投票」',
     };
   },
-  methods: {
-    logout() {
-      const api = `${import.meta.env.VITE_APP_API_URL}/api/auth/logout`;
-      this.$http.get(api)
-        .then((res) => {
-          console.log(res);
-          if (res.data.status) {
-            document.cookie = 'selectWaveToken=; path=/';
-            this.$swal({
-              title: `${res.data.message}`,
-            });
-            this.$router.push('/login');
-          }
-        })
-        .catch((err) => {
-          this.$swal({
-            title: `${err.response.data.message}`,
-          });
-        });
-    },
-  },
+  methods: {},
 };
 </script>
 

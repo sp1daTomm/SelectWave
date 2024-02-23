@@ -27,7 +27,7 @@
                 :class="{ 'is-invalid': errors['密碼'] }" placeholder="請輸入密碼"
                 rules="required|min:8|regex:(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\da-zA-Z])" v-model="user.password">
               </VField>
-              <i class="absolute -right-8 top-11 text-xl cursor-pointer"
+              <i class="absolute -top-1 left-10 text-lg cursor-pointer"
                 :class="showPassword ? 'bi bi-eye-fill' : 'bi bi-eye-slash'" @click="showPassword = !showPassword"></i>
               <ErrorMessage name="密碼" class="text-primary-dark text-sm"></ErrorMessage>
             </div>
