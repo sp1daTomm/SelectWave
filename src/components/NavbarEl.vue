@@ -1,7 +1,7 @@
 <template>
   <nav class="py-3 px-3 sticky top-0 bg-white z-10">
     <div class="flex items-center justify-between max-w-screen-lg mx-auto">
-      <div class="flex">
+      <div class="flex items-center">
       <RouterLink to="/">
         <img class=" w-12 md:w-16" :src="logoImageUrl" alt="選集">
       </RouterLink>
@@ -23,7 +23,7 @@
           group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
         </li>
         <li class="group relative">
-          <RouterLink to="/" type="button" class="py-2 px-4 block w-full text-left transition
+          <RouterLink to="/faq" type="button" class="py-2 px-4 block w-full text-left transition
           hover:text-primary">常見問題</RouterLink>
           <div class="group-hover:after:absolute group-hover:after:bottom-0
           group-hover:after:rounded
@@ -41,10 +41,10 @@
       </ul>
     </div>
     <ul class="flex items-center gap-2 ">
-        <li><RouterLink to="/" type="button" class="px-6 py-2 border-2 border-black
+        <li><RouterLink to="/login" class="px-6 py-2 border-2 border-black
           rounded-full hover:border-gray-2 hover:bg-gray-2 hover:text-white
           transition">登入</RouterLink></li>
-        <li><RouterLink to="/" type="button" class="px-6 py-2 border-2 border-black
+        <li><RouterLink to="/signup" class="px-6 py-2 border-2 border-black
           rounded-full bg-black text-white hover:border-gray-2 hover:bg-gray-2
           transition">註冊</RouterLink></li>
         <li class="relative">
@@ -89,11 +89,11 @@
       </button>
     </div>
     <ul class="gap-2">
-      <li><RouterLink to="/" type="button" class="py-2 px-4 block w-full text-left
+      <li><RouterLink to="/terms" type="button" class="py-2 px-4 block w-full text-left
         transition hover:text-primary">關於我們</RouterLink></li>
       <li><RouterLink to="/" type="button" class="py-2 px-4 block w-full text-left
         transition hover:text-primary">開始投票</RouterLink></li>
-      <li><RouterLink to="/" type="button" class="py-2 px-4 block w-full text-left
+      <li><RouterLink to="/faq" type="button" class="py-2 px-4 block w-full text-left
         transition hover:text-primary">常見問題</RouterLink></li>
       <li><RouterLink to="/" type="button" class="py-2 px-4 block w-full text-left
         transition hover:text-primary">聯絡我們</RouterLink></li>
