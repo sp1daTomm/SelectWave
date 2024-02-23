@@ -20,7 +20,7 @@ function getTokenFromCookie() {
 export function useWebSocket() {
   const ws = ref(null);
 
-  const websocketonopen = () => {
+  const webSocketOnOpen = () => {
     console.log('ws 連線成功~~');
     // 從 Cookie 中取得 token
     const token = getTokenFromCookie();
@@ -31,12 +31,12 @@ export function useWebSocket() {
   };
 
   onMounted(() => {
-    const wsURL = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_APP_WS_URL : 'ws://localhost:8082/';
+    const wsURL = import.meta.env.VITE_APP_WS_URL;
     ws.value = new WebSocket(wsURL);
 
     ws.value.onopen = () => {
       console.log('WebSocket connection established');
-      websocketonopen();
+      webSocketOnOpen();
     };
 
     ws.value.onerror = (e) => {
