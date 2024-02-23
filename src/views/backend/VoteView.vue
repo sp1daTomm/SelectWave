@@ -90,20 +90,20 @@
             </td>
             <td class="px-6 py-4 hidden lg:table-cell">
               <button type="button" class="hover:text-primary" @click="$refs.ShareModal.openModal()">
-                <Share2 class="w-full" />
+                <i class="bi bi-share w-full text-xl"></i>
               </button>
             </td>
             <td class="px-6 py-4 flex flex-col justify-center
             lg:justify-between lg:flex-row">
               <button type="button" class="hover:text-primary lg:hidden mb-3.5 lg:mb-0"
                 @click="$refs.ShareModal.openModal()">
-                <Share2 class="w-full" />
+                <i class="bi bi-share w-full text-xl"></i>
               </button>
               <button type="button" class="hover:text-primary mb-3.5 lg:mb-0" @click="$refs.DelModal.openModal()">
-                <Trash2 class="w-full" />
+                <i class="bi bi-trash3 w-full text-xl"></i>
               </button>
               <button type="button" class="hover:text-primary mb-3.5 lg:mb-0">
-                <Pencil class="w-full" />
+                <i class="bi bi-pencil w-full text-xl"></i>
               </button>
             </td>
           </tr>
@@ -118,7 +118,7 @@
           text-gray-1 bg-white border border-gray-4 rounded-lg
           hover:bg-primary-light hover:text-primary-dark mr-1.5">
             <span class="sr-only">回到第一頁</span>
-            <ChevronsLeft />
+            <i class="bi bi-chevron-double-left text-sm"></i>
           </a>
         </li>
         <li>
@@ -126,7 +126,7 @@
           text-gray-1 bg-white border border-gray-4 rounded-lg
           hover:bg-primary-light hover:text-primary-dark mr-1.5">
             <span class="sr-only">Previous</span>
-            <ChevronLeft />
+            <i class="bi bi-chevron-left text-sm"></i>
           </a>
         </li>
         <li>
@@ -148,7 +148,7 @@
           text-gray-1 bg-white border border-gray-4 rounded-lg
           hover:bg-primary-light hover:text-primary-dark mr-1.5">
             <span class="sr-only">Next</span>
-            <ChevronRight />
+            <i class="bi bi-chevron-right text-sm"></i>
           </a>
         </li>
         <li>
@@ -156,7 +156,7 @@
           text-gray-1 bg-white border border-gray-4 rounded-lg
           hover:bg-primary-light hover:text-primary-dark">
             <span class="sr-only">到最後一頁</span>
-            <ChevronsRight />
+            <i class="bi bi-chevron-double-right tex-sm"></i>
           </a>
         </li>
       </ul>
@@ -168,10 +168,6 @@
   <button type="button" @click="logout">登出</button>
 </template>
 <script>
-import {
-  ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
-  Pencil, Share2, Trash2,
-} from 'lucide-vue-next';
 import DelModal from '@/components/backend/DelModal.vue';
 import NavbarBackend from '@/components/backend/NavbarBackend.vue';
 import NavbarVote from '@/components/backend/NavbarVote.vue';
@@ -189,13 +185,6 @@ export default {
     ShareModal,
     NavbarBackend,
     NavbarVote,
-    Trash2,
-    Pencil,
-    Share2,
-    ChevronLeft,
-    ChevronRight,
-    ChevronsLeft,
-    ChevronsRight,
   },
   data() {
     return {
