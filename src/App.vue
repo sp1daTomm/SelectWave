@@ -2,8 +2,10 @@
   <RouterView />
 </template>
 
-<script>
-export default {};
+<script setup>
+import { useWebSocket } from '@/utils/ws';
+
+useWebSocket();
 </script>
 
 <style lang="scss">

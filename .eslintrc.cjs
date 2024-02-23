@@ -81,5 +81,6 @@ module.exports = {
         ],
       },
     ],
+    'linebreak-style': ['off', 'windows'],
   },
 };
