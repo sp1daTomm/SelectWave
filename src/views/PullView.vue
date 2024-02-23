@@ -255,17 +255,17 @@ export default {
             <div
               class="max-w-sm overflow-hidden border-2 border-gray-300 rounded-3xl flex flex-wrap"
             >
+                <img
+                  :src="card.image"
+                  class="w-full img-size"
+                  alt="Card Image"
+                />
               <div class="card-container relative">
                 <div
                   class="card-more absolute px-1 z-50 right-2 top-2 rounded-md transition-colors duration-300"
                 >
                   <i class="bi bi-three-dots dot-icon"></i>
                 </div>
-                <img
-                  :src="card.image"
-                  class="w-full img-size"
-                  alt="Card Image"
-                />
                 <!-- <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent h-115"></div> -->
                 <p class="card-deadline absolute bottom-3 left-7 text-white">
                   {{ formatDeadline(myCards[currentCardIndex].deadline) }}止
@@ -382,7 +382,9 @@ export default {
       <div class="pagination-container flex flex-row justify-center pt-3">
         <i class="bi bi-chevron-double-left"></i>
         <i class="bi bi-chevron-left"></i>
+        123
         <i class="bi bi-three-dots"></i>
+        10
         <i class="bi bi-chevron-right"></i>
         <i class="bi bi-chevron-double-right"></i>
       </div>
