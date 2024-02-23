@@ -69,7 +69,7 @@ export default {
         },
         {
           id: 5,
-          image: 'image5.jpg',
+          image: '/src/assets/vote 07.png',
           deadline: '2024-03-10',
           title: '最喜歡的飲料店',
           description:
@@ -182,6 +182,7 @@ export default {
         },
       ],
       currentDate: new Date(),
+      isDropdownOpen: false,
     };
   },
   methods: {
@@ -198,6 +199,9 @@ export default {
       const day = formattedDate.getDate().toString().padStart(2, '0');
       return `${year}/${month}/${day}`;
     },
+    toggleDropdown() {
+      this.isDropdownOpen = !this.isDropdownOpen;
+    },
   },
   mounted() {
     console.log(this.$refs.swiper);
@@ -213,7 +217,19 @@ export default {
         <serch></serch>
       </div>
       <div class="container-my">
-        <div class="title">我的投票</div>
+        <div class="flex flex-row justify-between">
+          <div class="title font-bold text-2xl">我的投票</div>
+          <div class="button-group flex flex-row flex-nowrap">
+            <button class="h-10 w-30 rounded-md pull-manage px-4 py-2">
+              投票管理
+              <i class="bi bi-arrow-right"></i>
+            </button>
+            <button class="h-10 w-30 rounded-md ml-4 create-pull px-4 py-2">
+              建立投票
+              <i class="bi bi-plus-lg"></i>
+            </button>
+          </div>
+        </div>
         <div class="swiper-button-prev prev-left">
           <img src="../assets/arrow.png" alt="Icon" />
         </div>
@@ -222,7 +238,7 @@ export default {
         </div>
         <swiper
           :slides-per-view="4"
-          :space-between="50"
+          :space-between="24"
           @swiper="onSwiper"
           @slideChange="onSlideChange"
           :pagination="{ clickable: true }"
@@ -231,10 +247,26 @@ export default {
             prevEl: '.swiper-button-prev',
           }"
         >
-          <swiper-slide v-for="card in myCards" :key="card.id">
-            <div class="max-w-sm overflow-hidden shadow-lg rounded-3xl flex flex-wrap">
-              <img :src="card.image" class="w-full img-size" alt="Card Image" />
+          <swiper-slide
+            v-for="card in myCards"
+            :key="card.id"
+            class="card-size"
+          >
+            <div
+              class="max-w-sm overflow-hidden border-2 border-gray-300 rounded-3xl flex flex-wrap"
+            >
               <div class="card-container relative">
+                <div
+                  class="card-more absolute px-1 z-50 right-2 top-2 rounded-md transition-colors duration-300"
+                >
+                  <i class="bi bi-three-dots dot-icon"></i>
+                </div>
+                <img
+                  :src="card.image"
+                  class="w-full img-size"
+                  alt="Card Image"
+                />
+                <!-- <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent h-115"></div> -->
                 <p class="card-deadline absolute bottom-3 left-7 text-white">
                   {{ formatDeadline(myCards[currentCardIndex].deadline) }}止
                 </p>
@@ -244,7 +276,7 @@ export default {
               </div>
               <div class="px-6 pt-4 pb-2">
                 <span
-                  class="inline-block bg-gray-200 rounded-full px-3 py-1 text-gray-700 mr-2 mb-2"
+                  class="inline-block rounded-full px-3 py-1 text-gray-500 -m-3 mb-2"
                 >
                   已有{{ card.voteQty }}人投票
                 </span>
@@ -253,11 +285,63 @@ export default {
           </swiper-slide>
         </swiper>
       </div>
-
+      <!-- <div class="relative">
+        <img src="../assets/bg.png" class="absolute bottom-6 -z-50 w-screen screen-img" alt="image" />
+      </div> -->
       <!-- <div class="create-my-vote hidden">
       </div> -->
-      <div>
-        <div class="title">全部投票</div>
+      <div class="container-all">
+        <div class="flex flex-row justify-between">
+          <div class="title title-all font-bold text-2xl">所有投票</div>
+          <div>
+            <div class="flex flex-row flex-nowrap">
+              <div class="relative inline-block mt-20">
+                <button
+                  @click="toggleDropdown"
+                  class="drop-down bg-white px-4 py-2 rounded-lg cursor-pointer flex flex-row"
+                >
+                  最熱門
+                  <i class="bi bi-chevron-down pl-1"></i>
+                </button>
+                <div
+                  :class="{ hidden: !isDropdownOpen }"
+                  id="myDropdown"
+                  class="absolute right-0 mt-2 w-40 bg-gray-100 rounded shadow-lg"
+                >
+                  <a
+                    href="#home"
+                    class="block px-4 py-2 text-black hover:bg-gray-200"
+                    >最熱門</a
+                  >
+                  <a
+                    href="#about"
+                    class="block px-4 py-2 text-black hover:bg-gray-200"
+                    >新到舊</a
+                  >
+                  <a
+                    href="#contact"
+                    class="block px-4 py-2 text-black hover:bg-gray-200"
+                    >舊到新</a
+                  >
+                </div>
+              </div>
+              <div class="search-bar flex justify-center items-end ml-4 py-1">
+                <div class="relative">
+                  <input
+                    type="text"
+                    class="search-input rounded z-0 focus:shadow focus:outline-none px-4"
+                    placeholder="搜尋投票"
+                  />
+                  <div class="absolute top-2 right-4">
+                    <i
+                      class="fa fa-search text-gray-500 z-20 hover:text-gray-500 bi bi-search"
+                    ></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="all-card mx-auto">
           <div class="flex flex-row container-all">
             <div class="flex flex-row flex-wrap justify-between">
@@ -267,13 +351,9 @@ export default {
                 class="w-full card-size mb-12"
               >
                 <div
-                  class="max-w-sm overflow-hidden shadow-lg rounded-3xl"
+                  class="max-w-sm border-2 border-gray-300 rounded-3xl overflow-hidden"
                 >
-                  <img
-                    :src="card.image"
-                    class="w-full img-size"
-                    alt="image"
-                  />
+                  <img :src="card.image" class="w-full img-size" alt="image" />
                   <div class="card-container relative">
                     <p
                       class="card-deadline absolute bottom-3 left-7 text-white"
@@ -281,13 +361,15 @@ export default {
                       {{ formatDeadline(myCards[currentCardIndex].deadline) }}止
                     </p>
                   </div>
-                  <div class="px-6 py-4">
-                    <div class="font-bold text-xl mb-2 h-12">{{ card.title }}</div>
+                  <div class="px-6 pt-4">
+                    <div class="font-bold text-xl mb-2 h-12">
+                      {{ card.title }}
+                    </div>
                     <p class="text-gray-700 text-base"></p>
                   </div>
-                  <div class="px-6 pt-4 pb-2">
+                  <div class="px-6 pt-2 pb-2">
                     <span
-                      class="inline-block bg-gray-200 rounded-full px-3 py-1 text-gray-700 mr-2 mb-2"
+                      class="inline-block rounded-full py-1 text-gray-500 pr-3 mb-2"
                       >已有{{ card.voteQty }}人投票
                     </span>
                   </div>
@@ -297,11 +379,19 @@ export default {
           </div>
         </div>
       </div>
-      <div class="pagination-container flex justify-center pt-3">
-        <GoTop />
+      <div class="pagination-container flex flex-row justify-center pt-3">
+        <i class="bi bi-chevron-double-left"></i>
+        <i class="bi bi-chevron-left"></i>
+        <i class="bi bi-three-dots"></i>
+        <i class="bi bi-chevron-right"></i>
+        <i class="bi bi-chevron-double-right"></i>
       </div>
     </div>
   </div>
+  <div class="relative">
+        <img src="../assets/bg.png" class="absolute -z-50 w-screen screen-img" alt="image" />
+      </div>
+  <GoTop />
   <PageFooter />
 </template>
 
@@ -313,27 +403,66 @@ export default {
   width: 1920px;
 }
 .pull-content {
-  width: 1341px;
+  width: 1296px;
 }
 .title {
   font-size: 32px;
+  margin-bottom: 32px;
+}
+.card-more {
+  background-color: #1e1e1e;
+  opacity: 80%;
+}
+.card-more:hover {
+  background-color: #f49e00;
+}
+.dot-icon {
+  color: #ffffff;
+}
+.pull-manage {
+  color: #1e1e1e;
+  font-size: 16px;
+  background-color: #f5f5f5;
+}
+.create-pull {
+  color: #1e1e1e;
+  font-size: 16px;
+  background-color: #fff4e0;
+}
+.screen-img {
+  bottom: 1430px;
+}
+.title-all {
+  margin-top: 80px;
+}
+.search-input {
+  width: 306px;
+  height: 40px;
+  border: none;
+  background-color: #f5f5f5;
+}
+.drop-down {
+  color: #fcb738;
+  border: 2px solid #fcb738;
 }
 .container-my {
-  width: 1341px;
+  width: 1296px;
   position: relative;
+  padding-top: 80px;
+  padding-bottom: 80px;
 }
 .prev-left {
   position: absolute;
   left: -50px;
-  top: 140px;
+  top: 290px;
 }
 .prev-right {
   position: absolute;
   right: -50px;
-  top: 140px;
+  top: 290px;
 }
 .container-all {
-  width: 1341px;
+  width: 1296px;
 }
 /* .my-card {
   } */
@@ -341,11 +470,9 @@ export default {
   } */
 .card-size {
   width: 306px;
-  height: 358px;
 }
 .img-size {
-  height: 230px;
-  width: 306px;
+  height: 226px;
   background-color: #fcb738;
 }
 /* .card-style {
