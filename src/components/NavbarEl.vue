@@ -68,7 +68,7 @@
               <button class="py-2 transition hover:text-primary w-full" type="button">投票評論</button>
             </li>
             <li>
-              <button class="py-2 transition hover:text-primary w-full" type="button" v-if="isMember">登出</button>
+              <button class="py-2 transition hover:text-primary w-full" type="button" v-if="isMember" @click="doLogout()">登出</button>
             </li>
           </ul>
         </li>
@@ -100,7 +100,7 @@
     </ul>
     <div class="border-b-2 my-4" v-if="isMember"></div>
     <button type="button" class="py-2 px-4 w-full text-left
-    transition hover:text-primary" v-if="isMember">登出</button>
+    transition hover:text-primary" v-if="isMember" @click="doLogout()">登出</button>
   </div>
 </template>
 <script>
@@ -125,6 +125,23 @@ export default {
 
     closeMenuModal() {
       this.isMenuModalOpen = false;
+    },
+    doLogout() {
+      const api = `${import.meta.env.VITE_APP_API_URL}/api/auth/logout`;
+      this.$http.get(api)
+        .then((res) => {
+          console.log(res);
+          this.isLogin = false;
+          this.isMember = false;
+          this.$swal({
+            title: `${res.data.message}`,
+          }).then(() => {
+            document.location.href = '/HomeView.vue';
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
   mounted() {
