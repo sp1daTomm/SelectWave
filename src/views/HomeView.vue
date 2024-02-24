@@ -81,7 +81,7 @@
       </ul>
     </section>
     <section class="max-w-screen-lg mx-auto px-3 pb-8 md:py-20">
-      <div class="md:border-2 md:border-solid md:border-gray-3 md:p-10 md:flex md:items-center md:p-16 md:rounded-3xl md:gap-10">
+      <div class="md:border md:border-solid md:border-gray-3 md:p-10 md:flex md:items-center md:p-16 md:rounded-3xl md:gap-10">
         <img :src="logoImageUrl" alt="選集LOGO" class="w-14 md:w-36 ">
         <div>
           <h3 class="text-xl leading-relaxed  pb-2 mt-4 md:mt-[unset] md:text-2xl md:pb-4 md:text-2xl ">輕鬆建立投票所，讓您的聲音成為決定力量。</h3>
