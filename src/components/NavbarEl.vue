@@ -41,13 +41,13 @@
       </ul>
     </div>
     <ul class="flex items-center gap-2 ">
-        <li><RouterLink to="/login" class="px-6 py-2 border-2 border-black
+        <li v-if="!isLogin" ><RouterLink to="/login" class="px-6 py-2 border-2 border-black
           rounded-full hover:border-gray-2 hover:bg-gray-2 hover:text-white
-          transition">登入</RouterLink></li>
-        <li><RouterLink to="/signup" class="px-6 py-2 border-2 border-black
+          transition" :data-test="isLogin">登入</RouterLink></li>
+        <li v-if="!isLogin"><RouterLink to="/signup" class="px-6 py-2 border-2 border-black
           rounded-full bg-black text-white hover:border-gray-2 hover:bg-gray-2
-          transition">註冊</RouterLink></li>
-        <li class="relative">
+          transition"  >註冊</RouterLink></li>
+        <li class="relative" v-else-if="isMember" :data-test="isLogin">
           <button @click="toggleMenu" type="button" class="px-6 py-2 border-2 border-black
           rounded-full flex gap-2 items-center hover:bg-gray-2 hover:text-white
           hover:border-gray-2
@@ -68,7 +68,7 @@
               <button class="py-2 transition hover:text-primary w-full" type="button">投票評論</button>
             </li>
             <li>
-              <button class="py-2 transition hover:text-primary w-full" type="button">登出</button>
+              <button class="py-2 transition hover:text-primary w-full" type="button" v-if="isMember">登出</button>
             </li>
           </ul>
         </li>
@@ -98,9 +98,9 @@
       <li><RouterLink to="/" type="button" class="py-2 px-4 block w-full text-left
         transition hover:text-primary">聯絡我們</RouterLink></li>
     </ul>
-    <div class="border-b-2 my-4"></div>
+    <div class="border-b-2 my-4" v-if="isMember"></div>
     <button type="button" class="py-2 px-4 w-full text-left
-    transition hover:text-primary">登出</button>
+    transition hover:text-primary" v-if="isMember">登出</button>
   </div>
 </template>
 <script>
@@ -110,6 +110,8 @@ export default {
       isMenuListOpen: false,
       isMenuModalOpen: false,
       logoImageUrl: '/img_components/logo.svg',
+      isLogin: false,
+      isMember: false,
     };
   },
   methods: {
@@ -124,6 +126,22 @@ export default {
     closeMenuModal() {
       this.isMenuModalOpen = false;
     },
+  },
+  mounted() {
+    const api = `${import.meta.env.VITE_APP_API_URL}/api/auth/check`;
+    this.$http.get(api)
+      .then((res) => {
+        if (res.status === false) {
+          this.isLogin = false;
+          this.isMember = false;
+        } else {
+          this.isLogin = true;
+          this.isMember = true;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
 };
 </script>
