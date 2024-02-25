@@ -136,6 +136,7 @@ export default {
           this.$swal({
             title: `${res.data.message}`,
           }).then(() => {
+            document.cookie = 'selectWaveToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
             document.location.href = '/HomeView.vue';
           });
         })
@@ -143,22 +144,30 @@ export default {
           console.log(err);
         });
     },
+    checkToken() {
+      const cookies = document.cookie.split(';').map((cookie) => cookie.trim());
+      const tokenCookie = cookies.find((cookie) => cookie.startsWith('selectWaveToken='));
+      const isTokenNotEmpty = tokenCookie && tokenCookie.split('=')[1].length > 0;
+      return isTokenNotEmpty;
+    },
   },
   mounted() {
-    const api = `${import.meta.env.VITE_APP_API_URL}/api/auth/check`;
-    this.$http.get(api)
-      .then((res) => {
-        if (res.status === false) {
-          this.isLogin = false;
-          this.isMember = false;
-        } else {
-          this.isLogin = true;
-          this.isMember = true;
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (this.checkToken()) {
+      const api = `${import.meta.env.VITE_APP_API_URL}/api/auth/check`;
+      this.$http.get(api)
+        .then((res) => {
+          if (res.status === false) {
+            this.isLogin = false;
+            this.isMember = false;
+          } else {
+            this.isLogin = true;
+            this.isMember = true;
+          }
+        })
+        .catch(() => {
+          // console.log(err);
+        });
+    }
   },
 };
 </script>
