@@ -15,7 +15,7 @@
           group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
         </li>
         <li class="group relative">
-          <RouterLink to="/" type="button" class="py-2 px-4 block w-full text-left transition
+          <RouterLink to="/none" type="button" class="py-2 px-4 block w-full text-left transition
           hover:text-primary">開始投票</RouterLink>
           <div class="group-hover:after:absolute group-hover:after:bottom-0
           group-hover:after:rounded
@@ -31,7 +31,7 @@
           group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
         </li>
         <li class="group relative">
-          <RouterLink to="/" type="button" class="py-2 px-4 block w-full text-left transition
+          <RouterLink to="/none" type="button" class="py-2 px-4 block w-full text-left transition
           hover:text-primary">聯絡我們</RouterLink>
           <div class="group-hover:after:absolute group-hover:after:bottom-0
           group-hover:after:rounded
@@ -91,11 +91,11 @@
     <ul class="gap-2">
       <li><RouterLink to="/terms" type="button" class="py-2 px-4 block w-full text-left
         transition hover:text-primary">關於我們</RouterLink></li>
-      <li><RouterLink to="/" type="button" class="py-2 px-4 block w-full text-left
+      <li><RouterLink to="/none" type="button" class="py-2 px-4 block w-full text-left
         transition hover:text-primary">開始投票</RouterLink></li>
       <li><RouterLink to="/faq" type="button" class="py-2 px-4 block w-full text-left
         transition hover:text-primary">常見問題</RouterLink></li>
-      <li><RouterLink to="/" type="button" class="py-2 px-4 block w-full text-left
+      <li><RouterLink to="/none" type="button" class="py-2 px-4 block w-full text-left
         transition hover:text-primary">聯絡我們</RouterLink></li>
     </ul>
     <div class="border-b-2 my-4" v-if="isMember"></div>

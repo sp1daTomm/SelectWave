@@ -4,8 +4,8 @@
       <img class="mx-auto w-12 mb-3 md:w-16" :src="logoImageUrl" alt="選集">
       <ul class="flex justify-center">
         <li><RouterLink to="/terms" class="px-2 py-1 transition hover:text-primary" type="button">關於我們</RouterLink></li>
-        <li><RouterLink to="/" class="px-2 py-1 transition hover:text-primary" type="button">開始投票</RouterLink></li>
-        <li><button class="px-2 py-1 transition hover:text-primary" type="button">常見問題</button></li>
+        <li><RouterLink to="/none" class="px-2 py-1 transition hover:text-primary" type="button">開始投票</RouterLink></li>
+        <li><RouterLink to="/faq" class="px-2 py-1 transition hover:text-primary" type="button">常見問題</RouterLink></li>
         <li><button class="px-2 py-1 transition hover:text-primary" type="button">聯絡我們</button></li>
       </ul>
     </div>
