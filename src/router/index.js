@@ -41,6 +41,11 @@ const routes = [
         name: 'Login',
         component: () => import('../views/LoginView.vue'),
       },
+      {
+        path: '/pull',
+        name: 'Pull',
+        component: () => import('../views/PullView.vue'),
+      },
     ],
   },
   {
@@ -52,11 +57,11 @@ const routes = [
     path: '/:pathMatch(.*)*',
     redirect: '/404',
   },
-  {
-    path: '/pull',
-    name: 'Pull',
-    component: () => import('../views/PullView.vue'),
-  },
+  // {
+  //   path: '/pull',
+  //   name: 'Pull',
+  //   component: () => import('../views/PullView.vue'),
+  // },
   {
     path: '/admin',
     name: 'Admin',

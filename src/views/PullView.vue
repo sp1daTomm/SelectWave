@@ -1,15 +1,9 @@
 <script type="module">
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import NavBar from '../components/NavbarEl.vue';
-import GoTop from '../components/TopGoEl.vue';
-// import PageFooter from '../components/ComponentFooter.vue';
 import 'swiper/css';
 
 export default {
   components: {
-    NavBar,
-    GoTop,
-    // PageFooter,
     Swiper,
     SwiperSlide,
   },
@@ -209,7 +203,6 @@ export default {
 };
 </script>
 <template>
-  <NavBar />
   <div class="container flex justify-center">
     <div class="pull-content m-auto">
       <div>
@@ -239,6 +232,7 @@ export default {
         <swiper
           :slides-per-view="4"
           :space-between="24"
+          :loop="true"
           @swiper="onSwiper"
           @slideChange="onSlideChange"
           :pagination="{ clickable: true }"
@@ -253,23 +247,19 @@ export default {
             class="card-size"
           >
             <div
-              class="max-w-sm overflow-hidden border-2 border-gray-300 rounded-3xl flex flex-wrap"
+              class="max-w-sm overflow-hidden border-2 border-gray-300 rounded-3xl flex flex-wrap bg-white"
             >
-                <img
-                  :src="card.image"
-                  class="w-full img-size"
-                  alt="Card Image"
-                />
+              <img :src="card.image" class="w-full img-size" alt="Card Image" />
               <div class="card-container relative">
                 <div
                   class="card-more absolute px-1 z-50 right-2 top-2 rounded-md transition-colors duration-300"
                 >
                   <i class="bi bi-three-dots dot-icon"></i>
                 </div>
-                <!-- <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent h-115"></div> -->
                 <p class="card-deadline absolute bottom-3 left-7 text-white">
                   {{ formatDeadline(myCards[currentCardIndex].deadline) }}止
                 </p>
+                <!-- <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent h-115"></div> -->
               </div>
               <div class="px-6 py-4">
                 <div class="font-bold text-xl mb-2">{{ card.title }}</div>
@@ -379,7 +369,90 @@ export default {
           </div>
         </div>
       </div>
-      <div class="pagination-container flex flex-row justify-center pt-3">
+      <div class="paginate">
+        <ul
+          class="inline-flex -space-x-px text-base h-10 w-full justify-center"
+        >
+          <li>
+            <a
+              href="#"
+              class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
+            >
+              <span class="sr-only">回到第一頁</span>
+              <i class="bi bi-chevron-double-left"></i>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
+            >
+              <span class="sr-only">Previous</span>
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="pagination-w flex items-center justify-center p-1.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
+            >
+              1
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="pagination-w flex items-center justify-center p-1.5  pagina leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
+            >
+              2
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
+            >
+              3
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
+            >
+              10
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white hover:bg-primary-light rounded-lg hover:text-primary-dark mr-1.5"
+            >
+              <span class="sr-only">...</span>
+              <i class="bi bi-three-dots"></i>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
+            >
+              <span class="sr-only">Next</span>
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark"
+            >
+              <span class="sr-only">到最後一頁</span>
+              <i class="bi bi-chevron-double-right"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <!-- <div class="pagination-container flex flex-row justify-center pt-3">
         <i class="bi bi-chevron-double-left"></i>
         <i class="bi bi-chevron-left"></i>
         123
@@ -387,14 +460,16 @@ export default {
         10
         <i class="bi bi-chevron-right"></i>
         <i class="bi bi-chevron-double-right"></i>
-      </div>
+      </div> -->
     </div>
   </div>
   <div class="relative">
-        <img src="../assets/bg.png" class="absolute -z-50 w-screen screen-img" alt="image" />
-      </div>
-  <GoTop />
-  <PageFooter />
+    <img
+      src="../assets/bg.png"
+      class="absolute -z-50 w-screen screen-img"
+      alt="image"
+    />
+  </div>
 </template>
 
 <style scoped>
@@ -421,6 +496,12 @@ export default {
 .dot-icon {
   color: #ffffff;
 }
+.paginate {
+  margin-bottom: 120px;
+}
+/* .pagina {
+  padding: 10px;
+} */
 .pull-manage {
   color: #1e1e1e;
   font-size: 16px;
@@ -432,7 +513,8 @@ export default {
   background-color: #fff4e0;
 }
 .screen-img {
-  bottom: 1430px;
+  bottom: 1520px;
+  z-index: -10;
 }
 .title-all {
   margin-top: 80px;
@@ -486,8 +568,6 @@ export default {
   left: 130px;
   top: 130px;
 }
-/* .pagination-container {
-  } */
 @media screen and (max-width: 768px) {
 }
 @media screen and (min-width: 769px) {
