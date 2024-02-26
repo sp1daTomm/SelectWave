@@ -129,10 +129,12 @@ export default {
         timerProgressBar: true,
         position: 'top-end',
         html: `
-              <h2 class="mb-4 text-2xl font-bold">登入成功</h2>
               <div class="flex items-center gap-4">
                 <img src=${data.result.avatar} class="w-20 h-20 object-fit" />
-                <p>歡迎回來 ${data.result.name}</p>
+                <h2 class="space-y-2">
+                  <span class="block font-bold">歡迎回來</span>
+                  ${data.result.name}
+                </h2>
               </div>`,
       });
       this.isLogin = true;
@@ -142,14 +144,12 @@ export default {
       const auth = this.$route.query.token;
       const baseUrl = import.meta.env.VITE_APP_API_URL;
       const api = `${baseUrl}/api/auth/check`;
-      console.log(auth);
       if (auth) {
         this.$http.get(api, {
           headers: {
             Authorization: `Bearer ${auth}`,
           },
         }).then(({ data }) => {
-          console.log(data);
           if (data.status) {
             localStorage.setItem('selectWaveToken', auth);
             this.checkUser(data);
