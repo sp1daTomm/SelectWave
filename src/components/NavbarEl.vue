@@ -121,6 +121,23 @@ export default {
       const isTokenNotEmpty = tokenCookie && tokenCookie.split('=')[1].length > 0;
       return isTokenNotEmpty;
     },
+    checkUser(data) {
+      this.$swal({
+        toast: true,
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        position: 'top-end',
+        html: `
+              <h2 class="mb-4 text-2xl font-bold">登入成功</h2>
+              <div class="flex items-center gap-4">
+                <img src=${data.result.avatar} class="w-20 h-20 object-fit" />
+                <p>歡迎回來 ${data.result.name}</p>
+              </div>`,
+      });
+      this.isLogin = true;
+      this.isMember = true;
+    },
     authCheck() {
       const auth = this.$route.query.token;
       const baseUrl = import.meta.env.VITE_APP_API_URL;
@@ -135,21 +152,7 @@ export default {
           console.log(data);
           if (data.status) {
             localStorage.setItem('selectWaveToken', auth);
-            this.$swal({
-              toast: true,
-              showConfirmButton: false,
-              timer: 3000,
-              timerProgressBar: true,
-              position: 'top-end',
-              html: `
-              <h2 class="mb-4 text-2xl font-bold">登入成功</h2>
-              <div class="flex items-center gap-4">
-                <img src=${data.result.avatar} class="w-20 h-20 object-fit" />
-                <p>歡迎回來 ${data.result.name}</p>
-              </div>`,
-            });
-            this.isLogin = true;
-            this.isMember = true;
+            this.checkUser(data);
           }
         }).catch(() => {
         });
@@ -160,8 +163,7 @@ export default {
               this.isLogin = false;
               this.isMember = false;
             } else {
-              this.isLogin = true;
-              this.isMember = true;
+              this.checkUser(res.data);
             }
           })
           .catch(() => {
