@@ -2,17 +2,19 @@
   <nav class="py-3 px-3 sticky top-0 bg-white z-10">
     <div class="flex items-center justify-between max-w-screen-lg mx-auto">
       <div class="flex items-center">
-      <RouterLink to="/">
+      <RouterLink :to="{name:'HomeDefault'}">
         <img class=" w-12 md:w-16" :src="logoImageUrl" alt="選集">
       </RouterLink>
       <ul class="gap-2 pl-6 hidden md:flex">
         <li class="group relative">
-          <RouterLink to="/terms" type="button" class="py-2 px-4 block w-full text-left transition
+          <RouterLink :to="{name: 'Terms'}" type="button" class="py-2 px-4 block w-full text-left transition
           hover:text-primary">關於我們</RouterLink>
           <div class="group-hover:after:absolute group-hover:after:bottom-0
           group-hover:after:rounded
           group-hover:after:left-1/2 group-hover:after:-translate-x-1/2
-          group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
+          group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"
+          :class="[ isActive('Terms') ? 'after:absolute after:bottom-0 after:rounded after:left-1/2 after:-translate-x-1/2 after:w-4 after:h-1 after:bg-primary' : '']"
+          ></div>
         </li>
         <li class="group relative">
           <RouterLink to="/none" type="button" class="py-2 px-4 block w-full text-left transition
@@ -23,12 +25,14 @@
           group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
         </li>
         <li class="group relative">
-          <RouterLink to="/faq" type="button" class="py-2 px-4 block w-full text-left transition
+          <RouterLink :to="{name:'FAQ'}" type="button" class="py-2 px-4 block w-full text-left transition
           hover:text-primary">常見問題</RouterLink>
           <div class="group-hover:after:absolute group-hover:after:bottom-0
           group-hover:after:rounded
           group-hover:after:left-1/2 group-hover:after:-translate-x-1/2
-          group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
+          group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"
+          :class="[ isActive('FAQ') ? 'after:absolute after:bottom-0 after:rounded after:left-1/2 after:-translate-x-1/2 after:w-4 after:h-1 after:bg-primary' : '']"
+          ></div>
         </li>
         <li class="group relative">
           <RouterLink to="/none" type="button" class="py-2 px-4 block w-full text-left transition
@@ -41,10 +45,10 @@
       </ul>
     </div>
     <ul class="flex items-center gap-2 ">
-        <li v-if="!isLogin" ><RouterLink to="/login" class="px-6 py-2 border-2 border-black
+        <li v-if="!isLogin" ><RouterLink :to="{name:'Login'}" class="px-6 py-2 border-2 border-black
           rounded-full hover:border-gray-2 hover:bg-gray-2 hover:text-white
           transition" :data-test="isLogin">登入</RouterLink></li>
-        <li v-if="!isLogin"><RouterLink to="/signup" class="px-6 py-2 border-2 border-black
+        <li v-if="!isLogin"><RouterLink :to="{name:'Signup'}" class="px-6 py-2 border-2 border-black
           rounded-full bg-black text-white hover:border-gray-2 hover:bg-gray-2
           transition"  >註冊</RouterLink></li>
         <li class="relative" v-else-if="isMember" :data-test="isLogin">
@@ -89,11 +93,11 @@
       </button>
     </div>
     <ul class="gap-2">
-      <li><RouterLink to="/terms" type="button" class="py-2 px-4 block w-full text-left
+      <li><RouterLink :to="{name: 'Terms'}" type="button" class="py-2 px-4 block w-full text-left
         transition hover:text-primary">關於我們</RouterLink></li>
       <li><RouterLink to="/none" type="button" class="py-2 px-4 block w-full text-left
         transition hover:text-primary">開始投票</RouterLink></li>
-      <li><RouterLink to="/faq" type="button" class="py-2 px-4 block w-full text-left
+      <li><RouterLink :to="{name:'FAQ'}" type="button" class="py-2 px-4 block w-full text-left
         transition hover:text-primary">常見問題</RouterLink></li>
       <li><RouterLink to="/none" type="button" class="py-2 px-4 block w-full text-left
         transition hover:text-primary">聯絡我們</RouterLink></li>
@@ -130,7 +134,6 @@ export default {
       const api = `${import.meta.env.VITE_APP_API_URL}/api/auth/logout`;
       this.$http.get(api)
         .then((res) => {
-          console.log(res);
           this.isLogin = false;
           this.isMember = false;
           this.$swal({
@@ -140,8 +143,7 @@ export default {
             document.location.href = '/HomeView.vue';
           });
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
         });
     },
     checkToken() {
@@ -149,6 +151,9 @@ export default {
       const tokenCookie = cookies.find((cookie) => cookie.startsWith('selectWaveToken='));
       const isTokenNotEmpty = tokenCookie && tokenCookie.split('=')[1].length > 0;
       return isTokenNotEmpty;
+    },
+    isActive(route) {
+      return this.$route.name === route;
     },
   },
   mounted() {
@@ -165,9 +170,9 @@ export default {
           }
         })
         .catch(() => {
-          // console.log(err);
         });
     }
   },
 };
+
 </script>
