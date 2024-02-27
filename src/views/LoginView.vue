@@ -67,6 +67,7 @@
 </template>
 <script>
 import { useMemberStore } from '../stores/member';
+import useCookie from '../utils';
 
 export default {
   data() {
@@ -120,8 +121,8 @@ export default {
       this.$http.post(api, this.user)
         .then(({ data }) => {
           if (data.status) {
-            const { authToken, member } = data.result;
-            document.cookie = `selectWaveToken=${authToken};`;
+            const { authToken, member } = data;
+            useCookie.setCookie('selectWaveToken', authToken, 7);
             this.$router.push('/admin');
             this.$swal({
               icon: 'success',
@@ -134,11 +135,13 @@ export default {
           }
         })
         .catch((err) => {
-          this.$swal({
-            icon: 'error',
-            title: `${err.response.data.message}`,
-          });
-          this.isLoading = false;
+          if (err.response) {
+            this.$swal({
+              icon: 'error',
+              title: `${err.response.data.message}`,
+            });
+            this.isLoading = false;
+          }
         });
     },
   },

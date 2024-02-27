@@ -7,6 +7,7 @@ import { inject, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { useMemberStore } from './stores/member';
+import useCookie from './utils';
 
 const swal = inject('$swal');
 
@@ -36,25 +37,21 @@ const userModal = (data) => swal({
               </div>`,
 });
 
-const checkUser = (path, token) => {
-  axios.get(path, {
+const checkUser = async (path, token) => {
+  const { data } = await axios.get(path, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  })
-    .then(({ data }) => {
-      if (data.status) {
-        localStorage.setItem('selectWaveToken', token);
-        userModal(data);
-        member.setMemberLoginStatus(true);
-        member.setMemberStatus(true);
-        member.setMemberData(data.result);
-      }
-    })
-    .catch(() => {
-      member.setMemberLoginStatus(false);
-      member.setMemberStatus(false);
-    });
+  });
+  if (data.status) {
+    useCookie.setCookie('selectWaveToken', token, 7);
+    userModal(data);
+    member.setMemberLoginStatus(true);
+    member.setMemberStatus(true);
+    member.setMemberData(data.result);
+  }
+  member.setMemberLoginStatus(false);
+  member.setMemberStatus(false);
 };
 
 const authCheck = async () => {
@@ -62,14 +59,14 @@ const authCheck = async () => {
   const baseUrl = import.meta.env.VITE_APP_API_URL;
   const api = `${baseUrl}/api/auth/check`;
   if (token) {
-    checkUser(api, token);
+    await checkUser(api, token);
   } else if (checkToken()) {
-    const localStorageToken = localStorage.getItem('selectWaveToken');
-    checkUser(api, localStorageToken);
+    const cookieToken = useCookie.getCookie('selectWaveToken');
+    await checkUser(api, cookieToken);
   }
 };
 
-onMounted(() => {
-  authCheck();
+onMounted(async () => {
+  await authCheck();
 });
 </script>

@@ -79,6 +79,7 @@
 <script>
 
 import { useMemberStore } from '../stores/member';
+import useCookie from '../utils';
 
 export default {
   data() {
@@ -124,7 +125,7 @@ export default {
           this.$swal({
             title: `${res.data.message}`,
           }).then(() => {
-            localStorage.removeItem('selectWaveToken');
+            useCookie.deleteCookie('selectWaveToken');
             document.location.href = '/HomeView.vue';
           });
         })

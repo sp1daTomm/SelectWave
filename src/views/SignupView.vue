@@ -67,6 +67,8 @@
   </div>
 </template>
 <script>
+import useCookie from '../utils';
+
 export default {
   data() {
     return {
@@ -88,7 +90,7 @@ export default {
         .then(({ data }) => {
           if (data.status) {
             const { token } = data.result;
-            localStorage.setItem('selectWaveToken', token);
+            useCookie.setCookie('selectWaveToken', token, 7);
             this.$swal({
               title: `${data.message}`,
             }).then(() => {
@@ -101,9 +103,11 @@ export default {
           this.isLoading = false;
         })
         .catch((err) => {
-          this.$swal({
-            title: `${err.response.data.message}`,
-          });
+          if (err.response) {
+            this.$swal({
+              title: `${err.response.data.message}`,
+            });
+          }
           this.isLoading = false;
         });
     },
