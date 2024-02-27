@@ -66,6 +66,7 @@
   </div>
 </template>
 <script>
+import { useMemberStore } from '../stores/member';
 
 export default {
   data() {
@@ -107,26 +108,32 @@ export default {
       isLoading: false,
     };
   },
+  computed: {
+    memberStore() {
+      return useMemberStore();
+    },
+  },
   methods: {
     login() {
       this.isLoading = true;
       const api = `${this.baseUrl}/api/auth/login`;
       this.$http.post(api, this.user)
-        .then((res) => {
-          console.log(res);
-          if (res.data.status) {
-            const { authToken } = res.data;
+        .then(({ data }) => {
+          if (data.status) {
+            const { authToken, member } = data.result;
             document.cookie = `selectWaveToken=${authToken};`;
             this.$router.push('/admin');
             this.$swal({
               icon: 'success',
-              title: `${res.data.message}`,
+              title: `${data.message}`,
             });
             this.isLoading = false;
+            this.memberStore.setMemberStatus(true);
+            this.memberStore.setMemberLoginStatus(true);
+            this.memberStore.setMemberData(member);
           }
         })
         .catch((err) => {
-          console.log(err);
           this.$swal({
             icon: 'error',
             title: `${err.response.data.message}`,
@@ -137,5 +144,3 @@ export default {
   },
 };
 </script>
-
-<style scoped></style>

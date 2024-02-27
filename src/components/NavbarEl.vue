@@ -29,7 +29,9 @@
         <li v-if="!isLogin"><RouterLink to="/signup" class="px-6 py-2 text-white transition bg-black border-2 border-black rounded-full hover:border-gray-2 hover:bg-gray-2"  >註冊</RouterLink></li>
         <li class="relative" v-else-if="isMember" :data-test="isLogin">
           <button @click="toggleMenu" type="button" class="flex items-center gap-2 px-6 py-2 transition border-2 border-black rounded-full hover:bg-gray-2 hover:text-white hover:border-gray-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-user-round"><path d="M18 20a6 6 0 0 0-12 0"/><circle cx="12" cy="10" r="4"/><circle cx="12" cy="12" r="10"/></svg>會員中心
+            <img :src="memberStore.member.avatar" class="object-cover w-8 h-8 border-2 rounded-full" alt="avatar" />
+            <!-- <span class="hidden md:block">{{ memberStore.member.name }}</span> -->
+            會員中心
         </button>
           <ul v-show="isMenuListOpen"
           :class="{ 'animate-fadeIn': isMenuListOpen, }"
@@ -89,12 +91,12 @@ export default {
     };
   },
   computed: {
-    member() {
+    memberStore() {
       return useMemberStore();
     },
   },
   watch: {
-    member: {
+    memberStore: {
       handler() {
         this.authCheck();
       },
@@ -117,9 +119,8 @@ export default {
       const api = `${import.meta.env.VITE_APP_API_URL}/api/auth/logout`;
       this.$http.get(api)
         .then((res) => {
-          console.log(res);
-          this.member.setMemberStatus(false);
-          this.member.setMemberLoginStatus(false);
+          this.memberStore.setMemberStatus(false);
+          this.memberStore.setMemberLoginStatus(false);
           this.$swal({
             title: `${res.data.message}`,
           }).then(() => {
@@ -127,13 +128,12 @@ export default {
             document.location.href = '/HomeView.vue';
           });
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
         });
     },
     authCheck() {
-      this.isLogin = this.member.isLogin;
-      this.isMember = this.member.isMember;
+      this.isLogin = this.memberStore.isLogin;
+      this.isMember = this.memberStore.isMember;
     },
   },
   mounted() {
