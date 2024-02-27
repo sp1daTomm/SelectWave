@@ -50,14 +50,6 @@ export default {
     },
   },
   plugins: [
-    function ({ addUtilities }) {
-      const newUtilities = {
-        '.active': {
-          color: '#F49E00',
-        },
-      };
-      addUtilities(newUtilities, ['responsive', 'hover']);
-    },
     require('@tailwindcss/typography'),
     require('@tailwindcss/forms'),
     require('@tailwindcss/aspect-ratio'),
