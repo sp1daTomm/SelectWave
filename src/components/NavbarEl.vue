@@ -75,15 +75,31 @@
   </div>
 </template>
 <script>
+
+import { useMemberStore } from '../stores/member';
+
 export default {
   data() {
     return {
       isMenuListOpen: false,
       isMenuModalOpen: false,
       logoImageUrl: '/img_components/logo.svg',
-      isLogin: false,
       isMember: false,
+      isLogin: false,
     };
+  },
+  computed: {
+    member() {
+      return useMemberStore();
+    },
+  },
+  watch: {
+    member: {
+      handler() {
+        this.authCheck();
+      },
+      deep: true,
+    },
   },
   methods: {
     toggleMenu() {
@@ -102,12 +118,12 @@ export default {
       this.$http.get(api)
         .then((res) => {
           console.log(res);
-          this.isLogin = false;
-          this.isMember = false;
+          this.member.setMemberStatus(false);
+          this.member.setMemberLoginStatus(false);
           this.$swal({
             title: `${res.data.message}`,
           }).then(() => {
-            document.cookie = 'selectWaveToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            localStorage.removeItem('selectWaveToken');
             document.location.href = '/HomeView.vue';
           });
         })
@@ -115,61 +131,9 @@ export default {
           console.log(err);
         });
     },
-    checkToken() {
-      const cookies = document.cookie.split(';').map((cookie) => cookie.trim());
-      const tokenCookie = cookies.find((cookie) => cookie.startsWith('selectWaveToken='));
-      const isTokenNotEmpty = tokenCookie && tokenCookie.split('=')[1].length > 0;
-      return isTokenNotEmpty;
-    },
-    checkUser(data) {
-      this.$swal({
-        toast: true,
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        position: 'top-end',
-        html: `
-              <div class="flex items-center gap-4">
-                <img src=${data.result.avatar} class="w-20 h-20 object-fit" />
-                <h2 class="space-y-2">
-                  <span class="block font-bold">歡迎回來</span>
-                  ${data.result.name}
-                </h2>
-              </div>`,
-      });
-      this.isLogin = true;
-      this.isMember = true;
-    },
     authCheck() {
-      const auth = this.$route.query.token;
-      const baseUrl = import.meta.env.VITE_APP_API_URL;
-      const api = `${baseUrl}/api/auth/check`;
-      if (auth) {
-        this.$http.get(api, {
-          headers: {
-            Authorization: `Bearer ${auth}`,
-          },
-        }).then(({ data }) => {
-          if (data.status) {
-            localStorage.setItem('selectWaveToken', auth);
-            this.checkUser(data);
-          }
-        }).catch(() => {
-        });
-      } else if (this.checkToken()) {
-        this.$http.get(api)
-          .then((res) => {
-            if (res.status === false) {
-              this.isLogin = false;
-              this.isMember = false;
-            } else {
-              this.checkUser(res.data);
-            }
-          })
-          .catch(() => {
-            // console.log(err);
-          });
-      }
+      this.isLogin = this.member.isLogin;
+      this.isMember = this.member.isMember;
     },
   },
   mounted() {
