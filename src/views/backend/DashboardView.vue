@@ -24,7 +24,7 @@ export default {
       deep: true,
     },
   },
-  mounted() {
+  created() {
     const token = useCookie.getCookie('selectWaveToken');
     this.$http.get(`${import.meta.env.VITE_APP_API_URL}/api/auth/check`, {
       headers: {
