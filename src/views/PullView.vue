@@ -177,6 +177,7 @@ export default {
       ],
       currentDate: new Date(),
       isDropdownOpen: false,
+      selectedOption: '最熱門',
     };
   },
   methods: {
@@ -195,6 +196,10 @@ export default {
     },
     toggleDropdown() {
       this.isDropdownOpen = !this.isDropdownOpen;
+    },
+    selectOption(option) {
+      this.selectedOption = option;
+      this.isDropdownOpen = false;
     },
   },
   mounted() {
@@ -290,29 +295,34 @@ export default {
                   @click="toggleDropdown"
                   class="drop-down bg-white px-4 py-2 rounded-lg cursor-pointer flex flex-row"
                 >
-                  最熱門
+                  {{ selectedOption }}
                   <i class="bi bi-chevron-down pl-1"></i>
                 </button>
                 <div
                   :class="{ hidden: !isDropdownOpen }"
                   id="myDropdown"
-                  class="absolute right-0 mt-2 w-40 bg-gray-100 rounded shadow-lg"
+                  class="absolute mt-2 w-32 bg-white rounded-2xl shadow-lg -left-2"
                 >
-                  <a
-                    href="#home"
-                    class="block px-4 py-2 text-black hover:bg-gray-200"
-                    >最熱門</a
-                  >
-                  <a
-                    href="#about"
-                    class="block px-4 py-2 text-black hover:bg-gray-200"
-                    >新到舊</a
-                  >
-                  <a
-                    href="#contact"
-                    class="block px-4 py-2 text-black hover:bg-gray-200"
-                    >舊到新</a
-                  >
+                  <div class="flex flex-col items-center text-center px-3 py-3">
+                    <a
+                      href="#home"
+                      class="w-28 px-4 py-2 drop-item rounded-2xl hover:bg-primary-light hover:text-primary-dark"
+                      @click.prevent="selectOption('最熱門')"
+                      >最熱門</a
+                    >
+                    <a
+                      href="#about"
+                      class="w-28 px-4 py-2 drop-item rounded-2xl hover:bg-primary-light hover:text-primary-dark"
+                      @click.prevent="selectOption('新到舊')"
+                      >新到舊</a
+                    >
+                    <a
+                      href="#contact"
+                      class="w-28 px-4 py-2 drop-item rounded-2xl hover:bg-primary-light hover:text-primary-dark"
+                      @click.prevent="selectOption('舊到新')"
+                      >舊到新</a
+                    >
+                  </div>
                 </div>
               </div>
               <div class="search-bar flex justify-center items-end ml-4 py-1">
@@ -394,7 +404,7 @@ export default {
           <li>
             <a
               href="#"
-              class="pagination-w flex items-center justify-center p-1.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
+              class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
             >
               1
             </a>
@@ -402,7 +412,7 @@ export default {
           <li>
             <a
               href="#"
-              class="pagination-w flex items-center justify-center p-1.5  pagina leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
+              class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
             >
               2
             </a>
@@ -528,6 +538,12 @@ export default {
 .drop-down {
   color: #fcb738;
   border: 2px solid #fcb738;
+}
+#myDropDown {
+  right: 100px;
+}
+.drop-item {
+  color: #1e1e1e;
 }
 .container-my {
   width: 1296px;
