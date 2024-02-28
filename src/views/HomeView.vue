@@ -102,7 +102,7 @@ const bgImgGraphic01 = 'url("/home/graphic01.png")';
 const bgImgGraphic02 = 'url("/home/graphic02.png")';
 const chartImage01 = '/home/chartImage01.png';
 const chartImage02 = '/home/chartImage02.png';
-const signupCover = '/images/signupCover.png';
+const signupCover = '/images/signupCover.svg';
 
 const sectionItems = [
   { imgSrc: '/home/sectionImage01.jpg', title: '簡單註冊', description: '只要 email 即可立即註冊，成為會員。' },
