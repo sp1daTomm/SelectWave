@@ -41,6 +41,11 @@ const routes = [
         name: 'Login',
         component: () => import('../views/LoginView.vue'),
       },
+      {
+        path: 'resetpassword',
+        name: 'ResetPassword',
+        component: () => import('../views/ResetPassword.vue'),
+      },
     ],
   },
   {
@@ -66,11 +71,6 @@ const routes = [
         path: 'account',
         name: 'Account',
         component: () => import('../views/backend/AccountView.vue'),
-      },
-      {
-        path: 'resetpassword',
-        name: 'ResetPassword',
-        component: () => import('../views/backend/ResetPassword.vue'),
       },
     ],
   },
