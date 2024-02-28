@@ -15,7 +15,7 @@ const member = useMemberStore();
 const route = useRoute();
 
 const checkToken = () => {
-  const token = localStorage.getItem('selectWaveToken');
+  const token = useCookie.getCookie('selectWaveToken');
   if (token) {
     return true;
   }
@@ -49,9 +49,12 @@ const checkUser = async (path, token) => {
     member.setMemberLoginStatus(true);
     member.setMemberStatus(true);
     member.setMemberData(data.result);
+    return member;
   }
   member.setMemberLoginStatus(false);
   member.setMemberStatus(false);
+  member.setMemberData({});
+  return member;
 };
 
 const authCheck = async () => {
@@ -60,13 +63,20 @@ const authCheck = async () => {
   const api = `${baseUrl}/api/auth/check`;
   if (token) {
     await checkUser(api, token);
-  } else if (checkToken()) {
+  } if (checkToken()) {
     const cookieToken = useCookie.getCookie('selectWaveToken');
     await checkUser(api, cookieToken);
+  } else {
+    member.setMemberLoginStatus(false);
+    member.setMemberStatus(false);
+    member.setMemberData({});
   }
+  return member;
 };
 
-onMounted(async () => {
-  await authCheck();
-});
+onMounted(
+  async () => {
+    await authCheck();
+  },
+);
 </script>

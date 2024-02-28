@@ -122,16 +122,20 @@ export default {
     },
     doLogout() {
       const api = `${import.meta.env.VITE_APP_API_URL}/api/auth/logout`;
-      this.$http.get(api)
+      const token = useCookie.getCookie('selectWaveToken');
+      this.$http.get(api, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
         .then((res) => {
           this.memberStore.setMemberStatus(false);
           this.memberStore.setMemberLoginStatus(false);
           this.$swal({
             title: `${res.data.message}`,
-          }).then(() => {
-            useCookie.deleteCookie('selectWaveToken');
-            document.location.href = '/HomeView.vue';
           });
+          useCookie.deleteCookie('selectWaveToken');
+          this.$router.push('/');
         })
         .catch(() => {
         });
