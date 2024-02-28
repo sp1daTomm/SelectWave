@@ -42,9 +42,9 @@ const routes = [
         component: () => import('../views/LoginView.vue'),
       },
       {
-        path: '/pull',
-        name: 'Pull',
-        component: () => import('../views/PullView.vue'),
+        path: '/poll',
+        name: 'Poll',
+        component: () => import('../views/PollView.vue'),
       },
     ],
   },
