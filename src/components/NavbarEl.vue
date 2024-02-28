@@ -1,5 +1,5 @@
 <template>
-  <nav class="py-3 px-3 sticky top-0 bg-white z-10">
+  <nav class="sticky top-0 z-10 px-3 py-3 bg-white">
     <div class="flex items-center justify-between max-w-screen-lg mx-auto">
       <div class="flex items-center">
       <RouterLink :to="{name:'HomeDefault'}">
@@ -60,19 +60,18 @@
         </button>
           <ul v-show="isMenuListOpen"
           :class="{ 'animate-fadeIn': isMenuListOpen, }"
-          class="absolute left-0 right-0 mt-2 p-3 bg-white drop-shadow-2xlg rounded-2xl
-          text-center">
+          class="absolute left-0 right-0 p-3 mt-2 text-center bg-white drop-shadow-2xlg rounded-2xl">
             <li>
-              <button class="py-2 transition hover:text-primary w-full" type="button">帳戶設定</button>
+              <button class="w-full py-2 transition hover:text-primary" type="button">帳戶設定</button>
             </li>
             <li>
-              <button class="py-2 transition hover:text-primary w-full" type="button">投票項目</button>
+              <button class="w-full py-2 transition hover:text-primary" type="button">投票項目</button>
             </li>
             <li>
-              <button class="py-2 transition hover:text-primary w-full" type="button">投票評論</button>
+              <button class="w-full py-2 transition hover:text-primary" type="button">投票評論</button>
             </li>
             <li>
-              <button class="py-2 transition hover:text-primary w-full" type="button" v-if="isMember" @click="doLogout()">登出</button>
+              <button class="w-full py-2 transition hover:text-primary" type="button" v-if="isMember" @click="doLogout()">登出</button>
             </li>
           </ul>
         </li>
@@ -85,9 +84,9 @@
     </div>
   </nav>
   <div v-show="isMenuModalOpen" :class="{ 'animate-fadeIn': isMenuModalOpen, }"
-  class="fixed top-0 left-0 right-0 bottom-0 bg-white z-10 p-3">
-    <div class="flex justify-between items-center py-3">
-      <img class=" w-12" :src="logoImageUrl" alt="選集">
+  class="fixed top-0 bottom-0 left-0 right-0 z-10 p-3 bg-white">
+    <div class="flex items-center justify-between py-3">
+      <img class="w-12 " :src="logoImageUrl" alt="選集">
       <button @click="closeMenuModal" type="button">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
@@ -108,15 +107,32 @@
   </div>
 </template>
 <script>
+
+import { useMemberStore } from '../stores/member';
+import useCookie from '../utils';
+
 export default {
   data() {
     return {
       isMenuListOpen: false,
       isMenuModalOpen: false,
       logoImageUrl: '/img_components/logo.svg',
-      isLogin: false,
       isMember: false,
+      isLogin: false,
     };
+  },
+  computed: {
+    memberStore() {
+      return useMemberStore();
+    },
+  },
+  watch: {
+    memberStore: {
+      handler() {
+        this.authCheck();
+      },
+      deep: true,
+    },
   },
   methods: {
     toggleMenu() {
@@ -134,44 +150,25 @@ export default {
       const api = `${import.meta.env.VITE_APP_API_URL}/api/auth/logout`;
       this.$http.get(api)
         .then((res) => {
-          this.isLogin = false;
-          this.isMember = false;
+          this.memberStore.setMemberStatus(false);
+          this.memberStore.setMemberLoginStatus(false);
           this.$swal({
             title: `${res.data.message}`,
           }).then(() => {
-            document.cookie = 'selectWaveToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            useCookie.deleteCookie('selectWaveToken');
             document.location.href = '/HomeView.vue';
           });
         })
         .catch(() => {
         });
     },
-    checkToken() {
-      const cookies = document.cookie.split(';').map((cookie) => cookie.trim());
-      const tokenCookie = cookies.find((cookie) => cookie.startsWith('selectWaveToken='));
-      const isTokenNotEmpty = tokenCookie && tokenCookie.split('=')[1].length > 0;
-      return isTokenNotEmpty;
-    },
-    isActive(route) {
-      return this.$route.name === route;
+    authCheck() {
+      this.isLogin = this.memberStore.isLogin;
+      this.isMember = this.memberStore.isMember;
     },
   },
   mounted() {
-    if (this.checkToken()) {
-      const api = `${import.meta.env.VITE_APP_API_URL}/api/auth/check`;
-      this.$http.get(api)
-        .then((res) => {
-          if (res.status === false) {
-            this.isLogin = false;
-            this.isMember = false;
-          } else {
-            this.isLogin = true;
-            this.isMember = true;
-          }
-        })
-        .catch(() => {
-        });
-    }
+    this.authCheck();
   },
 };
 

@@ -38,7 +38,7 @@ app.component('VForm', Form);
 app.component('VField', Field);
 app.component('ErrorMessage', ErrorMessage);
 app.use(VueSweetalert2);
+app.use(VueAxios, axios);
 app.use(createPinia());
 app.use(router);
-app.use(VueAxios, axios);
 app.mount('#app');
