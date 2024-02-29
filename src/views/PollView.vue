@@ -1,4 +1,6 @@
 <script type="module">
+import { ref } from 'vue';
+import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
 
@@ -8,13 +10,13 @@ export default {
     SwiperSlide,
   },
   setup() {
-    const onSwiper = (swiper) => {
-      console.log(swiper);
-    };
-    const onSlideChange = () => {};
+    const navigation = ref({
+      nextEl: '#swiper-btn-next',
+      prevEl: '#swiper-btn-prev',
+    });
     return {
-      onSwiper,
-      onSlideChange,
+      navigation,
+      modules: [Navigation],
     };
   },
   data() {
@@ -181,12 +183,6 @@ export default {
     };
   },
   methods: {
-    prevSlide() {
-      this.$refs.swiper.swiper.slidePrev();
-    },
-    nextSlide() {
-      this.$refs.swiper.swiper.slideNext();
-    },
     formatDeadline(deadline) {
       const formattedDate = new Date(deadline);
       const year = formattedDate.getFullYear();
@@ -203,389 +199,189 @@ export default {
     },
   },
   mounted() {
-    console.log(this.$refs.swiper);
   },
 };
 </script>
 <template>
-  <div class="container flex justify-center">
-    <div class="pull-content m-auto">
-      <div>
-        <filter></filter>
-        <serch></serch>
+  <section class="relative">
+    <div class="container flex flex-col gap-6 pt-6 pb-12 md:py-20 md:gap-8">
+      <div class="flex flex-col justify-between md:items-center md:flex-row">
+        <div class="text-2xl font-bold md:text-3xl">我的投票</div>
+        <div class="flex flex-row w-full button-group flex-nowrap md:w-auto">
+          <button class="h-10 px-4 py-2 rounded-md text-gray-1 bg-gray-4">
+            投票管理
+            <i class="bi bi-arrow-right"></i>
+          </button>
+          <button class="h-10 px-4 py-2 ml-4 rounded-md text-gray-1 bg-primary-light">
+            建立投票
+            <i class="bi bi-plus-lg"></i>
+          </button>
+        </div>
       </div>
-      <div class="container-my">
-        <div class="flex flex-row justify-between">
-          <div class="title font-bold text-2xl">我的投票</div>
-          <div class="button-group flex flex-row flex-nowrap">
-            <button class="h-10 w-30 rounded-md pull-manage px-4 py-2">
-              投票管理
-              <i class="bi bi-arrow-right"></i>
-            </button>
-            <button class="h-10 w-30 rounded-md ml-4 create-pull px-4 py-2">
-              建立投票
-              <i class="bi bi-plus-lg"></i>
-            </button>
-          </div>
-        </div>
-        <div class="swiper-button-prev prev-left">
-          <img src="../assets/arrow.png" alt="Icon" />
-        </div>
-        <div class="swiper-button-next prev-right">
-          <img src="../assets/arrow-2.png" alt="Icon" />
-        </div>
-        <swiper
-          :slides-per-view="4"
-          :space-between="24"
-          :loop="true"
-          @swiper="onSwiper"
-          @slideChange="onSlideChange"
-          :pagination="{ clickable: true }"
-          :navigation="{
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-          }"
-        >
-          <swiper-slide
-            v-for="card in myCards"
-            :key="card.id"
-            class="card-size"
-          >
+      <div class="relative">
+        <swiper :slides-per-view="4" :space-between="24" :loop="true" :modules="modules"
+                :navigation="navigation">
+          <swiper-slide v-for="card in myCards" :key="card.id">
             <div
-              class="max-w-sm overflow-hidden border-2 border-gray-300 rounded-3xl flex flex-wrap bg-white"
-            >
-              <img :src="card.image" class="w-full img-size" alt="Card Image" />
-              <div class="card-container relative">
+                 class="relative flex flex-col overflow-hidden bg-white border-2 border-gray-300 rounded-3xl">
+              <div class="relative">
+                <img :src="card.image" class="object-cover" alt="Card Image" />
                 <div
-                  class="card-more absolute px-1 z-50 right-2 top-2 rounded-md transition-colors duration-300"
-                >
-                  <i class="bi bi-three-dots dot-icon"></i>
-                </div>
-                <p class="card-deadline absolute bottom-3 left-7 text-white">
-                  {{ formatDeadline(myCards[currentCardIndex].deadline) }}止
+                     class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                <p class="absolute text-sm leading-normal text-white bottom-3 left-3">
+                  {{ formatDeadline(myCards[ currentCardIndex ].deadline) }}止
                 </p>
-                <!-- <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent h-115"></div> -->
               </div>
-              <div class="px-6 py-4">
-                <div class="font-bold text-xl mb-2">{{ card.title }}</div>
+              <div
+                   class="absolute z-50 px-1 transition-colors duration-300 rounded-md card-more right-2 top-2">
+                <i class="bi bi-three-dots dot-icon" />
               </div>
-              <div class="px-6 pt-4 pb-2">
-                <span
-                  class="inline-block rounded-full px-3 py-1 text-gray-500 -m-3 mb-2"
-                >
-                  已有{{ card.voteQty }}人投票
-                </span>
+              <div class="flex flex-col">
+                <div class="px-6 py-4">
+                  <div class="mb-2 font-medium md:leading-6 md:text-xl">{{ card.title }}</div>
+                </div>
+                <div class="px-6 pt-4 pb-2">
+                  <span class="inline-block px-3 py-1 mb-2 -m-3 text-gray-500 rounded-full text-sm leading-[1.2]">
+                    已有{{ card.voteQty }}人投票
+                  </span>
+                </div>
               </div>
             </div>
           </swiper-slide>
         </swiper>
+        <button type="button" id="swiper-btn-prev"
+                class="absolute hidden -translate-x-full -translate-y-1/2 md:block -left-6 top-1/2">
+          <i
+             class="text-3xl transition duration-150 text-gray-2 bi bi-arrow-left-circle hover:text-primary" />
+        </button>
+        <button type="button" id="swiper-btn-next"
+                class="absolute hidden translate-x-full -translate-y-1/2 md:block -right-6 top-1/2">
+          <i
+             class="text-3xl transition duration-150 text-gray-2 bi bi-arrow-right-circle hover:text-primary" />
+        </button>
       </div>
-      <!-- <div class="relative">
-        <img src="../assets/bg.png" class="absolute bottom-6 -z-50 w-screen screen-img" alt="image" />
-      </div> -->
-      <!-- <div class="create-my-vote hidden">
-      </div> -->
-      <div class="container-all">
-        <div class="flex flex-row justify-between">
-          <div class="title title-all font-bold text-2xl">所有投票</div>
-          <div>
-            <div class="flex flex-row flex-nowrap">
-              <div class="relative inline-block mt-20">
-                <button
-                  @click="toggleDropdown"
-                  class="drop-down bg-white px-4 py-2 rounded-lg cursor-pointer flex flex-row"
-                >
-                  {{ selectedOption }}
-                  <i class="bi bi-chevron-down pl-1"></i>
-                </button>
-                <div
-                  :class="{ hidden: !isDropdownOpen }"
-                  id="myDropdown"
-                  class="absolute mt-2 w-32 bg-white rounded-2xl shadow-lg -left-2"
-                >
-                  <div class="flex flex-col items-center text-center px-3 py-3">
-                    <a
-                      href="#home"
-                      class="w-28 px-4 py-2 drop-item rounded-2xl hover:bg-primary-light hover:text-primary-dark"
-                      @click.prevent="selectOption('最熱門')"
-                      >最熱門</a
-                    >
-                    <a
-                      href="#about"
-                      class="w-28 px-4 py-2 drop-item rounded-2xl hover:bg-primary-light hover:text-primary-dark"
-                      @click.prevent="selectOption('新到舊')"
-                      >新到舊</a
-                    >
-                    <a
-                      href="#contact"
-                      class="w-28 px-4 py-2 drop-item rounded-2xl hover:bg-primary-light hover:text-primary-dark"
-                      @click.prevent="selectOption('舊到新')"
-                      >舊到新</a
-                    >
-                  </div>
-                </div>
-              </div>
-              <div class="search-bar flex justify-center items-end ml-4 py-1">
-                <div class="relative">
-                  <input
-                    type="text"
-                    class="search-input rounded z-0 focus:shadow focus:outline-none px-4"
-                    placeholder="搜尋投票"
-                  />
-                  <div class="absolute top-2 right-4">
-                    <i
-                      class="fa fa-search text-gray-500 z-20 hover:text-gray-500 bi bi-search"
-                    ></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="all-card mx-auto">
-          <div class="flex flex-row container-all">
-            <div class="flex flex-row flex-wrap justify-between">
-              <div
-                v-for="card in allCards"
-                :key="card.id"
-                class="w-full card-size mb-12"
-              >
-                <div
-                  class="max-w-sm border-2 border-gray-300 rounded-3xl overflow-hidden"
-                >
-                  <img :src="card.image" class="w-full img-size" alt="image" />
-                  <div class="card-container relative">
-                    <p
-                      class="card-deadline absolute bottom-3 left-7 text-white"
-                    >
-                      {{ formatDeadline(myCards[currentCardIndex].deadline) }}止
-                    </p>
-                  </div>
-                  <div class="px-6 pt-4">
-                    <div class="font-bold text-xl mb-2 h-12">
-                      {{ card.title }}
-                    </div>
-                    <p class="text-gray-700 text-base"></p>
-                  </div>
-                  <div class="px-6 pt-2 pb-2">
-                    <span
-                      class="inline-block rounded-full py-1 text-gray-500 pr-3 mb-2"
-                      >已有{{ card.voteQty }}人投票
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="paginate">
-        <ul
-          class="inline-flex -space-x-px text-base h-10 w-full justify-center"
-        >
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
-            >
-              <span class="sr-only">回到第一頁</span>
-              <i class="bi bi-chevron-double-left"></i>
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
-            >
-              <span class="sr-only">Previous</span>
-              <i class="bi bi-chevron-left"></i>
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
-            >
-              1
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
-            >
-              2
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
-            >
-              3
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
-            >
-              10
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white hover:bg-primary-light rounded-lg hover:text-primary-dark mr-1.5"
-            >
-              <span class="sr-only">...</span>
-              <i class="bi bi-three-dots"></i>
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
-            >
-              <span class="sr-only">Next</span>
-              <i class="bi bi-chevron-right"></i>
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark"
-            >
-              <span class="sr-only">到最後一頁</span>
-              <i class="bi bi-chevron-double-right"></i>
-            </a>
-          </li>
-        </ul>
-      </div>
-      <!-- <div class="pagination-container flex flex-row justify-center pt-3">
-        <i class="bi bi-chevron-double-left"></i>
-        <i class="bi bi-chevron-left"></i>
-        123
-        <i class="bi bi-three-dots"></i>
-        10
-        <i class="bi bi-chevron-right"></i>
-        <i class="bi bi-chevron-double-right"></i>
-      </div> -->
     </div>
-  </div>
-  <div class="relative">
-    <img
-      src="../assets/bg.png"
-      class="absolute -z-50 w-screen screen-img"
-      alt="image"
-    />
-  </div>
+    <img src="../assets/bg.png" class="absolute bottom-0 w-full -z-10" alt="image" />
+  </section>
+  <section class="container flex flex-col pt-6 pb-12 gap-6 md:pt-20 md:pb-[7.5rem] md:gap-8">
+    <div class="flex flex-col justify-between md:items-center md:flex-row">
+      <div class="text-2xl font-bold md:text-3xl">所有投票</div>
+      <div class="flex flex-row items-center gap-4 flex-nowrap">
+        <div class="relative inline-block">
+          <button @click="toggleDropdown"
+                  class="flex flex-row px-4 py-2 bg-white border-2 rounded-lg cursor-pointer text-primary border-primary">
+            {{ selectedOption }}
+            <i class="pl-1 bi bi-chevron-down"></i>
+          </button>
+          <div :class="{ hidden: !isDropdownOpen }" id="myDropdown"
+               class="absolute z-10 w-32 mt-2 bg-white shadow-lg rounded-2xl -left-2">
+            <div class="flex flex-col items-center px-3 py-3 text-center">
+              <a href="#home"
+                 class="px-4 py-2 w-28 text-gray-1 rounded-2xl hover:bg-primary-light hover:text-primary-dark"
+                 @click.prevent="selectOption('最熱門')">最熱門</a>
+              <a href="#about"
+                 class="px-4 py-2 w-28 text-gray-1 rounded-2xl hover:bg-primary-light hover:text-primary-dark"
+                 @click.prevent="selectOption('新到舊')">新到舊</a>
+              <a href="#contact"
+                 class="px-4 py-2 w-28 text-gray-1 rounded-2xl hover:bg-primary-light hover:text-primary-dark"
+                 @click.prevent="selectOption('舊到新')">舊到新</a>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-end justify-center search-bar">
+          <div class="relative">
+            <input type="text" class="z-0 px-4 rounded search-input focus:shadow focus:outline-none"
+                   placeholder="搜尋投票" />
+            <div class="absolute top-2 right-4">
+              <i class="z-20 text-gray-500 fa fa-search hover:text-gray-500 bi bi-search"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+         class="grid grid-cols-2 gap-x-3 gap-y-6 md:gap-x-6 md:gap-y-12 md:grid-cols-4">
+        <div v-for="card in allCards" :key="card.id"
+             class="relative flex flex-col h-full overflow-hidden bg-white border-2 border-gray-300 rounded-3xl">
+          <div class="relative">
+            <img :src="card.image" class="object-cover w-full min-h-60" alt="Card Image" />
+            <div
+                 class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+            <p class="absolute text-white bottom-3 left-3">
+              {{ formatDeadline(myCards[ currentCardIndex ].deadline) }}止
+            </p>
+          </div>
+          <div class="flex flex-col justify-between h-full p-4 pt-3 md:pt-5 md:p-6">
+            <h3 class="mb-2 font-medium">{{ card.title }}</h3>
+            <p class="inline-block px-3 py-1 mb-2 -m-3 text-gray-500 rounded-full">
+              已有{{ card.voteQty }}人投票
+            </p>
+          </div>
+        </div>
+    </div>
+      <ul class="inline-flex justify-center w-full h-10 -space-x-px text-base">
+        <li>
+          <a href="#"
+             class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5">
+            <span class="sr-only">回到第一頁</span>
+            <i class="bi bi-chevron-double-left"></i>
+          </a>
+        </li>
+        <li>
+          <a href="#"
+             class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5">
+            <span class="sr-only">Previous</span>
+            <i class="bi bi-chevron-left"></i>
+          </a>
+        </li>
+        <li>
+          <a href="#"
+             class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5">
+            1
+          </a>
+        </li>
+        <li>
+          <a href="#"
+             class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5">
+            2
+          </a>
+        </li>
+        <li>
+          <a href="#"
+             class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5">
+            3
+          </a>
+        </li>
+        <li>
+          <a href="#"
+             class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5">
+            10
+          </a>
+        </li>
+        <li>
+          <a href="#"
+             class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white hover:bg-primary-light rounded-lg hover:text-primary-dark mr-1.5">
+            <span class="sr-only">...</span>
+            <i class="bi bi-three-dots"></i>
+          </a>
+        </li>
+        <li>
+          <a href="#"
+             class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5">
+            <span class="sr-only">Next</span>
+            <i class="bi bi-chevron-right"></i>
+          </a>
+        </li>
+        <li>
+          <a href="#"
+             class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark">
+            <span class="sr-only">到最後一頁</span>
+            <i class="bi bi-chevron-double-right"></i>
+          </a>
+        </li>
+      </ul>
+  </section>
 </template>
 
 <style scoped>
-* {
-  box-sizing: border-box;
-}
-.container {
-  width: 1920px;
-}
-.pull-content {
-  width: 1296px;
-}
-.title {
-  font-size: 32px;
-  margin-bottom: 32px;
-}
-.card-more {
-  background-color: #1e1e1e;
-  opacity: 80%;
-}
-.card-more:hover {
-  background-color: #f49e00;
-}
-.dot-icon {
-  color: #ffffff;
-}
-.paginate {
-  margin-bottom: 120px;
-}
-/* .pagina {
-  padding: 10px;
-} */
-.pull-manage {
-  color: #1e1e1e;
-  font-size: 16px;
-  background-color: #f5f5f5;
-}
-.create-pull {
-  color: #1e1e1e;
-  font-size: 16px;
-  background-color: #fff4e0;
-}
-.screen-img {
-  bottom: 1520px;
-  z-index: -10;
-}
-.title-all {
-  margin-top: 80px;
-}
-.search-input {
-  width: 306px;
-  height: 40px;
-  border: none;
-  background-color: #f5f5f5;
-}
-.drop-down {
-  color: #fcb738;
-  border: 2px solid #fcb738;
-}
-#myDropDown {
-  right: 100px;
-}
-.drop-item {
-  color: #1e1e1e;
-}
-.container-my {
-  width: 1296px;
-  position: relative;
-  padding-top: 80px;
-  padding-bottom: 80px;
-}
-.prev-left {
-  position: absolute;
-  left: -50px;
-  top: 290px;
-}
-.prev-right {
-  position: absolute;
-  right: -50px;
-  top: 290px;
-}
-.container-all {
-  width: 1296px;
-}
-/* .my-card {
-  } */
-/* .all-card {
-  } */
-.card-size {
-  width: 306px;
-}
-.img-size {
-  height: 226px;
-  background-color: #fcb738;
-}
-/* .card-style {
-  } */
-.add-box {
-  background-color: #fff4e0;
-}
-.add-group {
-  left: 130px;
-  top: 130px;
-}
-@media screen and (max-width: 768px) {
-}
-@media screen and (min-width: 769px) {
-}
 </style>
