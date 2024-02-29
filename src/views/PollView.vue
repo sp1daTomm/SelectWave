@@ -254,17 +254,17 @@ export default {
             <div
               class="max-w-sm overflow-hidden border-2 border-gray-300 rounded-3xl flex flex-wrap bg-white"
             >
-              <img :src="card.image" class="w-full img-size" alt="Card Image" />
               <div class="card-container relative">
+              <img :src="card.image" class="w-full img-size" alt="Card Image" />
                 <div
                   class="card-more absolute px-1 z-50 right-2 top-2 rounded-md transition-colors duration-300"
                 >
                   <i class="bi bi-three-dots dot-icon"></i>
                 </div>
-                <p class="card-deadline absolute bottom-3 left-7 text-white">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent h-115"></div>
+                <p class="card-deadline absolute bottom-3 left-7 text-white z-10">
                   {{ formatDeadline(myCards[currentCardIndex].deadline) }}止
                 </p>
-                <!-- <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent h-115"></div> -->
               </div>
               <div class="px-6 py-4">
                 <div class="font-bold text-xl mb-2">{{ card.title }}</div>
@@ -353,8 +353,9 @@ export default {
                 <div
                   class="max-w-sm border-2 border-gray-300 rounded-3xl overflow-hidden"
                 >
-                  <img :src="card.image" class="w-full img-size" alt="image" />
                   <div class="card-container relative">
+                  <img :src="card.image" class="w-full img-size" alt="image" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent h-115"></div>
                     <p
                       class="card-deadline absolute bottom-3 left-7 text-white"
                     >
@@ -486,9 +487,9 @@ export default {
 * {
   box-sizing: border-box;
 }
-.container {
+/* .container {
   width: 1920px;
-}
+} */
 .pull-content {
   width: 1296px;
 }
@@ -572,7 +573,6 @@ export default {
   width: 306px;
 }
 .img-size {
-  height: 226px;
   background-color: #fcb738;
 }
 /* .card-style {
