@@ -471,15 +471,6 @@ export default {
           </li>
         </ul>
       </div>
-      <!-- <div class="pagination-container flex flex-row justify-center pt-3">
-        <i class="bi bi-chevron-double-left"></i>
-        <i class="bi bi-chevron-left"></i>
-        123
-        <i class="bi bi-three-dots"></i>
-        10
-        <i class="bi bi-chevron-right"></i>
-        <i class="bi bi-chevron-double-right"></i>
-      </div> -->
     </div>
   </div>
   <div class="relative">
