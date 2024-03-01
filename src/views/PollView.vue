@@ -21,62 +21,61 @@ export default {
     return {
       currentCardIndex: 0,
       myCards: [
-        // {
-        //   id: 1,
-        //   image: '/src/assets/vote 01.png',
-        //   deadline: '2024-03-10',
-        //   title: '最喜歡的電視節目',
-        //   description:
-        //     'luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
-        //   tags: ['p', 't', 'e'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 2,
-        //   image: '/src/assets/vote 05.png',
-        //   deadline: '2024-03-10',
-        //   title: '最喜歡的食物',
-        //   description:
-        //     'Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
-        //   tags: ['s', 'r', 'i'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 3,
-        //   image: '/src/assets/vote 06.png',
-        //   deadline: '2024-03-10',
-        //   title: '最想去的國家',
-        //   description:
-        //     'Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.',
-        //   tags: ['m', 'o', 'n'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 4,
-        //   image: '/src/assets/vote 07.png',
-        //   deadline: '2024-03-10',
-        //   title: '最喜歡的飲料',
-        //   description:
-        //     'Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.',
-        //   tags: ['m', 'o', 'n'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 5,
-        //   image: '/src/assets/vote 07.png',
-        //   deadline: '2024-03-10',
-        //   title: '最喜歡的飲料店',
-        //   description:
-        //     'Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.',
-        //   tags: ['m', 'o', 'n'],
-        //   voteQty: '3000',
-        // },
+        {
+          id: 1,
+          image: "/src/assets/vote 01.png",
+          deadline: "2024-03-10",
+          title: "最喜歡的電視節目",
+          description:
+            "luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.",
+          tags: ["p", "t", "e"],
+          voteQty: "3000",
+        },
+        {
+          id: 2,
+          image: "/src/assets/vote 05.png",
+          deadline: "2024-03-10",
+          title: "最喜歡的食物",
+          description:
+            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.",
+          tags: ["s", "r", "i"],
+          voteQty: "3000",
+        },
+        {
+          id: 3,
+          image: "/src/assets/vote 06.png",
+          deadline: "2024-03-10",
+          title: "最想去的國家",
+          description:
+            "Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.",
+          tags: ["m", "o", "n"],
+          voteQty: "3000",
+        },
+        {
+          id: 4,
+          image: "/src/assets/vote 07.png",
+          deadline: "2024-03-10",
+          title: "最喜歡的飲料",
+          description:
+            "Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.",
+          tags: ["m", "o", "n"],
+          voteQty: "3000",
+        },
+        {
+          id: 5,
+          image: "/src/assets/vote 07.png",
+          deadline: "2024-03-10",
+          title: "最喜歡的飲料店",
+          description:
+            "Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.",
+          tags: ["m", "o", "n"],
+          voteQty: "3000",
+        },
       ],
       allCards: [
         {
           id: 1,
           image: "/src/assets/vote 04.png",
-          deadline: "2024-03-10",
           title: "喜歡狗還是貓",
           description:
             "luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.",
@@ -86,7 +85,6 @@ export default {
         {
           id: 2,
           image: "/src/assets/vote 08.png",
-          deadline: "2024-03-10",
           title: "更喜歡健身房還是戶外運動",
           description:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.",
@@ -96,7 +94,6 @@ export default {
         {
           id: 3,
           image: "/src/assets/vote 09.png",
-          deadline: "2024-03-10",
           title: "喜歡使用 Instagram還是 Twitter",
           description:
             "Cupiditate voluptates animi blanditiis error! Beatae, ullam commodi officiis culpa perferendis reprehenderit assumenda.",
@@ -106,7 +103,6 @@ export default {
         {
           id: 4,
           image: "/src/assets/vote 10.png",
-          deadline: "2024-03-10",
           title: "想要什麼超能力",
           description:
             "Consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.",
@@ -116,7 +112,6 @@ export default {
         {
           id: 5,
           image: "/src/assets/vote 11.png",
-          deadline: "2024-03-10",
           title: "喜歡的音樂風格",
           description: "Adipisicing elit. Dolores ipsum iure nostrum exercitationem.",
           tags: ["b", "r", "i"],
@@ -125,7 +120,6 @@ export default {
         {
           id: 6,
           image: "/src/assets/vote 12.png",
-          deadline: "2024-03-10",
           title: "喜歡咖啡還是茶",
           description: "Dolores ipsum iure nostrum exercitationem.",
           tags: ["d", "e", "e"],
@@ -134,7 +128,6 @@ export default {
         {
           id: 7,
           image: "/src/assets/vote 13.png",
-          deadline: "2024-03-10",
           title: "喜歡在週末做什麼",
           description: "Dolores ipsum iure nostrum exercitationem.",
           tags: ["d", "e", "e"],
@@ -143,7 +136,6 @@ export default {
         {
           id: 8,
           image: "/src/assets/vote 14.png",
-          deadline: "2024-03-10",
           title: "戶外活動還是宅在家",
           description: "Dolores ipsum iure nostrum exercitationem.",
           tags: ["d", "e", "e"],
@@ -152,7 +144,6 @@ export default {
         {
           id: 9,
           image: "/src/assets/vote 15.png",
-          deadline: "2024-03-10",
           title: "最喜歡的電影",
           description: "Dolores ipsum iure nostrum exercitationem.",
           tags: ["d", "e", "e"],
@@ -161,7 +152,6 @@ export default {
         {
           id: 10,
           image: "/src/assets/vote 16.png",
-          deadline: "2024-03-10",
           title: "最喜歡的旅遊景點",
           description: "Dolores ipsum iure nostrum exercitationem.",
           tags: ["d", "e", "e"],
@@ -170,7 +160,6 @@ export default {
         {
           id: 11,
           image: "/src/assets/vote 17.png",
-          deadline: "2024-03-10",
           title: "最喜歡的國家",
           description: "Dolores ipsum iure nostrum exercitationem.",
           tags: ["d", "e", "e"],
@@ -179,7 +168,6 @@ export default {
         {
           id: 12,
           image: "/src/assets/vote 18.png",
-          deadline: "2024-03-10",
           title: "最喜歡的動漫角色",
           description: "Dolores ipsum iure nostrum exercitationem.",
           tags: ["d", "e", "e"],
@@ -221,85 +209,78 @@ export default {
 <template>
   <div class="container flex justify-center">
     <div class="pull-content m-auto">
-      <div></div>
+      <div>
+        <filter></filter>
+        <serch></serch>
+      </div>
       <div class="container-my">
-        <div class="myCard-container">
-          <div class="flex flex-row justify-between">
-            <div class="title font-bold text-2xl">我的投票</div>
-            <div class="button-group flex flex-row flex-nowrap">
-              <button class="h-10 w-30 rounded-md pull-manage px-4 py-2">
-                投票管理
-                <i class="bi bi-arrow-right"></i>
-              </button>
-              <button class="h-10 w-30 rounded-md ml-4 create-pull px-4 py-2">
-                建立投票
-                <i class="bi bi-plus-lg"></i>
-              </button>
-            </div>
-          </div>
-          <div v-if="myCards.length === 0" class="no-data-message flex justify-center">
-            <div class="flex flex-col items-center">
-              <i></i>
-              <p class="text-gray-500 text-base">這裡還沒有任何投票！</p>
-              <p class="text-gray-500 text-base">快點來開始一個新的投票活動吧！</p>
-              <button class="text-white text-base py-3 px-6 rounded-full">
-                建立投票
-              </button>
-            </div>
-          </div>
-          <div class="swiper-container" v-else>
-            <div class="swiper-button-prev prev-left">
-              <img src="../assets/arrow.png" alt="Icon" />
-            </div>
-            <div class="swiper-button-next prev-right">
-              <img src="../assets/arrow-2.png" alt="Icon" />
-            </div>
-            <swiper
-              :slides-per-view="4"
-              :space-between="24"
-              :loop="true"
-              @swiper="onSwiper"
-              @slideChange="onSlideChange"
-              :pagination="{ clickable: true }"
-              :navigation="{
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-              }"
-            >
-              <swiper-slide v-for="card in myCards" :key="card.id" class="card-size">
-                <div
-                  class="max-w-sm overflow-hidden border-2 border-gray-300 rounded-3xl flex flex-wrap bg-white"
-                >
-                  <div class="card-container relative">
-                    <img :src="card.image" class="w-full img-size" alt="Card Image" />
-                    <div
-                      class="card-more absolute px-1 z-50 right-2 top-2 rounded-md transition-colors duration-300"
-                    >
-                      <i class="bi bi-three-dots dot-icon"></i>
-                    </div>
-                    <div
-                      class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent h-115"
-                    ></div>
-                    <p class="card-deadline absolute bottom-3 left-7 text-white z-10">
-                      {{ formatDeadline(myCards[currentCardIndex].deadline) }}止
-                    </p>
-                  </div>
-                  <div class="px-6 py-4">
-                    <div class="font-bold text-xl mb-2">{{ card.title }}</div>
-                  </div>
-                  <div class="px-6 pt-4 pb-2">
-                    <span
-                      class="inline-block rounded-full px-3 py-1 text-gray-500 -m-3 mb-2"
-                    >
-                      已有{{ card.voteQty }}人投票
-                    </span>
-                  </div>
-                </div>
-              </swiper-slide>
-            </swiper>
+        <div class="flex flex-row justify-between">
+          <div class="title font-bold text-2xl">我的投票</div>
+          <div class="button-group flex flex-row flex-nowrap">
+            <button class="h-10 w-30 rounded-md pull-manage px-4 py-2">
+              投票管理
+              <i class="bi bi-arrow-right"></i>
+            </button>
+            <button class="h-10 w-30 rounded-md ml-4 create-pull px-4 py-2">
+              建立投票
+              <i class="bi bi-plus-lg"></i>
+            </button>
           </div>
         </div>
+        <div class="swiper-container" v-else></div>
+        <div class="swiper-button-prev prev-left">
+          <img src="../assets/arrow.png" alt="Icon" />
+        </div>
+        <div class="swiper-button-next prev-right">
+          <img src="../assets/arrow-2.png" alt="Icon" />
+        </div>
+        <swiper
+          :slides-per-view="4"
+          :space-between="24"
+          :loop="true"
+          @swiper="onSwiper"
+          @slideChange="onSlideChange"
+          :pagination="{ clickable: true }"
+          :navigation="{
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          }"
+        >
+          <swiper-slide v-for="card in myCards" :key="card.id" class="card-size">
+            <div
+              class="max-w-sm overflow-hidden border-2 border-gray-300 rounded-3xl flex flex-wrap bg-white"
+            >
+              <div class="card-container relative">
+                <img :src="card.image" class="w-full img-size" alt="Card Image" />
+                <div
+                  class="card-more absolute px-1 z-50 right-2 top-2 rounded-md transition-colors duration-300"
+                >
+                  <i class="bi bi-three-dots dot-icon"></i>
+                </div>
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent h-115"
+                ></div>
+                <p class="card-deadline absolute bottom-3 left-7 text-white z-10">
+                  {{ formatDeadline(myCards[currentCardIndex].deadline) }}止
+                </p>
+              </div>
+              <div class="px-6 py-4">
+                <div class="font-bold text-xl mb-2">{{ card.title }}</div>
+              </div>
+              <div class="px-6 pt-4 pb-2">
+                <span class="inline-block rounded-full px-3 py-1 text-gray-500 -m-3 mb-2">
+                  已有{{ card.voteQty }}人投票
+                </span>
+              </div>
+            </div>
+          </swiper-slide>
+        </swiper>
       </div>
+      <!-- <div class="relative">
+        <img src="../assets/bg.png" class="absolute bottom-6 -z-50 w-screen screen-img" alt="image" />
+      </div> -->
+      <!-- <div class="create-my-vote hidden">
+      </div> -->
       <div class="container-all">
         <div class="flex flex-row justify-between">
           <div class="title title-all font-bold text-2xl">所有投票</div>
@@ -370,7 +351,7 @@ export default {
                       class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent h-115"
                     ></div>
                     <p class="card-deadline absolute bottom-3 left-7 text-white">
-                      {{ formatDeadline(card.deadline) }}止
+                      {{ formatDeadline(myCards[currentCardIndex].deadline) }}止
                     </p>
                   </div>
                   <div class="px-6 pt-4">
