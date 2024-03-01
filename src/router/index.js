@@ -42,9 +42,15 @@ const routes = [
         component: () => import('../views/LoginView.vue'),
       },
       {
+        dev/resetpassword
         path: 'resetpassword',
         name: 'ResetPassword',
         component: () => import('../views/ResetPassword.vue'),
+      },
+      {
+        path: '/poll',
+        name: 'Poll',
+        component: () => import('../views/PollView.vue'),
       },
     ],
   },
