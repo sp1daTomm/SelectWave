@@ -50,6 +50,7 @@
 import { inject, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
+import useCookie from '../utils';
 
 const route = useRoute();
 const router = useRouter();
@@ -67,11 +68,40 @@ const resetPassword = async () => {
   const { token } = route.query;
   console.log(token);
   isLoading.value = true;
-  try {
-    const { data } = await axios.put(baseUrl, {
+  if (token !== undefined) {
+    try {
+      const { data } = await axios.put(baseUrl, {
+        password: user.value.password,
+        confirmPassword: user.value.confirmPassword,
+        token,
+      });
+      if (data.status) {
+        swal({
+          icon: 'success',
+          title: '密碼重設成功',
+          text: '請重新登入',
+          timer: 500,
+        });
+        router.push('/login');
+      }
+    } catch (err) {
+      if (err.response) {
+        swal({
+          icon: 'error',
+          title: `${err.response.data.message}`,
+        });
+        isLoading.value = false;
+      }
+    }
+  } else {
+    const cookieToken = useCookie.getCookie('selectWaveToken');
+    const { data } = await axios.post(`${baseUrl}/api/auth/change-password`, {
       password: user.value.password,
       confirmPassword: user.value.confirmPassword,
-      token,
+    }, {
+      headers: {
+        Authorization: `Bearer ${cookieToken}`,
+      },
     });
     if (data.status) {
       swal({
@@ -81,14 +111,6 @@ const resetPassword = async () => {
         timer: 500,
       });
       router.push('/login');
-    }
-  } catch (err) {
-    if (err.response) {
-      swal({
-        icon: 'error',
-        title: `${err.response.data.message}`,
-      });
-      isLoading.value = false;
     }
   }
 };
