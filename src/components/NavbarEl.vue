@@ -2,35 +2,39 @@
   <nav class="sticky top-0 z-10 px-3 py-3 bg-white">
     <div class="flex items-center justify-between max-w-screen-lg mx-auto">
       <div class="flex items-center">
-      <RouterLink to="/">
+      <RouterLink :to="{name:'HomeDefault'}">
         <img class="w-12 md:w-16" :src="logoImageUrl" alt="選集">
       </RouterLink>
       <ul class="hidden gap-2 pl-6 md:flex">
         <li class="relative group">
-          <RouterLink to="/terms" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">關於我們</RouterLink>
-          <div class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
+          <RouterLink :to="{name: 'Terms'}" :class="[ isActive('Terms') ? 'text-primary' : '']" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">關於我們</RouterLink>
+          <div :class="[ isActive('Terms') ? 'after:absolute after:bottom-0 after:rounded after:left-1/2 after:-translate-x-1/2 after:w-4 after:h-1 after:bg-primary' : '']"
+          class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
         </li>
         <li class="relative group">
           <RouterLink to="/none" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">開始投票</RouterLink>
-          <div class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
+          <div
+          class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
         </li>
         <li class="relative group">
-          <RouterLink to="/faq" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">常見問題</RouterLink>
-          <div class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
+          <RouterLink :to="{name:'FAQ'}" :class="[ isActive('FAQ') ? 'text-primary' : '']" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">常見問題</RouterLink>
+          <div
+          :class="[ isActive('FAQ') ? 'after:absolute after:bottom-0 after:rounded after:left-1/2 after:-translate-x-1/2 after:w-4 after:h-1 after:bg-primary' : '']"
+          class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
         </li>
         <li class="relative group">
           <RouterLink to="/none" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">聯絡我們</RouterLink>
-          <div class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
+          <div
+          class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
         </li>
       </ul>
     </div>
     <ul class="flex items-center gap-2 ">
-        <li v-if="!isLogin" ><RouterLink to="/login" class="px-6 py-2 transition border-2 border-black rounded-full hover:border-gray-2 hover:bg-gray-2 hover:text-white" :data-test="isLogin">登入</RouterLink></li>
-        <li v-if="!isLogin"><RouterLink to="/signup" class="px-6 py-2 text-white transition bg-black border-2 border-black rounded-full hover:border-gray-2 hover:bg-gray-2"  >註冊</RouterLink></li>
-        <li class="relative" v-else-if="isMember" :data-test="isLogin">
+        <li v-if="!isLogin" ><RouterLink :to="{name:'Login'}" class="px-6 py-2 transition border-2 border-black rounded-full hover:border-gray-2 hover:bg-gray-2 hover:text-white" :data-test="isLogin">登入</RouterLink></li>
+        <li v-if="!isLogin"><RouterLink :to="{name:'Signup'}"  class="px-6 py-2 text-white transition bg-black border-2 border-black rounded-full hover:border-gray-2 hover:bg-gray-2" :data-test="isLogin" >註冊</RouterLink></li>
+        <li class="relative" v-else-if="isMember">
           <button @click="toggleMenu" type="button" class="flex items-center gap-2 px-6 py-2 transition border-2 border-black rounded-full hover:bg-gray-2 hover:text-white hover:border-gray-2">
             <img :src="memberStore.member.avatar" class="object-cover w-8 h-8 border-2 rounded-full" alt="avatar" />
-            <!-- <span class="hidden md:block">{{ memberStore.member.name }}</span> -->
             會員中心
         </button>
           <ul v-show="isMenuListOpen"
@@ -118,16 +122,20 @@ export default {
     },
     doLogout() {
       const api = `${import.meta.env.VITE_APP_API_URL}/api/auth/logout`;
-      this.$http.get(api)
+      const token = useCookie.getCookie('selectWaveToken');
+      this.$http.get(api, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
         .then((res) => {
           this.memberStore.setMemberStatus(false);
           this.memberStore.setMemberLoginStatus(false);
           this.$swal({
             title: `${res.data.message}`,
-          }).then(() => {
-            useCookie.deleteCookie('selectWaveToken');
-            document.location.href = '/HomeView.vue';
           });
+          useCookie.deleteCookie('selectWaveToken');
+          this.$router.push('/');
         })
         .catch(() => {
         });
@@ -135,6 +143,9 @@ export default {
     authCheck() {
       this.isLogin = this.memberStore.isLogin;
       this.isMember = this.memberStore.isMember;
+    },
+    isActive(route) {
+      return this.$route.name === route;
     },
   },
   mounted() {

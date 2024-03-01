@@ -81,7 +81,7 @@
       </ul>
     </section>
     <section class="max-w-screen-lg mx-auto px-3 pb-8 md:py-20">
-      <div class="md:border-2 md:border-solid md:border-gray-3 md:p-10 md:flex md:items-center md:p-16 md:rounded-3xl md:gap-10">
+      <div class="md:border md:border-solid md:border-gray-3 md:p-10 md:flex md:items-center md:p-16 md:rounded-3xl md:gap-10">
         <img :src="logoImageUrl" alt="選集LOGO" class="w-14 md:w-36 ">
         <div>
           <h3 class="text-xl leading-relaxed  pb-2 mt-4 md:mt-[unset] md:text-2xl md:pb-4 md:text-2xl ">輕鬆建立投票所，讓您的聲音成為決定力量。</h3>
@@ -102,7 +102,7 @@ const bgImgGraphic01 = 'url("/home/graphic01.png")';
 const bgImgGraphic02 = 'url("/home/graphic02.png")';
 const chartImage01 = '/home/chartImage01.png';
 const chartImage02 = '/home/chartImage02.png';
-const signupCover = '/images/signupCover.png';
+const signupCover = '/images/signupCover.svg';
 
 const sectionItems = [
   { imgSrc: '/home/sectionImage01.jpg', title: '簡單註冊', description: '只要 email 即可立即註冊，成為會員。' },
