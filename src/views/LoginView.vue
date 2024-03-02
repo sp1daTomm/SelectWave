@@ -14,7 +14,7 @@
             <div class="mb-4">
               <label for="email" class="block mb-2 text-base font-medium text-gray-1">Email</label>
               <VField id="email" name="信箱" type="email"
-                class="block w-full px-3 py-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-2"
+                class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-2"
                 :class="{ 'is-invalid': errors['信箱'] }" :disabled="isLoading" placeholder="請輸入信箱" rules="email|required" v-model="user.email">
               </VField>
               <ErrorMessage name="信箱" class="text-sm text-primary-dark"></ErrorMessage>
@@ -22,7 +22,7 @@
             <div class="relative mb-1">
               <label for="password" class="block mb-2 text-base font-medium text-gray-1">密碼</label>
               <VField id="password" name="密碼" :type="showPassword ? 'text' : 'password'"
-                class="block w-full px-3 py-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-2"
+                class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-2"
                 :class="{ 'is-invalid': errors['密碼']}" :disabled="isLoading" placeholder="請輸入密碼"
                 rules="required|min:8|regex:(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\da-zA-Z])" v-model="user.password">
               </VField>
@@ -33,17 +33,6 @@
             <router-link class="block mb-6 text-sm text-right text-gray-2 hover:text-primary" to="">
               忘記密碼 ?
             </router-link>
-            <div class="flex flex-col items-start mb-6">
-              <div class="flex items-center h-5">
-                <VField id="agreePrivacy" name="agreePrivacy" type="checkbox" v-model="user.agreePrivacy" class="w-4 h-4 border border-gray-300 rounded text-primary bg-gray-50 focus:ring-3 focus:ring-primary-light" :rules="{is: true}" :disabled="isLoading" />
-                <label for="agreePrivacy" class="text-sm font-medium text-gray-900 ms-2" :class="{'is-invalid': errors['agreePrivacy']}">
-                  同意
-                  <router-link class="text-gray-2" target="_blank" to="/terms">使用規範</router-link>、
-                  <router-link class="text-gray-2" target="_blank" to="/privacy">隱私權政策</router-link>
-                </label>
-              </div>
-              <p class="text-sm text-primary-dark" v-if="errors['agreePrivacy']">{{ errors['agreePrivacy'] && '請同意使用規範及隱私權政策' }}</p>
-            </div>
             <button type="submit" class="text-white bg-gray-1 hover:bg-primary focus:ring-4
               focus:outline-none focus:ring-primary-light font-medium rounded-full
               text-base w-full sm:w-auto px-5 py-2.5 text-center mb-6" :disabled="isLoading">
@@ -75,7 +64,6 @@ export default {
       user: {
         email: '',
         password: '',
-        agreePrivacy: false,
       },
       showPassword: false,
       thirdParty: [
