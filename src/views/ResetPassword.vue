@@ -10,7 +10,7 @@
             <div class="mb-4">
               <label for="password" class="block mb-2 text-base font-medium text-gray-1">密碼</label>
               <VField id="password" name="密碼" :type="showPassword ? 'text' : 'password'"
-                class="block w-full px-3 py-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-2"
+                class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-2"
                 :class="{ 'is-invalid': errors['密碼'] }" placeholder="請輸入密碼"
                 :disabled="isLoading"
                 rules="required|min:8|regex:(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\da-zA-Z])" v-model="user.password">
@@ -21,7 +21,7 @@
             <div class="mb-4">
               <label for="confirmPassword" class="block mb-2 text-base font-medium text-gray-1">再次輸入密碼</label>
               <VField id="confirmPassword" name="再次輸入密碼" :type="showPassword ? 'text' : 'password'"
-                class="block w-full px-3 py-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-2"
+                class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-2"
                 :class="{ 'is-invalid': errors['再次輸入密碼'] }" placeholder="請再次輸入密碼" rules="required|confirmed:@密碼"
                 :disabled="isLoading"
                 v-model="user.confirmPassword">
@@ -66,11 +66,10 @@ const isLoading = ref(false);
 const resetPassword = async () => {
   const baseUrl = import.meta.env.VITE_APP_API_URL;
   const { token } = route.query;
-  console.log(token);
   isLoading.value = true;
   if (token !== undefined) {
     try {
-      const { data } = await axios.put(baseUrl, {
+      const { data } = await axios.put(`${baseUrl}/api/auth/reset-password`, {
         password: user.value.password,
         confirmPassword: user.value.confirmPassword,
         token,
