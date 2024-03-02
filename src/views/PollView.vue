@@ -1,6 +1,6 @@
 <script type="module">
-import { Swiper, SwiperSlide } from "swiper/vue";
-import "swiper/css";
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/css';
 
 export default {
   components: {
@@ -75,120 +75,120 @@ export default {
       allCards: [
         {
           id: 1,
-          image: "/src/assets/vote 04.png",
-          deadline: "2024-03-10",
-          title: "喜歡狗還是貓",
+          image: '/src/assets/vote 04.png',
+          deadline: '2024-03-10',
+          title: '喜歡狗還是貓',
           description:
-            "luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.",
-          tags: ["p", "t", "e"],
-          voteQty: "3000",
+            'luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
+          tags: ['p', 't', 'e'],
+          voteQty: '3000',
         },
         {
           id: 2,
-          image: "/src/assets/vote 08.png",
-          deadline: "2024-03-10",
-          title: "更喜歡健身房還是戶外運動",
+          image: '/src/assets/vote 08.png',
+          deadline: '2024-03-10',
+          title: '更喜歡健身房還是戶外運動',
           description:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.",
-          tags: ["s", "r", "i"],
-          voteQty: "3000",
+            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
+          tags: ['s', 'r', 'i'],
+          voteQty: '3000',
         },
         {
           id: 3,
-          image: "/src/assets/vote 09.png",
-          deadline: "2024-03-10",
-          title: "喜歡使用 Instagram還是 Twitter",
+          image: '/src/assets/vote 09.png',
+          deadline: '2024-03-10',
+          title: '喜歡使用 Instagram還是 Twitter',
           description:
-            "Cupiditate voluptates animi blanditiis error! Beatae, ullam commodi officiis culpa perferendis reprehenderit assumenda.",
-          tags: ["m", "o", "n"],
-          voteQty: "3000",
+            'Cupiditate voluptates animi blanditiis error! Beatae, ullam commodi officiis culpa perferendis reprehenderit assumenda.',
+          tags: ['m', 'o', 'n'],
+          voteQty: '3000',
         },
         {
           id: 4,
-          image: "/src/assets/vote 10.png",
-          deadline: "2024-03-10",
-          title: "想要什麼超能力",
+          image: '/src/assets/vote 10.png',
+          deadline: '2024-03-10',
+          title: '想要什麼超能力',
           description:
-            "Consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.",
-          tags: ["w", "a", "r"],
-          voteQty: "3000",
+            'Consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
+          tags: ['w', 'a', 'r'],
+          voteQty: '3000',
         },
         {
           id: 5,
-          image: "/src/assets/vote 11.png",
-          deadline: "2024-03-10",
-          title: "喜歡的音樂風格",
-          description: "Adipisicing elit. Dolores ipsum iure nostrum exercitationem.",
-          tags: ["b", "r", "i"],
-          voteQty: "3000",
+          image: '/src/assets/vote 11.png',
+          deadline: '2024-03-10',
+          title: '喜歡的音樂風格',
+          description: 'Adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
+          tags: ['b', 'r', 'i'],
+          voteQty: '3000',
         },
         {
           id: 6,
-          image: "/src/assets/vote 12.png",
-          deadline: "2024-03-10",
-          title: "喜歡咖啡還是茶",
-          description: "Dolores ipsum iure nostrum exercitationem.",
-          tags: ["d", "e", "e"],
-          voteQty: "3000",
+          image: '/src/assets/vote 12.png',
+          deadline: '2024-03-10',
+          title: '喜歡咖啡還是茶',
+          description: 'Dolores ipsum iure nostrum exercitationem.',
+          tags: ['d', 'e', 'e'],
+          voteQty: '3000',
         },
         {
           id: 7,
-          image: "/src/assets/vote 13.png",
-          deadline: "2024-03-10",
-          title: "喜歡在週末做什麼",
-          description: "Dolores ipsum iure nostrum exercitationem.",
-          tags: ["d", "e", "e"],
-          voteQty: "3000",
+          image: '/src/assets/vote 13.png',
+          deadline: '2024-03-10',
+          title: '喜歡在週末做什麼',
+          description: 'Dolores ipsum iure nostrum exercitationem.',
+          tags: ['d', 'e', 'e'],
+          voteQty: '3000',
         },
         {
           id: 8,
-          image: "/src/assets/vote 14.png",
-          deadline: "2024-03-10",
-          title: "戶外活動還是宅在家",
-          description: "Dolores ipsum iure nostrum exercitationem.",
-          tags: ["d", "e", "e"],
-          voteQty: "3000",
+          image: '/src/assets/vote 14.png',
+          deadline: '2024-03-10',
+          title: '戶外活動還是宅在家',
+          description: 'Dolores ipsum iure nostrum exercitationem.',
+          tags: ['d', 'e', 'e'],
+          voteQty: '3000',
         },
         {
           id: 9,
-          image: "/src/assets/vote 15.png",
-          deadline: "2024-03-10",
-          title: "最喜歡的電影",
-          description: "Dolores ipsum iure nostrum exercitationem.",
-          tags: ["d", "e", "e"],
-          voteQty: "3000",
+          image: '/src/assets/vote 15.png',
+          deadline: '2024-03-10',
+          title: '最喜歡的電影',
+          description: 'Dolores ipsum iure nostrum exercitationem.',
+          tags: ['d', 'e', 'e'],
+          voteQty: '3000',
         },
         {
           id: 10,
-          image: "/src/assets/vote 16.png",
-          deadline: "2024-03-10",
-          title: "最喜歡的旅遊景點",
-          description: "Dolores ipsum iure nostrum exercitationem.",
-          tags: ["d", "e", "e"],
-          voteQty: "3000",
+          image: '/src/assets/vote 16.png',
+          deadline: '2024-03-10',
+          title: '最喜歡的旅遊景點',
+          description: 'Dolores ipsum iure nostrum exercitationem.',
+          tags: ['d', 'e', 'e'],
+          voteQty: '3000',
         },
         {
           id: 11,
-          image: "/src/assets/vote 17.png",
-          deadline: "2024-03-10",
-          title: "最喜歡的國家",
-          description: "Dolores ipsum iure nostrum exercitationem.",
-          tags: ["d", "e", "e"],
-          voteQty: "3000",
+          image: '/src/assets/vote 17.png',
+          deadline: '2024-03-10',
+          title: '最喜歡的國家',
+          description: 'Dolores ipsum iure nostrum exercitationem.',
+          tags: ['d', 'e', 'e'],
+          voteQty: '3000',
         },
         {
           id: 12,
-          image: "/src/assets/vote 18.png",
-          deadline: "2024-03-10",
-          title: "最喜歡的動漫角色",
-          description: "Dolores ipsum iure nostrum exercitationem.",
-          tags: ["d", "e", "e"],
-          voteQty: "3000",
+          image: '/src/assets/vote 18.png',
+          deadline: '2024-03-10',
+          title: '最喜歡的動漫角色',
+          description: 'Dolores ipsum iure nostrum exercitationem.',
+          tags: ['d', 'e', 'e'],
+          voteQty: '3000',
         },
       ],
       currentDate: new Date(),
       isDropdownOpen: false,
-      selectedOption: "最熱門",
+      selectedOption: '最熱門',
     };
   },
   methods: {
@@ -201,8 +201,8 @@ export default {
     formatDeadline(deadline) {
       const formattedDate = new Date(deadline);
       const year = formattedDate.getFullYear();
-      const month = (formattedDate.getMonth() + 1).toString().padStart(2, "0");
-      const day = formattedDate.getDate().toString().padStart(2, "0");
+      const month = (formattedDate.getMonth() + 1).toString().padStart(2, '0');
+      const day = formattedDate.getDate().toString().padStart(2, '0');
       return `${year}/${month}/${day}`;
     },
     toggleDropdown() {
@@ -471,6 +471,15 @@ export default {
           </li>
         </ul>
       </div>
+      <!-- <div class="pagination-container flex flex-row justify-center pt-3">
+        <i class="bi bi-chevron-double-left"></i>
+        <i class="bi bi-chevron-left"></i>
+        123
+        <i class="bi bi-three-dots"></i>
+        10
+        <i class="bi bi-chevron-right"></i>
+        <i class="bi bi-chevron-double-right"></i>
+      </div> -->
     </div>
   </div>
   <div class="relative">
@@ -482,29 +491,36 @@ export default {
 * {
   box-sizing: border-box;
 }
+
 /* .container {
   width: 1920px;
 } */
 .pull-content {
   width: 1296px;
 }
+
 .title {
   font-size: 32px;
   margin-bottom: 32px;
 }
+
 .card-more {
   background-color: #1e1e1e;
   opacity: 80%;
 }
+
 .card-more:hover {
   background-color: #f49e00;
 }
+
 .dot-icon {
   color: #ffffff;
 }
+
 .paginate {
   margin-bottom: 120px;
 }
+
 /* .pagina {
   padding: 10px;
 } */
@@ -513,53 +529,65 @@ export default {
   font-size: 16px;
   background-color: #f5f5f5;
 }
+
 .create-pull {
   color: #1e1e1e;
   font-size: 16px;
   background-color: #fff4e0;
 }
+
 .screen-img {
   bottom: 1520px;
   z-index: -10;
 }
+
 .title-all {
   margin-top: 80px;
 }
+
 .search-input {
   width: 306px;
   height: 40px;
   border: none;
   background-color: #f5f5f5;
 }
+
 .drop-down {
   color: #fcb738;
   border: 2px solid #fcb738;
 }
+
 #myDropDown {
   right: 100px;
 }
+
 .drop-item {
   color: #1e1e1e;
 }
+
 .container-my {
   width: 1296px;
   position: relative;
   padding-top: 80px;
   padding-bottom: 80px;
 }
+
 .prev-left {
   position: absolute;
   left: -50px;
   top: 290px;
 }
+
 .prev-right {
   position: absolute;
   right: -50px;
   top: 290px;
 }
+
 .container-all {
   width: 1296px;
 }
+
 /* .my-card {
   } */
 /* .all-card {
@@ -567,20 +595,25 @@ export default {
 .card-size {
   width: 306px;
 }
+
 .img-size {
   background-color: #fcb738;
 }
+
 /* .card-style {
   } */
 .add-box {
   background-color: #fff4e0;
 }
+
 .add-group {
   left: 130px;
   top: 130px;
 }
+
 @media screen and (max-width: 768px) {
 }
+
 @media screen and (min-width: 769px) {
 }
 </style>
