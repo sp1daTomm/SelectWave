@@ -4,17 +4,34 @@
   <div class="max-w-screen-lg mx-auto px-3">
     <div class="outline outline-1 outline-gray-3 rounded-2xl md:rounded-3xl
     py-11 px-5 mb-10">
-      <div class="flex justify-between mb-7 md:mb-8 max-w-3xl mx-auto">
-        <button type="button" class="px-6 py-3 flex items-center justify-center rounded-full bg-white
-          text-gray-1 text-base font-medium outline outline-2 outline-gray-1
-          hover:outline-primary hover:text-primary">
-          換成頭像
+      <div class="flex flex-wrap justify-between items-center mb-7 md:mb-8 max-w-3xl mx-auto">
+        <label
+          class="relative border-blue hover:bg-blue flex cursor-pointer flex-col items-center justify-center rounded-full border bg-white uppercase tracking-wide shadow-lg mb-5 md:mb-0"
+          style="width: 120px; height: 120px;">
+          <input type="file" class="hidden" ref="fileInput" @change="uploadFile" />
+          <img :src="memberPerson.avatar" class="rounded-full object-cover object-center" style="width: 120px; height: 120px;">
+          <i class="absolute z-20 bottom-0 right-1 text-3xl bi bi-file-earmark-arrow-up"></i>
+          <div
+            class="absolute z-10 inset-0 bg-gray-500 bg-opacity-50 rounded-full opacity-0 hover:opacity-100 transition-opacity">
+            <div class="flex items-center justify-center h-full">
+              <span class="text-white font-semibold uppercase tracking-wide">
+                修改頭像
+              </span>
+            </div>
+          </div>
+        </label>
+        <div class="flex">
+        <button type="button" class="px-6 py-3 flex items-center justify-center rounded-full border-2 mr-3
+          border-gray-1 bg-white text-gray-1 text-sm md:text-base font-medium hover:text-primary hover:border-primary"
+          @click="$refs.AccountResetPasswordModal.openModal()">
+          重設密碼
         </button>
         <button type="button" class="px-6 py-3 flex items-center justify-center rounded-full border-2
-          border-gray-1 bg-white text-gray-1 text-base font-medium hover:text-primary hover:border-primary"
+          border-gray-1 bg-white text-gray-1 text-sm md:text-base font-medium hover:text-primary hover:border-primary"
           @click="$refs.DelModal.openModal()">
           刪除帳號
         </button>
+      </div>
       </div>
       <form class="max-w-3xl mx-auto" @submit.prevent="updateMember">
         <div class="mb-4">
@@ -37,13 +54,9 @@
           <label for="birthday" class="block mb-2 text-base font-medium text-gray-1">生日</label>
           <input v-if="!memberPerson.birthday"
           type="date" id="birthday" class="bg-white border border-gray-3 text-sm rounded-full
-              focus:ring-primary focus:border-primary block w-full px-3 py-4"
-              v-model="birthday"
-              @input="clickDate" />
+              focus:ring-primary focus:border-primary block w-full px-3 py-4" v-model="birthday" @input="clickDate" />
           <input v-else type="date" id="birthday" class="bg-white border border-gray-3 text-sm rounded-full
-          focus:ring-primary focus:border-primary block w-full px-3 py-4"
-          v-model="birthday"
-          @input="clickDate" />
+          focus:ring-primary focus:border-primary block w-full px-3 py-4" v-model="birthday" @input="clickDate" />
         </div>
         <div class="mb-4" v-for="(item, index) in memberPerson.socialMedia" :key="index">
           <label for="facebookUrl" class="block mb-2 text-base font-medium text-gray-1">
@@ -61,10 +74,12 @@
       </form>
     </div>
   </div>
+  <AccountResetPasswordModal ref="AccountResetPasswordModal" />
   <DelModal ref="DelModal" :delContent="delContent"></DelModal>
   <ComponentFooter></ComponentFooter>
 </template>
 <script>
+import AccountResetPasswordModal from '@/components/backend/AccountResetPasswordModal.vue';
 import DelModal from '@/components/backend/DelModal.vue';
 import NavbarBackend from '@/components/backend/NavbarBackend.vue';
 import ComponentFooter from '@/components/ComponentFooter.vue';
@@ -76,12 +91,14 @@ export default {
     NavbarBackend,
     ComponentFooter,
     DelModal,
+    AccountResetPasswordModal,
   },
   data() {
     return {
       delContent: '「此帳號後，需重新建立帳號」',
       memberId: '',
       memberPerson: { // 根據ID獲取會員詳細資料
+        avatar: 'https://i.imgur.com/xcLTrkV.png',
         follwing: [],
         followers: [],
         socialMedia: [],
@@ -116,6 +133,36 @@ export default {
             });
             this.$router.push('/login');
           }
+        })
+        .catch((err) => {
+          this.$swal({
+            title: `${err.response.data.message}`,
+          });
+        });
+    },
+    uploadFile() {
+      const token = document.cookie.replace(
+        /(?:(?:^|.*;\s*)selectWaveToken\s*=\s*([^;]*).*$)|^.*$/,
+        '$1',
+      );
+      this.$http.defaults.headers.common.Authorization = token;
+      const authoToken = {
+        headers: {
+          Authorization: token,
+        },
+      };
+
+      const uploadFile = this.$refs.fileInput.files[0];
+      const formData = new FormData();
+      formData.append('file-to-upload', uploadFile);
+
+      const api = `${import.meta.env.VITE_APP_API_URL}/api/imgur/upload`;
+      this.$http.post(api, formData, authoToken)
+        .then((res) => {
+          this.memberPerson.avatar = res.data.result;
+          this.$swal({
+            title: `${res.data.message}`,
+          });
         })
         .catch((err) => {
           this.$swal({

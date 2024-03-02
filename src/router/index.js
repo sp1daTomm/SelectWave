@@ -78,6 +78,11 @@ const routes = [
         component: () => import('../views/backend/AccountView.vue'),
       },
       {
+        path: 'comment',
+        name: 'CommentView',
+        component: () => import('../views/backend/CommentView.vue'),
+      },
+      {
         path: 'resetpassword',
         name: 'ResetPassword',
         component: () => import('../views/backend/ResetPassword.vue'),
