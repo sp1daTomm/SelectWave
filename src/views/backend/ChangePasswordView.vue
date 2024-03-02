@@ -57,10 +57,12 @@
 import { inject, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { useMemberStore } from '@/stores/member';
 import useCookie from '@/utils';
 
 const router = useRouter();
 const swal = inject('$swal');
+const member = useMemberStore();
 
 const user = ref({
   password: '',
@@ -83,6 +85,9 @@ const changePassword = async () => {
   });
   if (data.status) {
     useCookie.deleteCookie('selectWaveToken');
+    member.setMemberLoginStatus(false);
+    member.setMemberStatus(false);
+    member.setMemberData({});
     swal({
       icon: 'success',
       title: '密碼變更成功',
@@ -92,5 +97,4 @@ const changePassword = async () => {
     router.push('/login');
   }
 };
-
 </script>

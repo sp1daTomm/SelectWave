@@ -47,14 +47,16 @@
   </div>
 </template>
 <script setup>
-import { inject, ref } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
+import { useMemberStore } from '@/stores/member';
 import useCookie from '@/utils';
 
 const route = useRoute();
 const router = useRouter();
 const swal = inject('$swal');
+const member = useMemberStore();
 
 const user = ref({
   password: '',
@@ -93,5 +95,12 @@ const resetPassword = async () => {
     }
   }
 };
+
+onMounted(() => {
+  useCookie.deleteCookie('selectWaveToken');
+  member.setMemberLoginStatus(false);
+  member.setMemberStatus(false);
+  member.setMemberData({});
+});
 
 </script>
