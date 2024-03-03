@@ -8,6 +8,8 @@ import zhTW from '@vee-validate/i18n/dist/locale/zh_TW.json';
 // 匯入 vee-validate 相關規則
 import * as rules from '@vee-validate/rules';
 import axios from 'axios';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { createPinia } from 'pinia';
 // 匯入 vee-validate 主套件
 import {
@@ -32,6 +34,7 @@ configure({
 // 設定預設語系 (如果上方設定很多語系，可以在此加入預設語系)
 setLocale('zh_TW');
 
+gsap.registerPlugin(ScrollTrigger);
 const app = createApp(App);
 // 註冊 vee-validate 三個全域元件
 app.component('VForm', Form);
