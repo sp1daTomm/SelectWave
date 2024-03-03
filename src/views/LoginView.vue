@@ -26,7 +26,7 @@
                 :class="{ 'is-invalid': errors['密碼']}" :disabled="isLoading" placeholder="請輸入密碼"
                 rules="required|min:8|regex:(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\da-zA-Z])" v-model="user.password">
               </VField>
-              <i class="absolute text-xl cursor-pointer  -top-1 left-10 "
+              <i class="absolute text-xl cursor-pointer -top-1 left-10 "
                 :class="showPassword ? 'bi bi-eye-fill' : 'bi bi-eye-slash'" @click="showPassword = !showPassword"></i>
               <ErrorMessage name="密碼" class="text-sm text-primary-dark"></ErrorMessage>
             </div>
@@ -66,8 +66,8 @@
   </div>
 </template>
 <script>
-import { useMemberStore } from '../stores/member';
-import useCookie from '../utils';
+import { useMemberStore } from '@/stores/member';
+import { setCookie } from '@/utils';
 
 export default {
   data() {
@@ -122,11 +122,11 @@ export default {
         .then(({ data }) => {
           if (data.status) {
             const { authToken, member } = data;
-            useCookie.setCookie('selectWaveToken', authToken, 7);
+            setCookie('selectWaveToken', authToken, 7);
             this.$router.push('/admin');
             this.$swal({
               icon: 'success',
-              title: `${data.message}`,
+              title: '登入成功',
             });
             this.isLoading = false;
             this.memberStore.setMemberStatus(true);

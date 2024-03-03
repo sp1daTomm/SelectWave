@@ -6,8 +6,8 @@
 import { inject, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
-import { useMemberStore } from './stores/member';
-import useCookie from './utils';
+import { useMemberStore } from '@/stores/member';
+import { getCookie, setCookie } from '@/utils';
 
 const swal = inject('$swal');
 
@@ -15,7 +15,7 @@ const member = useMemberStore();
 const route = useRoute();
 
 const checkToken = () => {
-  const token = useCookie.getCookie('selectWaveToken');
+  const token = getCookie('selectWaveToken');
   if (token) {
     return true;
   }
@@ -44,7 +44,7 @@ const checkUser = async (path, token) => {
     },
   });
   if (data.status) {
-    useCookie.setCookie('selectWaveToken', token, 7);
+    setCookie('selectWaveToken', token, 7);
     userModal(data);
     member.setMemberLoginStatus(true);
     member.setMemberStatus(true);
@@ -64,7 +64,7 @@ const authCheck = async () => {
   if (token) {
     await checkUser(api, token);
   } if (checkToken()) {
-    const cookieToken = useCookie.getCookie('selectWaveToken');
+    const cookieToken = getCookie('selectWaveToken');
     await checkUser(api, cookieToken);
   } else {
     member.setMemberLoginStatus(false);
