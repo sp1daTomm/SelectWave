@@ -5,7 +5,7 @@
         <img src="/images/signupCover.svg" alt="註冊頁面">
       </div>
       <div class="basis-full md:basis-1/2">
-        <VForm v-slot="{ errors }" class="max-w-sm mx-auto" @submit.prevent="signup">
+        <VForm v-slot="{ errors }" class="max-w-sm mx-auto" @submit="signup">
           <div class="mb-4">
             <h2 class="mb-2 text-2xl font-bold md:text-4xl text-gray-1">註冊</h2>
             <span class="text-gray-1">已經有帳號嗎？</span>
@@ -14,7 +14,7 @@
           <div class="mb-4">
             <label for="email" class="block mb-2 text-base font-medium text-gray-1">Email</label>
             <VField id="email" name="信箱" type="email"
-              class="block w-full px-3 py-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
+              class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
               :class="{ 'is-invalid': errors['信箱'] }" :disabled="isLoading" placeholder="請輸入信箱" rules="email|required" v-model="user.email">
             </VField>
             <ErrorMessage name="信箱" class="text-sm text-primary-dark"></ErrorMessage>
@@ -22,7 +22,7 @@
           <div class="mb-4">
             <label for="password" class="block mb-2 text-base font-medium text-gray-1">密碼</label>
             <VField id="password" name="密碼" :type="showPassword ? 'text' : 'password'"
-              class="block w-full px-3 py-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
+              class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
               :class="{ 'is-invalid': errors['密碼'] }" :disabled="isLoading" placeholder="請輸入密碼"
               rules="required|min:8|regex:(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\da-zA-Z])" v-model="user.password">
             </VField>
@@ -32,7 +32,7 @@
           <div class="mb-4">
             <label for="confirmPassword" class="block mb-2 text-base font-medium text-gray-1">再次輸入密碼</label>
             <VField id="confirmPassword" name="再次輸入密碼" :type="showPassword ? 'text' : 'password'"
-              class="block w-full px-3 py-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
+              class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
               :class="{ 'is-invalid': errors['再次輸入密碼'] }" :disabled="isLoading" placeholder="請再次輸入密碼" rules="required|confirmed:@密碼"
               v-model="user.confirmPassword">
             </VField>
@@ -93,14 +93,16 @@ export default {
             useCookie.setCookie('selectWaveToken', token, 7);
             this.$swal({
               title: `${data.message}`,
+              icon: 'success',
+              text: '歡迎加入 SelectWave',
             }).then(() => {
-              this.$router.push('/');
+              window.location.href = '/';
+              this.user.email = '';
+              this.user.password = '';
+              this.user.confirmPassword = '';
             });
-            this.user.email = '';
-            this.user.password = '';
-            this.user.confirmPassword = '';
+            this.isLoading = false;
           }
-          this.isLoading = false;
         })
         .catch((err) => {
           if (err.response) {
