@@ -6,99 +6,97 @@
 </style>
 <template>
   <main>
-    <section class="relative max-w-screen-lg mx-auto px-6 py-5">
-      <ul class="hidden">
-        <li>
-          <button type="button">
-            <div :style="{ backgroundImage:bgPersonImg}" class="w-8 h-8 rounded-full bg-cover"></div>
-          </button>
-        </li>
-      </ul>
-      <swiper
-        :spaceBetween="30"
-        :centeredSlides="true"
-        :autoplay="{
-          delay: 4000,
-          disableOnInteraction: false,
-        }"
-        :pagination="{
-          clickable: true,
-        }"
-        :navigation="navigation"
-        :modules="modules"
-      >
-      <swiper-slide v-for="card in myCards" :key="card.id">
-            <div class="relative flex flex-col overflow-hidden rounded-3xl">
-              <div>
-                <div :data-test="card.image" v-bind:style="{ backgroundImage:card.image }"
-                class=" bg-cover rounded-3xl pb-[70%] relative">
-                  <p class="text-white p-4 absolute bottom-0 drop-shadow-md">{{ card.title }}</p>
+    <div class="flex flex-col md:flex-row max-w-screen-lg mx-auto">
+      <section class="relative max-w-screen-lg mx-auto px-8 py-5 md:w-8/12 w-full">
+        <ul class="hidden">
+          <li>
+            <button type="button">
+              <div :style="{ backgroundImage:bgPersonImg}" class="w-8 h-8 rounded-full bg-cover"></div>
+            </button>
+          </li>
+        </ul>
+        <swiper
+          :spaceBetween="30"
+          :centeredSlides="true"
+          :autoplay="{
+            delay: 4000,
+            disableOnInteraction: false,
+          }"
+          :pagination="{
+            clickable: true,
+          }"
+          :navigation="navigation"
+          :modules="modules"
+        >
+        <swiper-slide v-for="card in myCards" :key="card.id">
+              <div class="relative flex flex-col overflow-hidden rounded-3xl">
+                <div>
+                  <div :data-test="card.image" v-bind:style="{ backgroundImage:card.image }"
+                  class=" bg-cover rounded-3xl pb-[70%] relative">
+                    <p class="text-white p-4 absolute bottom-0 drop-shadow-md">{{ card.title }}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </swiper-slide>
-          <div class="h-10"></div>
-      </swiper>
-      <button type="button" id="swiper-btn-prev"
-                class="absolute hidden -translate-x-full -translate-y-1/2 md:block -left-6 top-1/2">
-          <i
-             class="text-3xl transition duration-150 text-gray-2 bi bi-arrow-left-circle hover:text-primary" />
-        </button>
-        <button type="button" id="swiper-btn-next"
-                class="absolute hidden translate-x-full -translate-y-1/2 md:block -right-6 top-1/2">
-          <i
-             class="text-3xl transition duration-150 text-gray-2 bi bi-arrow-right-circle hover:text-primary" />
-        </button>
-        <div class="absolute mx-3 left-0 right-0 bottom-3 top-10 bg-primary-light rounded-2xl"></div>
-    </section>
+            </swiper-slide>
+            <div class="h-10"></div>
+        </swiper>
+          <div class="absolute mx-3 left-0 right-0 bottom-3 top-10 bg-primary-light rounded-2xl
+          md:bottom-[unset] md:top-10 md:left-0 md:right-0 md:pb-[68%]"></div>
+      </section>
 
-    <section class="py-8 md:py-20 max-w-screen-lg mx-auto px-3">
-      <h1 class="text-2xl md:text-3xl leading-normal font-semibold">輕鬆建立投票所，讓您的聲音成為力量。</h1>
-      <p class="md:text-xl text-gray-2 py-3">目前電視節目玲琅滿目，你最喜歡哪一台呢？</p>
-      <ul class="flex gap-3 flex-wrap">
-        <li><span class="text-primary pr-1 font-bold">#</span>公開投票</li>
-        <li><span class="text-primary pr-1 font-bold">#</span>標籤01</li>
-        <li><span class="text-primary pr-1 font-bold">#</span>標籤02</li>
-        <li><span class="text-primary pr-1 font-bold">#</span>標籤03</li>
-      </ul>
-      <div class="flex items-center py-6">
-        <div :style="{ backgroundImage:bgPersonImg}" class="w-8 h-8 rounded-full bg-cover"></div>
-        <p class="pl-3 pr-4 font-medium">王小明</p>
-        <div class="px-3 py-1 border-gray-2 border rounded-full border-2 text-gray-2">發起人</div>
-      </div>
-      <ul class="flex flex-col gap-3">
-        <li class="flex items-center border rounded-3xl border-2 border-gray-3 p-3 relative">
-          <input type="radio" name="flexRadioDefault" value="a" id="flexCheckDefault01" class="focus:ring-primary text-primary" v-model="selectedRadio">
-          <label for="flexCheckDefault01" class="flex items-center justify-between w-full gap-3" :class="selectedRadio === 'a' ? 'red' : 'nonee'">
-            <p class="pl-3 flex-grow">a.晚間新聞</p><p class="text-gray-2 flex-shrink-0" :class="{'text-amber-600': selectedRadio === 'a'}">38票</p>
-          </label>
-          <div class="absolute bg-gray-4 inset-y-0 right-0 left-[62%] z-[-1] rounded-r-3xl"
-          :class="radioClass">
-          </div>
-        </li>
-        <li class="flex items-center border rounded-3xl border-2 border-gray-3 p-3 relative">
-          <input type="radio" name="flexRadioDefault" value="b" id="flexCheckDefault02" class="focus:ring-primary text-primary" v-model="selectedRadio">
-          <label for="flexCheckDefault02" class="flex items-center justify-between w-full gap-3"  :class="selectedRadio === 'b' ? 'red' : 'nonee'">
-            <p class="pl-3 flex-grow">b.晚間新聞</p><p class="text-gray-2 flex-shrink-0" :class="{'text-amber-600': selectedRadio === 'a'}">38票</p>
-          </label>
-          <div class="absolute bg-gray-4 inset-y-0 right-0 left-[62%] z-[-1] rounded-r-3xl">
-          </div>
-        </li>
-      </ul>
-      {{ selectedRadio }}
-    </section>
-    <section class="max-w-screen-lg mx-auto px-3 flex gap-4">
-      <button class="w-10 h-10 bg-gray-4 rounded-full" type="button"><i class="bi bi-link"></i></button>
-      <button type="button" class="px-6 py-2 border-2 rounded-full bg-black text-white hover:border-gray-2 hover:bg-gray-2 transition grow">送出投票</button>
-    </section>
-    <section class="max-w-screen-lg mx-auto px-3  gap-4 py-6">
-      <div class="flex">
+      <section class="py-8 md:py-4 max-w-screen-lg px-3">
+        <h1 class="text-2xl md:text-3xl leading-normal md:leading-relaxed font-semibold">輕鬆建立投票所，讓您的聲音成為力量。</h1>
+        <p class="md:text-xl  text-gray-2 py-3 md:py-4">目前電視節目玲琅滿目，你最喜歡哪一台呢？</p>
+        <ul class="flex gap-3 flex-wrap">
+          <li><span class="text-primary pr-1 font-bold">#</span>公開投票</li>
+          <li><span class="text-primary pr-1 font-bold">#</span>標籤01</li>
+          <li><span class="text-primary pr-1 font-bold">#</span>標籤02</li>
+          <li><span class="text-primary pr-1 font-bold">#</span>標籤03</li>
+        </ul>
+        <div class="flex items-center py-6">
+          <div :style="{ backgroundImage:bgPersonImg}" class="w-8 h-8 rounded-full bg-cover"></div>
+          <p class="pl-3 pr-4 font-medium">王小明</p>
+          <div class="px-3 py-1 border-gray-2 border rounded-full border-2 text-gray-2">發起人</div>
+        </div>
+        <ul class="flex flex-col gap-3">
+          <li class="flex items-center border rounded-3xl border-2 border-gray-3 p-3 relative" :class="{ 'border-primary': isSelectedRadio('a') }">
+            <input type="radio" name="flexRadioDefault" value="a" id="flexCheckDefault01" class="focus:ring-primary text-primary" v-model="selectedRadio">
+            <label for="flexCheckDefault01" class="flex items-center justify-between w-full gap-3">
+              <p class="pl-3 flex-grow">a.晚間新聞</p><p class="text-gray-2 flex-shrink-0" >38票</p>
+            </label>
+            <div class="absolute bg-gray-4 inset-y-0 right-0 left-[62%] z-[-1] rounded-r-3xl"
+            :class="{ 'bg-primary-light': isSelectedRadio('a') }"
+            >
+            </div>
+          </li>
+          <li class="flex items-center border rounded-3xl border-2 border-gray-3 p-3 relative" :class="{ 'border-primary': isSelectedRadio('b') }">
+            <input type="radio" name="flexRadioDefault" value="b" id="flexCheckDefault02" class="focus:ring-primary text-primary" v-model="selectedRadio">
+            <label for="flexCheckDefault02" class="flex items-center justify-between w-full gap-3">
+              <p class="pl-3 flex-grow">b.晚間新聞</p><p class="text-gray-2 flex-shrink-0" >38票</p>
+            </label>
+            <div class="absolute bg-gray-4 inset-y-0 right-0 left-[62%] z-[-1] rounded-r-3xl"
+            :class="{ 'bg-primary-light': isSelectedRadio('b') }"
+            >
+            </div>
+          </li>
+        </ul>
+        <div class="px-3 flex gap-4 py-3">
+          <button class="w-10 h-10 bg-gray-4 rounded-full" type="button"><i class="bi bi-link"></i></button>
+          <button type="button" class="px-6 py-2 border-2 rounded-full bg-black text-white hover:border-gray-2 hover:bg-gray-2 transition grow">送出投票</button>
+        </div>
+
+      </section>
+    </div>
+    <section class="relative">
+      <div :style="{ backgroundImage:bgImg}" class="bg-no-repeat bg-right absolute inset-0 bg-40% hidden md:block"></div>
+      <div class=" max-w-screen-lg mx-auto px-3  gap-4 py-6 ">
+      <div class="flex md:w-8/12">
         <div class="flex justify-between w-full items-center">
           <h2 class="text-gray-1 pt-6 pb-4 text-xl md:text-3xl text-center leading-normal font-semibold md:pb-8">討論區</h2>
           <p class="text-gray-1">2則留言</p>
         </div>
       </div>
-      <ul class="flex flex-col gap-3">
+      <ul class="flex flex-col gap-3 md:w-8/12">
         <li class="border rounded-3xl border-2 py-3 px-4 flex flex-col md:py-5" data-message="send">
           <div class="flex items-center md:pb-6 pb-2">
             <div :style="{ backgroundImage:bgPersonImg}" class="w-8 h-8 rounded-full bg-cover"></div>
@@ -122,12 +120,12 @@
             <div class="flex" data-message="list">
               <div :style="{ backgroundImage:bgPersonImg}" class="w-8 h-8 shrink rounded-full bg-cover"></div>
               <div class="grow">
-                <div class="flex items-center md:pb-6">
+                <div class="flex items-center">
                   <p class="pl-3 pr-4 font-medium">王小明</p>
                   <div class="px-3 py-1 border-gray-2 border rounded-full border-2 text-gray-2 bg-white">發起人</div>
                   <p class="ml-auto text-gray-2">2023/12/31</p>
                 </div>
-                <p class="py-2 pl-3 leading-normal">我也是！</p>
+                <p class="py-2 pl-3 leading-normal md:pb-3">我也是！</p>
               </div>
             </div>
             <div class="flex flex-col">
@@ -138,7 +136,7 @@
           </div>
         </li>
       </ul>
-
+    </div>
     </section>
 
   </main>
@@ -159,14 +157,11 @@ export default {
   setup() {
     const show = ref(true);
     const bgPersonImg = 'url("/images/loginCover.png")';
+    const bgImg = 'url("/images/bg-01.svg")';
     const selectedRadio = ref(null);
     const replyComment = ref('');
     const messageComment = ref('');
     const widthIsShow = true;
-    const navigation = ref({
-      nextEl: '#swiper-btn-next',
-      prevEl: '#swiper-btn-prev',
-    });
     const myCards = [
       {
         id: 1,
@@ -249,6 +244,9 @@ export default {
         }
       }
     }
+    function isSelectedRadio(value) {
+      return selectedRadio.value === value;
+    }
 
     return {
       show,
@@ -256,12 +254,13 @@ export default {
       selectedRadio,
       replyComment,
       messageComment,
-      sentComment,
       modules: [Autoplay, Pagination, Navigation],
       widthIsShow,
-      navigation,
       myCards,
+      bgImg,
+      sentComment,
       formatDeadline,
+      isSelectedRadio,
     };
   },
 };
