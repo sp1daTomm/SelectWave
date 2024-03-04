@@ -10,18 +10,29 @@ const props = defineProps({
 
 const message = useMessageStore();
 
-const baseUrl = ref(`${import.meta.env.VITE_APP_URL}/#/vote/${props.id}`);
+const Url = ref(`${window.location.href.split('#')[0]}#/vote/${props.id}`);
 
 const copyUrl = () => {
-  navigator.clipboard.writeText(baseUrl.value);
-  message.setMessage({
-    message: '複製成功',
-  });
-  message.showToast(true);
-  setTimeout(() => {
-    message.closeModel();
-    props.closeModal();
-  }, 2000);
+  if (navigator.clipboard && window.isSecureContext) {
+    // navigator.clipboard API 需要在安全上下文中（如HTTPS）
+    navigator.clipboard.writeText(Url.value)
+      .then(() => {
+        message.setMessage({
+          message: '複製成功',
+        });
+        message.showToast(true);
+        setTimeout(() => {
+          message.closeModel();
+          props.closeModal();
+        }, 2000);
+      })
+      .catch(() => {
+        message.setMessage({
+          message: '複製失敗',
+        });
+        message.showToast(true, 'error');
+      });
+  }
 };
 const clickOutsideModal = (event) => {
   if (event.target.dataset.modal === 'backdrop') {
@@ -52,7 +63,7 @@ const clickOutsideModal = (event) => {
           </button>
         </div>
         <div class="p-4 md:p-5">
-          <p class="pb-4 text-center">{{ baseUrl }}</p>
+          <p class="pb-4 text-center">{{ Url }}</p>
           <button type="submit"
             class="w-full text-white bg-primary hover:bg-primary-dark focus:ring-4
             focus:outline-none focus:ring-primary-light font-medium rounded-3xl text-base
