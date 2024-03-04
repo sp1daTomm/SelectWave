@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import Swal from 'sweetalert2';
 
-export const useMessageStore = defineStore('memberStatus', {
+export const useMessageStore = defineStore('messageStore', {
   state: () => ({
     message: '',
     title: '',
@@ -11,26 +11,34 @@ export const useMessageStore = defineStore('memberStatus', {
       this.message = data.message;
       this.title = data.title;
     },
-    setShowToast(status) {
+    showToast(status, icon) {
       if (status) {
         Swal.fire({
-          icon: status,
+          icon: icon || 'success',
           title: this.title,
           text: this.message,
           toast: true,
           showConfirmButton: false,
-          timer: 2000,
+          timer: 1500,
           timerProgressBar: true,
           position: 'top-end',
         });
       }
     },
-    setShowModal(status) {
+    showModal(icon) {
       Swal.fire({
-        icon: status,
+        icon: icon || 'success',
         title: this.title,
         text: this.message,
       });
+    },
+    resetMessage() {
+      this.message = '';
+      this.title = '';
+    },
+    closeModel() {
+      this.resetMessage();
+      Swal.close();
     },
   },
 });

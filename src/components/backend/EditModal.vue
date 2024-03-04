@@ -1,4 +1,3 @@
-<!-- eslint-disable no-unused-vars -->
 <script setup>
 import { defineProps, onMounted, ref } from 'vue';
 import axios from 'axios';
@@ -6,41 +5,18 @@ import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import {
   getCookie,
-  isFileSizeValid,
-  isFileTypesValid,
   turnDate,
 } from '@/utils';
-
-const maxFileSize = 1024 * 1024;
-const fileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
 
 const pollValidationSchema = yup.object({
   title: yup.string().required('請輸入標題'),
   description: yup.string().required('請輸入投票說明'),
-  imageUrl: yup
-    .mixed()
-    .test('fileSize', (value) => {
-      if (!value) return true;
-      return isFileSizeValid([value], maxFileSize);
-    })
-    .test('fileType', (value) => {
-      if (!value) return true;
-      return isFileTypesValid([value], fileTypes);
-    }),
+  imageUrl: yup.string().url('請輸入正確的圖片網址'),
   tags: yup.array().of(yup.string()).max(3, '最多只能選擇三個標籤'),
   options: yup.array().of(
     yup.object().shape({
       title: yup.string().required('請輸入選項名稱'),
-      imageUrl: yup
-        .mixed()
-        .test('fileSize', (value) => {
-          if (!value) return true;
-          return isFileSizeValid([value], maxFileSize);
-        })
-        .test('fileType', (value) => {
-          if (!value) return true;
-          return isFileTypesValid([value], fileTypes);
-        }),
+      imageUrl: yup.string().url('請輸入正確的圖片網址'),
     }),
   ),
 });
@@ -56,17 +32,12 @@ const props = defineProps({
 });
 
 const editPollDataModal = ref({
-  title: '',
-  description: '',
-  imageUrl: '',
-  startDate: '',
-  endDate: '',
-  isPrivate: false,
-  options: [],
-  tags: [],
+  ...props.pollData,
 });
 
-const { errors, values } = useForm({
+const {
+  errors, values, meta,
+} = useForm({
   initialValues: {
     ...editPollDataModal.value,
   },
@@ -80,8 +51,6 @@ const labelTag = ref(null);
 
 const selectedTags = ref([]);
 const isPollStart = ref(false);
-const startDate = ref('');
-const endDate = ref('');
 
 const isLoading = ref(false);
 const apiUrl = import.meta.env.VITE_APP_API_URL;
@@ -104,23 +73,24 @@ async function uploadImage(file) {
 async function uploadCoverFile() {
   isLoading.value = true;
   const uploadFile = fileInput.value.files[0];
-  const imageUrl = await uploadImage(uploadFile);
-  editPollDataModal.value.imageUrl = imageUrl;
+  editPollDataModal.value.imageUrl = await uploadImage(uploadFile);
   fileInput.value = '';
   isLoading.value = false;
 }
 async function uploadOptionFile(index) {
   isLoading.value = true;
   const uploadFile = fileInputOption.value.files[0];
-  const imageUrl = await uploadImage(uploadFile);
-  editPollDataModal.value.options[index].imageUrl = imageUrl;
+  editPollDataModal.value.options[index].imageUrl = await uploadImage(uploadFile);
   fileInputOption.value = '';
   isLoading.value = false;
 }
 function createOption() {
+  if (!editPollDataModal.value.options) {
+    editPollDataModal.value.options = [];
+  }
   editPollDataModal.value.options.push({
     title: '',
-    imageUrl: '',
+    imageUrl: 'https://imgur.com/TECsq2J.png',
   });
 }
 function changeTag() {
@@ -131,17 +101,9 @@ function changeTag() {
       !selectedTags.value.includes(selectedValue)
       && selectedTags.value.length < 3
     ) {
-      // this.selectedTags.push(selectedValue);
       selectedTags.value.push(selectedValue);
       labelInput.value = '';
     }
-  }
-}
-function handleTimeDate(date, type) {
-  if (type === 'start') {
-    editPollDataModal.value.startDate = turnDate(date);
-  } else {
-    editPollDataModal.value.endDate = turnDate(date);
   }
 }
 
@@ -152,6 +114,8 @@ onMounted(async () => {
 const onSubmit = async () => {
   isLoading.value = true;
   try {
+    values.startDate = turnDate(editPollDataModal.value.startDate);
+    values.endDate = turnDate(editPollDataModal.value.endDate);
     await props.submitFunction(values);
     isLoading.value = false;
   } catch (error) {
@@ -168,7 +132,6 @@ const clickOutsideModal = (event) => {
 </script>
 
 <template>
-  <Transition name="fade" :duration="550">
   <div
     v-if="props.openModal" data-modal="backdrop"
     class="fixed bg-gray-1/35 backdrop-blur top-0 left-0 right-0 z-50 w-full p-4
@@ -249,7 +212,7 @@ const clickOutsideModal = (event) => {
                     />
                     <div
                       v-if="editPollDataModal.imageUrl"
-                      class="absolute inset-0 flex flex-col justify-end transition duration-150 opacity-0 cursor-pointer bg-gradient-to-b from-transparent to-gray-1 text-gray-4 hover:opacity-90"
+                      class="absolute inset-0 flex flex-col justify-end transition duration-150 opacity-0 cursor-pointer bg-gradient-to-b from-transparent to-gray-1 text-gray-4 hover:opacity-90 rounded-3xl"
                     >
                       <p class="py-2 mt-auto text-center">變更</p>
                     </div>
@@ -264,7 +227,7 @@ const clickOutsideModal = (event) => {
                     />
                   </div>
                 </label>
-                <p v-if="errors.imageUrl" class="text-red-400">
+                <p v-if="errors.imageUrl" class="text-sm text-primary-dark">
                   僅限上傳 jpg、jpeg 與 png 格式。 圖片大小不可超過 2MB
                 </p>
               </div>
@@ -273,15 +236,16 @@ const clickOutsideModal = (event) => {
                   <label for="title" class="text-base font-medium text-gray-1"
                     >標題<span class="text-primary">*</span></label
                   >
-                  <VField
+                  <input
                     type="text"
                     id="title"
                     name="title"
                     class="w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
+                    :class="{ 'is-invalid': errors.title }"
                     :disabled="isPollStart"
-                    v-model="editPollDataModal.title"
+                    v-model="values.title"
                   />
-                  <p v-if="errors.title" class="text-red-400">
+                  <p v-if="errors.title" class="text-sm text-primary-dark">
                     {{ errors.title }}
                   </p>
                 </div>
@@ -300,32 +264,29 @@ const clickOutsideModal = (event) => {
                     class="p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary focus:border-primary"
                     :disabled="isPollStart"
                     placeholder="請在此寫下投票說明.."
-                    v-model="editPollDataModal.description"
+                    v-model="values.description"
                   >
                   </VField>
-                  <p v-if="errors.description" class="text-red-400">
+                  <p v-if="errors.description" class="text-sm text-primary-dark">
                     {{ errors.description }}
                   </p>
                 </div>
               </div>
             </div>
-            <div>
-              <p class="mb-2 text-base font-medium text-gray-1">
-                選項內容<span class="text-primary">*</span>
-              </p>
+            <p class="mb-2 text-base font-medium text-gray-1">
+              選項內容<span class="text-primary">*</span>
+            </p>
+            <div class="flex flex-col gap-4 p-4">
               <ol
-                class="px-4 space-y-2 text-sm font-medium list-decimal rounded-lg text-gray-1 marker:text-base"
+                class="space-y-2 text-sm font-medium list-decimal rounded-lg text-gray-1 marker:text-base"
               >
-                <template
-                  v-for="(item, index) in editPollDataModal.options"
-                  :key="item.id"
-                >
-                  <li
+                  <li v-for="(item, index) in editPollDataModal.options"
+                  :key="index"
                     class="w-full p-2 border-b border-gray-4 hover:bg-primary-light"
                   >
                     <div class="flex flex-wrap items-center gap-4">
                       <label
-                        :for="'optionCover' + item.id"
+                        :for="'optionCover' + index"
                         class="relative w-full overflow-hidden rounded-2xl md:w-auto"
                       >
                         <img
@@ -334,8 +295,8 @@ const clickOutsideModal = (event) => {
                         />
                         <input
                           class="hidden"
-                          :id="'optionCover' + item.id"
-                          :name="'optionCover' + item.id"
+                          :id="'optionCover' + index"
+                          :name="'optionCover' + index"
                           type="file"
                           ref="fileInputOption"
                           accept="image/png, image/jpeg, image/jpg"
@@ -358,7 +319,7 @@ const clickOutsideModal = (event) => {
                             class="text-base font-medium text-gray-1"
                             >選項名稱<span class="text-primary">*</span></label
                           >
-                          <VField
+                          <input
                             :id="'optionTitle' + index"
                             type="text"
                             :name="'optionTitle' + index"
@@ -387,7 +348,6 @@ const clickOutsideModal = (event) => {
                       </div>
                     </div>
                   </li>
-                </template>
               </ol>
               <p v-if="errors.options" class="text-red-400">
                 {{ errors.options }}
@@ -411,9 +371,9 @@ const clickOutsideModal = (event) => {
               <input
                 id="label"
                 list="label-tag"
-                ref="labelInput"
+                v-model="labelInput"
                 name="label"
-                class="block w-full px-3 py-4 mb-6 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
+                class="block w-full p-4 mb-6 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
                 :disabled="isPollStart"
                 @change="changeTag"
               />
@@ -432,7 +392,7 @@ const clickOutsideModal = (event) => {
                   :key="index"
                 >
                   <span class="mr-1 text-primary">#</span>
-                  <span class="mr-1">{{ item.name }}</span>
+                  <span class="mr-1">{{ item.name || item }}</span>
                   <button
                     type="button"
                     class="px-1 cursor-pointer hover:text-primary-dark"
@@ -455,15 +415,14 @@ const clickOutsideModal = (event) => {
                   >
                     開始日期
                   </label>
-                  <VField
+                  <input
                     type="date"
                     id="vote-start"
                     name="vote-start"
                     :min="new Date().toISOString().split('T')[0]"
-                    class="flex-1 block w-full min-w-0 px-3 py-4 text-sm text-gray-900 border border-gray-300 rounded-none rounded-e-full bg-gray-50 focus:ring-primary focus:border-primary"
-                    :disabled="isPollStart"
-                    v-model="startDate"
-                    @input="handleTimeDate(startDate, 'start')"
+                    class="flex-1 block w-full min-w-0 px-3 py-4 text-sm text-gray-900 border border-gray-300 rounded-none rounded-e-full bg-gray-50 focus:ring-primary focus:border-primary disabled:bg-gray-2 disabled:text-gray-1 disabled:opacity-50"
+                    :disabled="isPollStart || values.status === 'active'"
+                    v-model="values.startDate"
                   />
                 </div>
                 <div class="flex flex-auto w-full">
@@ -473,59 +432,83 @@ const clickOutsideModal = (event) => {
                   >
                     結束日期
                   </label>
-                  <VField
+                  <input
                     type="date"
                     id="vote-end"
                     name="vote-end"
                     :min="new Date().toISOString().split('T')[0]"
                     class="flex-1 block w-full min-w-0 px-3 py-4 text-sm text-gray-900 border border-gray-300 rounded-none rounded-e-full bg-gray-50 focus:ring-primary focus:border-primary"
                     :disabled="isPollStart"
-                    v-model="endDate"
-                    @input="handleTimeDate(endDate, 'end')"
+                    v-model="values.endDate"
                   />
                 </div>
               </div>
             </div>
-            <div>
-              <p class="mb-2 text-base font-medium text-gray-1">投票狀態</p>
-              <ul class="flex text-sm font-medium text-gray-1">
-                <li class="border-gray-200">
-                  <div class="flex items-center ps-3">
-                    <input
-                      id="open"
-                      type="radio"
-                      name="list-radio"
-                      class="w-4 h-4 bg-gray-100 border-gray-300 text-primary focus:ring-primary-light focus:ring-2"
-                      :disabled="isPollStart"
-                      value="false"
-                      v-model="editPollDataModal.isPrivate"
-                    />
-                    <label
-                      for="open"
-                      class="w-full py-3 text-sm font-medium ms-2"
-                      >公開</label
-                    >
-                  </div>
-                </li>
-                <li class="border-gray-200">
-                  <div class="flex items-center ps-3">
-                    <input
-                      id="hide"
-                      type="radio"
-                      name="list-radio"
-                      class="w-4 h-4 bg-gray-100 border-gray-300 text-primary focus:ring-primary-light focus:ring-2"
-                      :disabled="isPollStart"
-                      value="true"
-                      v-model="editPollDataModal.isPrivate"
-                    />
-                    <label
-                      for="hide"
-                      class="w-full py-3 text-sm font-medium ms-2"
-                      >隱藏</label
-                    >
-                  </div>
-                </li>
-              </ul>
+            <div class="flex justify-between">
+              <div>
+                <p class="mb-2 text-base font-medium text-center text-gray-1">顯示狀態</p>
+                <ul class="flex text-sm font-medium text-gray-1">
+                  <li class="border-gray-200">
+                    <div class="flex items-center ps-3">
+                      <input
+                        id="open"
+                        type="radio"
+                        name="list-radio"
+                        class="w-4 h-4 bg-gray-100 border-gray-300 text-primary focus:ring-primary-light focus:ring-2"
+                        :disabled="isPollStart"
+                        value="false"
+                        v-model="values.isPrivate"
+                      />
+                      <label
+                        for="open"
+                        class="w-full py-3 text-sm font-medium ms-2"
+                        >公開</label
+                      >
+                    </div>
+                  </li>
+                  <li class="border-gray-200">
+                    <div class="flex items-center ps-3">
+                      <input
+                        id="hide"
+                        type="radio"
+                        name="list-radio"
+                        class="w-4 h-4 bg-gray-100 border-gray-300 text-primary focus:ring-primary-light focus:ring-2"
+                        :disabled="isPollStart"
+                        value="true"
+                        v-model="values.isPrivate"
+                      />
+                      <label
+                        for="hide"
+                        class="w-full py-3 text-sm font-medium ms-2"
+                        >隱藏</label
+                      >
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <p class="mb-2 text-base font-medium text-center text-gray-1">投票狀態</p>
+                <ul class="flex text-sm font-medium text-gray-1">
+                  <li class="border-gray-200">
+                    <div class="flex items-center ps-3">
+                      <input
+                        id="status"
+                        type="checkbox"
+                        name="list-radio"
+                        class="w-4 h-4 bg-gray-100 border-gray-300 text-primary focus:ring-primary-light focus:ring-2"
+                        :disabled="isPollStart"
+                        value="'active'"
+                        v-model="values.status"
+                      />
+                      <label
+                        for="status"
+                        class="w-full py-3 text-sm font-medium ms-2"
+                        >立即開始</label
+                      >
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
           <div
@@ -534,10 +517,10 @@ const clickOutsideModal = (event) => {
             <div class="flex items-center justify-end w-full">
               <button
                 type="submit"
-                class="w-full px-6 py-3 text-base font-medium text-center text-white rounded-full md:w-auto bg-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary-light"
-                @click.prevent="$emit('update-poll', editPollDataModal)"
+                class="w-full px-6 py-3 text-base font-medium text-center text-white rounded-full md:w-auto bg-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary-light disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-3 disabled:text-gray-2"
+                :disabled="isLoading || !meta.valid"
               >
-                儲存
+                {{ functionType === '新增' ? '創造投票' : '儲存編輯'}}
               </button>
               <button
                 type="button"
@@ -552,37 +535,4 @@ const clickOutsideModal = (event) => {
       </div>
     </div>
   </div>
-  </Transition>
 </template>
-
-<style scoped>
-
-.fade-enter-active, .fade-leave-active {
-  transition: all 0.25s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
-
-.fade-leave-active {
-  transition-delay: 0.25s;
-}
-
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
-
-.fade-enter-active #modal, .fade-leave-active #modal {
-  transition: all 0.3s ease-in-out;
-}
-
-.fade-enter-active #modal {
-  transition-delay: 0.25s;
-}
-
-.fade-enter-from #modal, .fade-leave-to #modal {
-  transform: translateY(-100%);
-  opacity: 0.001;
-}
-
-</style>
