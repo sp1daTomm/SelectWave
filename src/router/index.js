@@ -51,6 +51,11 @@ const routes = [
         name: 'Poll',
         component: () => import('../views/PollView.vue'),
       },
+      {
+        path: '/voting',
+        name: 'Voting',
+        component: () => import('../views/VoteContent.vue'),
+      },
     ],
   },
   {
