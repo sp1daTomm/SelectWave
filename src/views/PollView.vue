@@ -227,11 +227,11 @@ export default {
           <div class="flex flex-row justify-between">
             <div class="title font-bold text-2xl">我的投票</div>
             <div class="button-group flex flex-row flex-nowrap">
-              <button class="h-10 w-30 rounded-md pull-manage px-4 py-2">
+              <button class="h-10 w-30 rounded-md pull-manage px-4 py-2" v-show="myCards.length > 0">
                 投票管理
                 <i class="bi bi-arrow-right"></i>
               </button>
-              <button class="h-10 w-30 rounded-md ml-4 create-pull px-4 py-2">
+              <button class="h-10 w-30 rounded-md ml-4 create-pull px-4 py-2" v-show="myCards.length > 0">
                 建立投票
                 <i class="bi bi-plus-lg"></i>
               </button>
@@ -239,10 +239,12 @@ export default {
           </div>
           <div v-if="myCards.length === 0" class="no-data-message flex justify-center">
             <div class="flex flex-col items-center">
-              <i></i>
-              <p class="text-gray-500 text-base">這裡還沒有任何投票！</p>
-              <p class="text-gray-500 text-base">快點來開始一個新的投票活動吧！</p>
-              <button class="text-white text-base py-3 px-6 rounded-full">
+              <div class="flex justify-center items-center bg-gray-100 rounded-full h-16 w-16 p-4 mb-4">
+  <img src="/src/assets/how_to_vote.svg" alt="Logo" class="h-16 w-16">
+</div>
+              <p class="text-gray-500 text-base leading-6">這裡還沒有任何投票！</p>
+              <p class="text-gray-500 text-base line-height-24">快點來開始一個新的投票活動吧！</p>
+              <button class="create-button text-white text-base py-3 px-6 rounded-full mt-6">
                 建立投票
               </button>
             </div>
@@ -516,7 +518,9 @@ export default {
 .dot-icon {
   color: #ffffff;
 }
-
+.create-button {
+  background-color:#f49e00;
+}
 .paginate {
   margin-bottom: 120px;
 }
