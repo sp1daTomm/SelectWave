@@ -22,11 +22,6 @@
           :class="[ isActive('FAQ') ? 'after:absolute after:bottom-0 after:rounded after:left-1/2 after:-translate-x-1/2 after:w-4 after:h-1 after:bg-primary' : '']"
           class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
         </li>
-        <li class="relative group">
-          <RouterLink to="/none" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">聯絡我們</RouterLink>
-          <div
-          class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
-        </li>
       </ul>
     </div>
     <ul class="flex items-center gap-2 ">
@@ -41,13 +36,13 @@
           :class="{ 'animate-fadeIn': isMenuListOpen, }"
           class="absolute left-0 right-0 p-3 mt-2 text-center bg-white drop-shadow-2xlg rounded-2xl">
             <li>
-              <button class="w-full py-2 transition hover:text-primary" type="button">帳戶設定</button>
+              <RouterLink :to="{name:'Account'}" :class="[ isActive('Account') ? 'text-primary' : '']" class="w-full py-2 transition hover:text-primary" type="button">帳戶設定</RouterLink>
             </li>
             <li>
-              <button class="w-full py-2 transition hover:text-primary" type="button">投票項目</button>
+              <RouterLink :to="{name:'Vote'}"  :class="[ isActive('Vote') ? 'text-primary' : '']" class="w-full py-2 transition hover:text-primary" type="button">投票項目</RouterLink>
             </li>
             <li>
-              <button class="w-full py-2 transition hover:text-primary" type="button">投票評論</button>
+              <RouterLink :to="{name:'ChangePassword'}" :class="[ isActive('ChangePassword') ? 'text-primary' : '']" class="w-full py-2 transition hover:text-primary" type="button">更改密碼</RouterLink>
             </li>
             <li>
               <button class="w-full py-2 transition hover:text-primary" type="button" v-if="isMember" @click="doLogout()">登出</button>
@@ -74,7 +69,6 @@
       <li><RouterLink to="/terms" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">關於我們</RouterLink></li>
       <li><RouterLink to="/none" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">開始投票</RouterLink></li>
       <li><RouterLink to="/faq" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">常見問題</RouterLink></li>
-      <li><RouterLink to="/none" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">聯絡我們</RouterLink></li>
     </ul>
     <div class="my-4 border-b-2" v-if="isMember"></div>
     <button type="button" class="w-full px-4 py-2 text-left transition hover:text-primary" v-if="isMember" @click="doLogout()">登出</button>
