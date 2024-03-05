@@ -57,6 +57,38 @@ export function isFileTypesValid(files, authorizedExtensions) {
   return valid;
 }
 
+export function formatImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const scaleHeight = 800;
+        const ratio = scaleHeight / img.height;
+        const scaleWidth = img.width * ratio;
+        const canvas = document.createElement('canvas');
+        canvas.width = scaleWidth;
+        canvas.height = scaleHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, scaleWidth, scaleHeight);
+        // 使用toBlob方法轉換為blob並解析Promise
+        canvas.toBlob((blob) => {
+          if (blob.size > 2 * 1024 * 1024) {
+            console.error('檔案大小超過2MB');
+            reject(new Error('檔案大小超過2MB'));
+          }
+          resolve(blob);
+          URL.revokeObjectURL(img.src);
+        }, 'image/png', 0.5);
+      };
+      img.onerror = reject; // 處理圖片加載錯誤
+      img.src = e.target.result;
+    };
+    reader.onerror = reject; // 處理讀取錯誤
+    reader.readAsDataURL(file);
+  });
+}
+
 export default {
   getCookie,
   setCookie,

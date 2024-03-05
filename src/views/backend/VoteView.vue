@@ -1,7 +1,5 @@
 <script setup>
-import {
-  inject, onMounted, ref,
-} from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import DelModal from '@/components/backend/DelModal.vue';
@@ -9,15 +7,15 @@ import EditModal from '@/components/backend/EditModal.vue';
 import ShareModal from '@/components/backend/ShareModal.vue';
 import Pagination from '@/components/PaginationView.vue';
 import { useMemberStore } from '@/stores/member';
-import { turnDate } from '@/utils';
+import { useMessageStore } from '@/stores/message';
+import { getCookie, turnDate } from '@/utils';
 
 const baseUrl = import.meta.env.VITE_APP_API_URL;
 
 const member = useMemberStore();
+const message = useMessageStore();
 
 const router = useRouter();
-
-const swal = inject('$swal');
 
 const showCollapse = ref(false);
 const toggleCollapse = () => {
@@ -40,7 +38,7 @@ const totalPage = ref('');
 const currentPage = ref('');
 const targetId = ref('');
 
-const delContent = ref('「xxx投票」');
+const delContent = ref('');
 const memberPolls = ref([]); // member投票資料
 const resultPolls = ref([]);
 const pollData = ref({
@@ -52,7 +50,7 @@ const pollData = ref({
   endDate: '',
   isPrivate: false,
   optionsData: [],
-  status: 'active',
+  status: 'pending',
 });
 
 const allTags = ref([]);
@@ -69,13 +67,14 @@ const closeModal = () => {
     startDate: '',
     isPrivate: false,
     tags: [],
+    status: 'pending',
   };
   console.log('closeModal', pollData.value);
   console.log('closeModal', openModal.value);
 };
 
 async function getMemberPolls(page = 1) {
-  const apiUrl = `${baseUrl}/api/poll?createdBy=${memberId.value}&?page=${page}`;
+  const apiUrl = `${baseUrl}/api/poll?createdBy=${memberId.value}&page=${page}`;
   try {
     const { data } = await axios.get(apiUrl);
     console.log('getMemberPolls', data);
@@ -86,10 +85,10 @@ async function getMemberPolls(page = 1) {
     perPage.value = data.limit;
     totalPage.value = Math.ceil(totalMemberPolls.value / perPage.value);
   } catch (err) {
-    console.log(err);
-    swal({
-      title: `${err.response.data.message}`,
+    message.setMessage({
+      message: `${err.response.data.message}`,
     });
+    message.showToast(true, 'error');
   }
 }
 
@@ -113,9 +112,10 @@ async function getInitialize() {
     await getMemberPolls();
     await getTags();
   } else {
-    swal({
-      title: '登入失敗，請重新登入',
+    message.setMessage({
+      message: '登入失敗，請重新登入',
     });
+    message.showToast(true, 'error');
     router.push('/login');
   }
 }
@@ -135,30 +135,33 @@ function openNewModal() {
     startDate,
     isPrivate: false,
     tags: [],
+    status: 'pending',
   };
   openModal.value = true;
 }
-function createNewPoll() {
-  functionType.value = '新增';
+async function createNewPoll() {
   const apiUrl = `${baseUrl}/api/poll/`;
-  axios.post(apiUrl, pollData.value)
-    .then((res) => {
-      if (res.status === 200) {
-        getMemberPolls();
-        console.log('更新', pollData.value);
-        swal({
-          title: `${res.data.message}`,
-        });
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-      swal({
-        title: `${err.response.data.message}`,
-      });
+  console.log('新增', pollData.value);
+  const { data } = await axios.post(apiUrl, pollData.value, {
+    headers: {
+      Authorization: `Bearer ${getCookie('selectWaveToken')}`,
+    },
+  });
+  if (data.status) {
+    getMemberPolls();
+    message.setMessage({
+      message: `${data.message}`,
     });
+    message.showToast(true);
+  } else {
+    message.setMessage({
+      message: `${data.message}`,
+    });
+    message.showToast(true, 'error');
+  }
   closeModal();
 }
+
 async function openEditModal(item) {
   functionType.value = '編輯';
   const apiUrl = `${baseUrl}/api/poll/${item.id}`;
@@ -167,16 +170,17 @@ async function openEditModal(item) {
     const { data } = await axios.get(apiUrl);
     pollData.value = data.poll;
   } catch (err) {
-    swal({
+    message.setMessage({
       title: `${err.response.data.message}`,
     });
+    message.showToast(true, 'error');
   }
   openModal.value = true;
   console.log('編輯modal', pollData.value);
   console.log('編輯modal', openModal.value);
 }
 function updateEditPoll() {
-  console.log('編輯modal', pollData.value);
+  console.log('update poll', pollData.value);
   const result = pollData.value.options.filter((item) => {
     return item.title !== '';
   });
@@ -187,14 +191,16 @@ function updateEditPoll() {
       console.log('編輯modal成功', res.data);
       this.getMemberPolls();
       console.log('編輯modal成功editPollData', pollData.value);
-      swal({
+      message.setMessage({
         title: `${res.data.message}`,
       });
+      message.showToast(true);
     })
     .catch((err) => {
-      swal({
+      message.setMessage({
         title: `${err.response.data.message}`,
       });
+      message.showToast(true, 'error');
     });
   closeModal();
 }
@@ -203,6 +209,30 @@ function openDelModal(item) {
   targetId.value = item.id;
   delContent.value = `「${item.title}」`;
 }
+
+const delPoll = async () => {
+  const token = getCookie('selectWaveToken');
+  const apiUrl = import.meta.env.VITE_APP_API_URL;
+  try {
+    const { data } = await axios.delete(`${apiUrl}/polls/${targetId.value}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (data.status) {
+      message.setMessage({
+        message: '刪除成功',
+      });
+      message.showToast(true);
+    }
+  } catch (error) {
+    message.setMessage({
+      message: `${error.response.data.message}`,
+    });
+    message.showToast(true, 'error');
+  }
+  closeDelModal();
+};
 
 function openShareModal(id) {
   showShare.value = true;
@@ -361,6 +391,7 @@ function filterPoll(status) {
     :selectedTagsProps="pollData.tags" :type="functionType"
     :closeModal="closeModal" :openModal="openModal"
     :submitFunction="functionType === '新增' ? createNewPoll : updateEditPoll" />
-  <DelModal v-if="showDel" :openModal="showDel" :delContent="delContent" :closeModal="closeDelModal" :id="targetId" />
+  <DelModal v-if="showDel" :openModal="showDel" :closeModal="closeDelModal" :delPoll="delPoll"
+  :delContent="delContent" />
   <shareModal v-if="showShare" :openModal="showShare" :closeModal="closeShareModal" :id="targetId" />
 </template>

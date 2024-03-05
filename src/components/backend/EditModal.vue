@@ -1,14 +1,20 @@
 <script setup>
-import { defineProps, onMounted, ref } from 'vue';
+import {
+  defineProps, onMounted, ref,
+} from 'vue';
 import axios from 'axios';
 import {
   Field, useField, useFieldArray, useForm,
 } from 'vee-validate';
 import * as yup from 'yup';
+import { useMessageStore } from '@/stores/message';
 import {
+  formatImage,
   getCookie,
   turnDate,
 } from '@/utils';
+
+const message = useMessageStore();
 
 const pollValidationSchema = yup.object({
   title: yup.string().required('請輸入標題'),
@@ -36,8 +42,7 @@ const props = defineProps({
 const editPollDataModal = ref({});
 
 const {
-  errors, validate, defineField,
-  handleSubmit,
+  errors, defineField, handleSubmit,
 } = useForm({
   initialValues: {
     title: editPollDataModal.value.title || '',
@@ -53,8 +58,8 @@ const {
   validationSchema: pollValidationSchema,
 });
 
-const [title, titleAttrs] = defineField('title');
-const [description, descriptionAttrs] = defineField('description');
+const [title] = defineField('title');
+const [description] = defineField('description');
 const [imageUrl] = defineField('imageUrl');
 const [tags] = defineField('tags');
 const { value: options, errorMessage: optionsError } = useField('options');
@@ -66,10 +71,9 @@ const [status] = defineField('status');
 
 const fileInput = ref(null);
 const fileInputOption = ref(null);
-const labelTag = ref(null);
 
 const selectedTags = ref([]);
-const isPollStart = ref(false);
+const isPollCanEdit = ref(true);
 
 const isLoading = ref(false);
 const apiUrl = import.meta.env.VITE_APP_API_URL;
@@ -78,28 +82,40 @@ axios.defaults.headers.common.Authorization = token;
 
 async function uploadImage(file) {
   const formData = new FormData();
-  formData.append('upload-image', file);
+  formData.append('upload-image', file, 'image.png');
   const apiPath = `${apiUrl}/api/imgur/upload`;
-  const { data } = await axios.post(apiPath, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return data.result;
+  try {
+    const { data } = await axios.post(apiPath, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (data.status) {
+      return data.result;
+    }
+  } catch ({ response }) {
+    message.setMessage({ message: response.data.message });
+    message.showModal('error');
+  }
+  return false;
 }
 
-async function uploadCoverFile() {
+async function uploadCoverFile(event) {
   isLoading.value = true;
-  const uploadFile = fileInput.value.files[0];
-  editPollDataModal.value.imageUrl = await uploadImage(uploadFile);
+  const uploadFile = event.target.files[0];
+  const imageBlob = await formatImage(uploadFile);
+  const imgurUrl = await uploadImage(imageBlob);
+  editPollDataModal.value.imageUrl = imgurUrl;
   fileInput.value = '';
   isLoading.value = false;
 }
-async function uploadOptionFile(index) {
+async function uploadOptionFile(event, index) {
   isLoading.value = true;
-  const uploadFile = fileInputOption.value.files[0];
-  editPollDataModal.value.options[index].imageUrl = await uploadImage(uploadFile);
+  const uploadFile = event.target.files[0];
+  const imageBlob = await formatImage(uploadFile);
+  const imgurUrl = await uploadImage(imageBlob);
+  editPollDataModal.value.options[index].imageUrl = imgurUrl;
   fileInputOption.value = '';
   isLoading.value = false;
 }
@@ -113,48 +129,57 @@ function changeTag() {
   // 標籤
   const selectedValue = tags.value;
   if (selectedValue) {
-    if (
-      !selectedTags.value.includes(selectedValue)
-      && selectedTags.value.length < 3
-    ) {
+    if (!selectedTags.value) selectedTags.value = [];
+    if (!selectedTags.value.includes(selectedValue)
+      && selectedTags.value.length < 3) {
       selectedTags.value.push(selectedValue);
       tags.value = '';
     }
   }
 }
 
+function handleStartPoll() {
+  if (status.value === 'active') {
+    editPollDataModal.value.startDate = new Date().toISOString();
+  } else {
+    editPollDataModal.value.startDate = '';
+  }
+}
+
 onMounted(async () => {
-  editPollDataModal.value = JSON.parse(JSON.stringify(props.pollData));
+  editPollDataModal.value = { ...props.pollData };
+  title.value = editPollDataModal.value.title;
+  description.value = editPollDataModal.value.description;
+  isPollCanEdit.value = editPollDataModal.value.status === 'pending';
   imageUrl.value = editPollDataModal.value.imageUrl;
+  startDate.value = editPollDataModal.value.startDate && editPollDataModal.value.startDate.split('T')[0];
+  endDate.value = editPollDataModal.value.endDate && editPollDataModal.value.endDate.split('T')[0];
+  isPrivate.value = editPollDataModal.value.isPrivate;
   selectedTags.value = props.selectedTagsProps;
   tags.value = selectedTags.value;
   options.value = editPollDataModal.value.options;
 });
 
 const onSubmit = handleSubmit((values) => {
-  validate().then(async (valdez) => {
-    if (valdez.valid) {
-      isLoading.value = true;
-      try {
-        const result = {
-          title: values.title,
-          description: values.description,
-          imageUrl: values.imageUrl,
-          options: values.options,
-          startDate: (values.startDate && turnDate(values.startDate)) || '',
-          endDate: (values.endDate && turnDate(values.endDate)) || '',
-          tags: selectedTags.value,
-          isPrivate: values.isPrivate,
-          status: values.status,
-        };
-        console.log('result', result);
-        // await props.submitFunction(result);
-        isLoading.value = false;
-      } catch (error) {
-        isLoading.value = false;
-      }
-    }
-  });
+  isLoading.value = true;
+  console.log(values);
+  try {
+    const result = {
+      title: values.title,
+      description: values.description,
+      imageUrl: values.imageUrl,
+      options: values.options,
+      startDate: (values.startDate && turnDate(values.startDate)) || '',
+      endDate: (values.endDate && turnDate(values.endDate)) || '',
+      tags: selectedTags.value,
+      isPrivate: values.isPrivate,
+      status: values.status,
+    };
+    props.submitFunction(result);
+    isLoading.value = false;
+  } catch (error) {
+    isLoading.value = false;
+  }
 });
 
 const clickOutsideModal = (event) => {
@@ -169,7 +194,7 @@ const clickOutsideModal = (event) => {
   <div
     v-if="openModal" data-modal="backdrop"
     class="fixed bg-gray-1/35 backdrop-blur top-0 left-0 right-0 z-50 w-full p-4
-         overflow-hidden md:inset-0 h-[calc(100%-1rem)] max-h-full"
+        overflow-hidden md:inset-0 h-[calc(100%-1rem)] max-h-full"
     :class="openModal ? '' : 'hidden'" @click="clickOutsideModal" @keydown.esc="openModal && closeModal()"
   >
     <div id="modal" class="relative w-full max-w-2xl max-h-screen py-4 mx-auto">
@@ -232,7 +257,7 @@ const clickOutsideModal = (event) => {
                         accept="image/png, image/jpeg, image/jpg"
                         class="hidden"
                         ref="fileInput"
-                        :disabled="isPollStart"
+                        :disabled="!isPollCanEdit"
                         @change="uploadCoverFile"
                       />
                     </label>
@@ -256,7 +281,7 @@ const clickOutsideModal = (event) => {
                       ref="fileInput"
                       accept="image/png, image/jpeg, image/jpg"
                       class="hidden"
-                      :disabled="isPollStart"
+                      :disabled="!isPollCanEdit"
                       @change="uploadCoverFile"
                     />
                   </div>
@@ -276,9 +301,8 @@ const clickOutsideModal = (event) => {
                     name="title"
                     class="w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
                     :class="{ 'is-invalid': errors.title }"
-                    :disabled="isPollStart"
+                    :disabled="!isPollCanEdit"
                     v-model="title"
-                    v-bind="titleAttrs"
                     required
                   />
                   <p v-if="errors.title" class="text-sm text-primary-dark">
@@ -298,10 +322,9 @@ const clickOutsideModal = (event) => {
                     rows="4"
                     required
                     class="p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary focus:border-primary"
-                    :disabled="isPollStart"
+                    :disabled="!isPollCanEdit"
                     placeholder="請在此寫下投票說明.."
                     v-model="description"
-                    v-bind="descriptionAttrs"
                   >
                   </Field>
                   <p v-if="errors.description" class="text-sm text-primary-dark">
@@ -337,8 +360,8 @@ const clickOutsideModal = (event) => {
                           type="file"
                           ref="fileInputOption"
                           accept="image/png, image/jpeg, image/jpg"
-                          :disabled="isPollStart"
-                          @change="uploadOptionFile(index)"
+                          :disabled="!isPollCanEdit"
+                          @change="uploadOptionFile(event, index)"
                         />
                         <div
                           v-if="item.imageUrl"
@@ -361,9 +384,8 @@ const clickOutsideModal = (event) => {
                             type="text"
                             :name="`options[${index}].title`"
                             class="block w-full p-3 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
-                            :disabled="isPollStart"
-                            rules="required|max:50"
-                            placeholder="請輸入內容"
+                            :disabled="!isPollCanEdit"
+                            placeholder="請輸入選項內容"
                             v-model="item.title"
                           />
                         </div>
@@ -373,7 +395,7 @@ const clickOutsideModal = (event) => {
                         >
                           <button
                             class="px-4 py-3 mr-3 text-red-600 bg-white border border-red-600 rounded-3xl hover:bg-red-600 hover:text-white"
-                            :disabled="isPollStart"
+                            :disabled="!isPollCanEdit"
                             @click.prevent="
                               remove(index)
                             "
@@ -392,7 +414,7 @@ const clickOutsideModal = (event) => {
               <button
                 type="button"
                 class="rounded-3xl border border-gray-1 hover:bg-gray-1 hover:text-white bg-white px-4 py-2.5 mt-3 w-full"
-                :disabled="isPollStart"
+                :disabled="!isPollCanEdit"
                 @click.prevent="createOption"
               >
                 新增選項
@@ -406,15 +428,16 @@ const clickOutsideModal = (event) => {
               >
               <p class="mb-2 text-sm text-gray-2">最多可新增三個標籤</p>
               <Field
-                id="tags"
-                name="tags"
+                id="labelTag"
+                name="labelTag"
                 list="label-tag"
                 v-model="tags"
                 class="block w-full p-4 mb-6 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
-                :disabled="isPollStart"
-                @change="changeTag"
+                :disabled="!isPollCanEdit"
+                @change.prevent="changeTag"
+                @keydown.enter.prevent="changeTag"
               />
-              <datalist id="label-tag" ref="labelTag">
+              <datalist id="label-tag">
                 <template v-for="item in allTags" :key="item">
                   <option :value="item">{{ item }}</option>
                 </template>
@@ -447,35 +470,35 @@ const clickOutsideModal = (event) => {
               >
                 <div class="flex flex-auto w-full">
                   <label
-                    for="vote-start"
+                    for="startDate"
                     class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-gray-300 rounded-e-0 rounded-s-full"
                   >
                     開始日期
                   </label>
                   <Field
                     type="date"
-                    id="vote-start"
-                    name="vote-start"
+                    id="startDate"
+                    name="startDate"
                     :min="new Date().toISOString().split('T')[0]"
-                    class="flex-1 block w-full min-w-0 px-3 py-4 text-sm text-gray-900 border border-gray-300 rounded-none rounded-e-full bg-gray-50 focus:ring-primary focus:border-primary disabled:bg-gray-2 disabled:text-gray-1 disabled:opacity-50"
-                    :disabled="isPollStart || editPollDataModal.status === 'active'"
+                    class="flex-1 block w-full min-w-0 px-3 py-4 text-sm text-gray-900 border border-gray-300 rounded-none rounded-e-full bg-gray-50 focus:ring-primary focus:border-primary disabled:bg-gray-2/25 disabled:text-gray-1/25"
+                    :disabled="!isPollCanEdit || status === 'active'"
                     v-model="startDate"
                   />
                 </div>
                 <div class="flex flex-auto w-full">
                   <label
-                    for="vote-end"
+                    for="endDate"
                     class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-gray-300 rounded-e-0 rounded-s-full"
                   >
                     結束日期
                   </label>
                   <Field
                     type="date"
-                    id="vote-end"
-                    name="vote-end"
+                    id="endDate"
+                    name="endDate"
                     :min="new Date().toISOString().split('T')[0]"
                     class="flex-1 block w-full min-w-0 px-3 py-4 text-sm text-gray-900 border border-gray-300 rounded-none rounded-e-full bg-gray-50 focus:ring-primary focus:border-primary"
-                    :disabled="isPollStart"
+                    :disabled="!isPollCanEdit"
                     v-model="endDate"
                   />
                 </div>
@@ -492,8 +515,8 @@ const clickOutsideModal = (event) => {
                         type="radio"
                         name="private"
                         class="w-4 h-4 bg-gray-100 border-gray-300 text-primary focus:ring-primary-light focus:ring-2"
-                        :disabled="isPollStart"
-                        value="false"
+                        :disabled="!isPollCanEdit"
+                        :value="false"
                         v-model="isPrivate"
                       />
                       <label
@@ -510,8 +533,8 @@ const clickOutsideModal = (event) => {
                         type="radio"
                         name="private"
                         class="w-4 h-4 bg-gray-100 border-gray-300 text-primary focus:ring-primary-light focus:ring-2"
-                        :disabled="isPollStart"
-                        value="true"
+                        :disabled="!isPollCanEdit"
+                        :value="true"
                         v-model="isPrivate"
                       />
                       <label
@@ -533,9 +556,10 @@ const clickOutsideModal = (event) => {
                         type="checkbox"
                         name="status"
                         class="w-4 h-4 bg-gray-100 border-gray-300 text-primary focus:ring-primary-light focus:ring-2"
-                        :disabled="isPollStart"
-                        value="'active'"
+                        :disabled="!isPollCanEdit"
+                        :value="'active'"
                         v-model="status"
+                        @change="handleStartPoll"
                       />
                       <label
                         for="status"
