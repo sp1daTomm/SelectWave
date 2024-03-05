@@ -49,7 +49,7 @@ const pollData = ref({
   startDate: '',
   endDate: '',
   isPrivate: false,
-  optionsData: [],
+  options: [],
   status: 'pending',
 });
 
@@ -62,11 +62,14 @@ const openModal = ref(false);
 const closeModal = () => {
   openModal.value = false;
   pollData.value = {
+    title: '',
+    description: '',
     imageUrl: 'https://i.imgur.com/df933Ux.png',
-    optionsData: [],
-    startDate: '',
-    isPrivate: false,
     tags: [],
+    startDate: '',
+    endDate: '',
+    isPrivate: false,
+    options: [],
     status: 'pending',
   };
   console.log('closeModal', pollData.value);
@@ -86,7 +89,7 @@ async function getMemberPolls(page = 1) {
     totalPage.value = Math.ceil(totalMemberPolls.value / perPage.value);
   } catch (err) {
     message.setMessage({
-      message: `${err.response.data.message}`,
+      message: err.response.data.message,
     });
     message.showToast(true, 'error');
   }
@@ -130,9 +133,11 @@ function openNewModal() {
   startDate.value = `${taipeiDate.toISOString().slice(0, 23)}Z`;
 
   pollData.value = {
+    title: '',
+    description: '',
     imageUrl: 'https://i.imgur.com/df933Ux.png',
-    optionsData: [],
-    startDate,
+    options: [],
+    startDate: startDate.value,
     isPrivate: false,
     tags: [],
     status: 'pending',
@@ -179,29 +184,28 @@ async function openEditModal(item) {
   console.log('編輯modal', pollData.value);
   console.log('編輯modal', openModal.value);
 }
-function updateEditPoll() {
-  console.log('update poll', pollData.value);
-  const result = pollData.value.options.filter((item) => {
-    return item.title !== '';
-  });
-  pollData.value.options = result;
+async function updateEditPoll(result) {
+  console.log('update poll', result);
   const apiUrl = `${baseUrl}/api/poll/${pollData.value.id}`;
-  axios.put(apiUrl, pollData.value)
-    .then((res) => {
-      console.log('編輯modal成功', res.data);
-      this.getMemberPolls();
-      console.log('編輯modal成功editPollData', pollData.value);
-      message.setMessage({
-        title: `${res.data.message}`,
-      });
-      message.showToast(true);
-    })
-    .catch((err) => {
-      message.setMessage({
-        title: `${err.response.data.message}`,
-      });
-      message.showToast(true, 'error');
+  const { data } = await axios.put(apiUrl, result, {
+    headers: {
+      Authorization: `Bearer ${getCookie('selectWaveToken')}`,
+    },
+  });
+  console.log('編輯modal成功', data);
+  if (data.status) {
+    getMemberPolls();
+    console.log('編輯modal成功editPollData', data.result);
+    message.setMessage({
+      title: `${data.message}`,
     });
+    message.showToast(true);
+  } else {
+    message.setMessage({
+      title: `${data.message}`,
+    });
+    message.showToast(true, 'error');
+  }
   closeModal();
 }
 function openDelModal(item) {
@@ -214,12 +218,13 @@ const delPoll = async () => {
   const token = getCookie('selectWaveToken');
   const apiUrl = import.meta.env.VITE_APP_API_URL;
   try {
-    const { data } = await axios.delete(`${apiUrl}/polls/${targetId.value}`, {
+    const { data } = await axios.delete(`${apiUrl}/api/poll/${targetId.value}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     if (data.status) {
+      getMemberPolls();
       message.setMessage({
         message: '刪除成功',
       });
@@ -300,7 +305,7 @@ function filterPoll(status) {
           <thead class="uppercase text-gray-2">
             <tr class="border-b">
               <th scope="col" class="px-6 py-3 font-medium text-left">
-                投票標題
+                投票題目
               </th>
               <th scope="col" class="hidden px-6 py-3 font-medium lg:table-cell">
                 顯示狀態
@@ -387,11 +392,10 @@ function filterPoll(status) {
   v-if="openModal" :functionType="functionType"
   :pollData="pollData"
   :allTags="allTags"
-  :optionsData="pollData.optionsData"
     :selectedTagsProps="pollData.tags" :type="functionType"
     :closeModal="closeModal" :openModal="openModal"
     :submitFunction="functionType === '新增' ? createNewPoll : updateEditPoll" />
   <DelModal v-if="showDel" :openModal="showDel" :closeModal="closeDelModal" :delPoll="delPoll"
-  :delContent="delContent" />
+  :delContent="delContent" :contentType="'投票'" />
   <shareModal v-if="showShare" :openModal="showShare" :closeModal="closeShareModal" :id="targetId" />
 </template>

@@ -6,6 +6,7 @@ const props = defineProps({
   closeModal: Function,
   delContent: String,
   delPoll: Function,
+  contentType: String,
 });
 
 const clickOutsideModal = (event) => {
@@ -42,7 +43,7 @@ const clickOutsideModal = (event) => {
                 d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
             <h3 class="mb-5 text-lg font-normal text-gray-01 dark:text-gray-400">
-              刪除<span class="text-red-500">{{ delContent }}</span>這個投票<br />
+              刪除<span class="text-red-500">{{ delContent }}</span>這個{{ contentType }}<br />
               確定要刪除 ?
             </h3>
             <button type="button"
