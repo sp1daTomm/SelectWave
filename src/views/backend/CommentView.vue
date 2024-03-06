@@ -91,7 +91,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="max-w-screen-lg px-3 mx-auto">
+  <div class="container max-w-screen-lg">
     <div class="outline outline-1 outline-gray-3 rounded-2xl md:rounded-3xl
     pt-5 pb-10 md:pt-4 md:pb-16 px-3.5 md:px-5 mb-10 min-h-[45dvh]">
       <div class="flex justify-between mb-7 md:mb-8">

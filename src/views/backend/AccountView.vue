@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-screen-lg px-3 mx-auto">
+  <div class="container max-w-screen-lg">
     <div class="px-5 mb-10 outline outline-1 outline-gray-3 rounded-2xl md:rounded-3xl py-11">
       <div class="flex flex-wrap items-center justify-between max-w-3xl mx-auto mb-7 md:mb-8">
         <label

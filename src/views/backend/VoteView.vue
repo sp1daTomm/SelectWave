@@ -144,20 +144,21 @@ function openNewModal() {
   };
   openModal.value = true;
 }
-async function createNewPoll() {
+async function createNewPoll(resultData) {
   const apiUrl = `${baseUrl}/api/poll/`;
-  console.log('新增', pollData.value);
-  const { data } = await axios.post(apiUrl, pollData.value, {
+  console.log('新增', resultData.value);
+  const { data } = await axios.post(apiUrl, resultData, {
     headers: {
       Authorization: `Bearer ${getCookie('selectWaveToken')}`,
     },
   });
   if (data.status) {
-    getMemberPolls();
     message.setMessage({
       message: `${data.message}`,
     });
     message.showToast(true);
+    await getMemberPolls(currentPage.value);
+    resultPolls.value = memberPolls.value.polls;
   } else {
     message.setMessage({
       message: `${data.message}`,
@@ -173,7 +174,10 @@ async function openEditModal(item) {
   console.log('編輯modal', item.title);
   try {
     const { data } = await axios.get(apiUrl);
-    pollData.value = data.poll;
+    pollData.value = {
+      ...data.poll,
+      tags: data.poll.tags.map((tag) => tag.name),
+    };
   } catch (err) {
     message.setMessage({
       title: `${err.response.data.message}`,
@@ -194,12 +198,13 @@ async function updateEditPoll(result) {
   });
   console.log('編輯modal成功', data);
   if (data.status) {
-    getMemberPolls();
     console.log('編輯modal成功editPollData', data.result);
     message.setMessage({
       title: `${data.message}`,
     });
     message.showToast(true);
+    await getMemberPolls(currentPage.value);
+    resultPolls.value = memberPolls.value.polls;
   } else {
     message.setMessage({
       title: `${data.message}`,
@@ -224,11 +229,12 @@ const delPoll = async () => {
       },
     });
     if (data.status) {
-      getMemberPolls();
       message.setMessage({
         message: '刪除成功',
       });
       message.showToast(true);
+      await getMemberPolls(currentPage.value);
+      resultPolls.value = memberPolls.value.polls;
     }
   } catch (error) {
     message.setMessage({
@@ -272,7 +278,7 @@ function filterPoll(status) {
 </script>
 
 <template>
-  <div class="container">
+  <div class="container max-w-screen-lg">
     <div class="outline outline-1 outline-gray-3 rounded-2xl md:rounded-3xl
     pt-5 pb-10 md:pt-4 md:pb-16 px-3.5 md:px-5 mb-10 min-h-[45dvh]">
       <div class="flex justify-between mb-7 md:mb-8">
@@ -395,7 +401,7 @@ function filterPoll(status) {
   </div>
   <EditModal
   v-if="openModal" :functionType="functionType"
-  :pollData="pollData"
+  :propsPollData="pollData"
   :allTags="allTags"
     :selectedTagsProps="pollData.tags" :type="functionType"
     :closeModal="closeModal" :openModal="openModal"

@@ -1,12 +1,10 @@
 <script setup>
 import {
   computed,
-  defineProps, onMounted, ref, watch,
+  defineProps, ref, watch,
+  watchEffect,
 } from 'vue';
 import axios from 'axios';
-import {
-  Field, useFieldArray, useForm,
-} from 'vee-validate';
 import * as yup from 'yup';
 import { useMessageStore } from '@/stores/message';
 import {
@@ -30,31 +28,58 @@ const validationSchema = yup.object({
   ).min(1, '至少要有一個選項'),
 });
 
+const pollData = ref({
+  title: '',
+  description: '',
+  imageUrl: '',
+  options: [{ title: '', imageUrl: 'https://imgur.com/TECsq2J.png' }],
+  startDate: turnDate(new Date().toISOString()),
+  endDate: '',
+  tags: [],
+  isPrivate: false,
+  status: 'pending',
+});
+
 const props = defineProps({
   allTags: Array,
   functionType: String,
-  pollData: Object,
+  propsPollData: Object,
   selectedTagsProps: Array,
   closeModal: Function,
   openModal: Boolean,
   submitFunction: Function,
 });
 
-const {
-  errors, handleSubmit, setFieldValue, form,
-} = useForm({
-  validationSchema,
-});
+const formErrors = ref({});
 
-const { push, remove } = useFieldArray('options');
+watch(pollData, async (newVal) => {
+  try {
+    // 嘗試根據定義的規則驗證整個表單資料
+    await validationSchema.validate(newVal, { abortEarly: false });
+    // 如果驗證成功，清空錯誤訊息
+    formErrors.value = {};
+  } catch (err) {
+    // 如果驗證失敗，處理錯誤訊息
+    const errors = {};
+    if (err.inner) {
+      err.inner.forEach((error) => {
+        if (!errors[error.path]) {
+          errors[error.path] = error.message;
+        }
+      });
+    }
+    formErrors.value = errors;
+  }
+}, { deep: true }); // 啟用深度監聽
 
 const fileInput = ref(null);
 const fileInputOption = ref(null);
 const tagInput = ref(null);
 const selectedTags = ref([]);
-
 const isLoading = ref(false);
+const pollStartNow = ref(false);
 const apiUrl = import.meta.env.VITE_APP_API_URL;
+
 const token = getCookie('selectWaveToken');
 axios.defaults.headers.common.Authorization = token;
 
@@ -84,7 +109,7 @@ async function uploadCoverFile(event) {
   const uploadFile = event.target.files[0];
   const imageBlob = await formatImage(uploadFile);
   const imgurUrl = await uploadImage(imageBlob);
-  form.imageUrl.value = imgurUrl;
+  pollData.value.imageUrl = imgurUrl;
   fileInput.value = '';
   isLoading.value = false;
 }
@@ -93,12 +118,12 @@ async function uploadOptionFile(event, index) {
   const uploadFile = event.target.files[0];
   const imageBlob = await formatImage(uploadFile);
   const imgurUrl = await uploadImage(imageBlob);
-  form.options[index].value.imageUrl = imgurUrl;
+  pollData.value.options[index].imageUrl = imgurUrl;
   fileInputOption.value = '';
   isLoading.value = false;
 }
 function createOption() {
-  push({ title: '', imageUrl: 'https://imgur.com/TECsq2J.png' });
+  pollData.value.options.push({ title: '', imageUrl: 'https://imgur.com/TECsq2J.png' });
 }
 function changeTag() {
   // 標籤
@@ -120,56 +145,63 @@ const clickOutsideModal = (event) => {
 };
 
 function handleStartPoll() {
-  if (form.status.value === 'active') {
-    form.startDate.value = new Date().toISOString();
+  if (pollStartNow.value) {
+    pollData.value.status = 'active';
+    pollData.value.startDate = new Date().toISOString();
   } else {
-    form.startDate.value = '';
+    pollData.value.status = 'pending';
+    pollData.value.startDate = props.propsPollData.startDate;
   }
 }
 
-onMounted(async () => {
-  if (props.pollData) {
-    Object.keys(props.pollData).forEach((key) => {
-      setFieldValue(key, props.pollData[key]);
-    });
+watchEffect(() => {
+  if (props.propsPollData) {
+    pollData.value = { ...props.propsPollData };
+
+    const [startDate] = props.propsPollData.startDate.split('T');
+    pollData.value.startDate = startDate;
+    pollData.value.endDate = props.propsPollData.endDate ? props.propsPollData.endDate.split('T')[0] : '';
+    pollData.value.status = props.propsPollData.status === 'active' ? 'active' : 'pending';
+    selectedTags.value = props.selectedTagsProps;
   }
 });
-
-watch(() => props.pollData, (newValue) => {
-  Object.keys(newValue).forEach((key) => {
-    setFieldValue(key, newValue[key]);
-  });
-}, { deep: true });
 
 const isPollCanEdit = computed(() => {
   if (props.functionType === '新增') return true;
-  if (props.pollData && props.pollData.status !== 'pending') return false;
+  if (props.propsPollData && props.propsPollData.status !== 'pending') return false;
   return true;
 });
 
-const onSubmit = handleSubmit((values) => {
-  console.log('Form submitted with values:', values);
+const onSubmit = async () => {
   isLoading.value = true;
   try {
-    const result = {
-      title: values.title,
-      description: values.description,
-      imageUrl: values.imageUrl,
-      options: values.options,
-      startDate: (values.startDate && turnDate(values.startDate)) || '',
-      endDate: (values.endDate && turnDate(values.endDate)) || '',
+    await validationSchema.validate(pollData.value, { abortEarly: false });
+    formErrors.value = {};
+    const formValues = {
+      ...pollData.value,
       tags: selectedTags.value,
-      isPrivate: values.isPrivate,
-      status: values.status,
     };
-    console.log('final result:', result);
-    props.submitFunction(result);
+    props.submitFunction(formValues);
     isLoading.value = false;
   } catch (error) {
     isLoading.value = false;
-  }
-});
+    if (error instanceof yup.ValidationError) {
+      const errors = {};
+      error.inner.forEach((err) => {
+        if (!errors[err.path]) {
+          errors[err.path] = err.message;
+        }
+      });
+      formErrors.value = errors;
 
+      message.setMessage({ message: '表單驗證失敗，請確認輸入內容' });
+      message.showModal(true, 'error');
+    } else {
+      message.setMessage({ message: `送出表單過程發生錯誤, ${error}` });
+      message.showModal(true, 'error');
+    }
+  }
+};
 </script>
 
 <template>
@@ -209,11 +241,11 @@ const onSubmit = handleSubmit((values) => {
                   class="flex flex-col gap-2 text-base font-medium text-gray-1"
                 >
                   {{
-                    !imageUrl ? "上傳封面照" : "變更封面照"
+                    !pollData.imageUrl ? "上傳封面照" : "變更封面照"
                   }}
                     <label
                       for="dropzone-file"
-                      v-if="!imageUrl"
+                      v-if="!pollData.imageUrl"
                       class="flex flex-col items-center justify-center w-full p-5 transition duration-150 border-2 border-gray-300 border-dashed rounded-lg h-52 bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
                       :class="!isPollCanEdit ? 'cursor-auto' : 'cursor-pointer hover:bg-gray-100 dark:hover:border-gray-500 dark:hover:bg-gray-600 dark:hover:bg-bray-800'"
                     >
@@ -233,46 +265,44 @@ const onSubmit = handleSubmit((values) => {
                           支援 jpg、jpeg 與 png 格式
                         </p>
                       </div>
-                      <Field
+                      <input
                         id="dropzone-file"
-                        name="imageUrl"
+                        name="dropzone-file"
                         type="file"
                         accept="image/png, image/jpeg, image/jpg"
                         class="hidden"
                         ref="fileInput"
                         :disabled="!isPollCanEdit"
-                        v-model="imageUrl"
                         @change="uploadCoverFile"
                       />
                     </label>
                   <div class="relative group">
                     <img
-                      v-if="imageUrl"
-                      :src="imageUrl"
+                      v-if="pollData.imageUrl"
+                      :src="pollData.imageUrl"
                       class="block object-cover object-center w-32 h-32 mx-auto cursor-pointer rounded-3xl md:h-64 md:w-64"
                       :class="{ 'filter grayscale-[50%] opacity-50 cursor-auto': !isPollCanEdit }"
                       alt="封面照"
                     />
                     <div
-                      v-if="imageUrl && isPollCanEdit"
+                      v-if="pollData.imageUrl && isPollCanEdit"
                       class="absolute inset-0 flex flex-col justify-end transition duration-150 opacity-0 cursor-pointer bg-gradient-to-b from-transparent to-gray-1 text-gray-4 hover:opacity-90 rounded-3xl"
                     >
                       <p class="py-2 mt-auto text-center">變更</p>
                     </div>
-                    <Field
+                    <input
                       id="cover"
-                      name="imageUrl"
+                      name="dropzone-file"
                       type="file"
                       ref="fileInput"
                       accept="image/png, image/jpeg, image/jpg"
                       class="hidden"
                       :disabled="!isPollCanEdit"
-                      v-model="imageUrl"
                       @change="uploadCoverFile"
                     />
                   </div>
                 </label>
-                <p v-if="errors.imageUrl" class="text-sm text-primary-dark">
+                <p v-if="formErrors.imageUrl" class="text-sm text-primary-dark">
                   僅限上傳 jpg、jpeg 與 png 格式。 圖片大小不可超過 2MB
                 </p>
               </div>
@@ -281,18 +311,18 @@ const onSubmit = handleSubmit((values) => {
                   <label for="title" class="text-base font-medium text-gray-1"
                     >投票題目<span class="text-primary">*</span></label
                   >
-                  <Field
+                  <input
                     type="text"
                     id="title"
                     name="title"
                     class="w-full p-4 text-sm transition duration-150 bg-white border rounded-full disabled:bg-gray-3/25 disabled:text-gray-1/50 border-gray-3 focus:ring-primary focus:border-primary"
-                    :class="{ 'is-invalid': errors.title }"
+                    :class="{ 'is-invalid': formErrors.title }"
                     :disabled="!isPollCanEdit"
-                    v-model="title"
+                    v-model="pollData.title"
                     required
                   />
-                  <p v-if="errors.title" class="text-sm text-primary-dark">
-                    {{ errors.title }}
+                  <p v-if="formErrors.title" class="text-sm text-primary-dark">
+                    {{ formErrors.title }}
                   </p>
                 </div>
                 <div class="flex flex-col flex-auto gap-2">
@@ -301,7 +331,7 @@ const onSubmit = handleSubmit((values) => {
                     class="text-base font-medium text-gray-1"
                     >投票說明<span class="text-primary">*</span></label
                   >
-                  <Field
+                  <textarea
                     as="textarea"
                     name="description"
                     id="description"
@@ -310,11 +340,11 @@ const onSubmit = handleSubmit((values) => {
                     class="p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary focus:border-primary  disabled:bg-gray-3/25 disabled:text-gray-1/50 transition duration-150"
                     :disabled="!isPollCanEdit"
                     placeholder="請在此寫下投票說明.."
-                    v-model="description"
+                    v-model="pollData.description"
                   >
-                  </Field>
-                  <p v-if="errors.description" class="text-sm text-primary-dark">
-                    {{ errors.description }}
+                  </textarea>
+                  <p v-if="formErrors.description" class="text-sm text-primary-dark">
+                    {{ formErrors.description }}
                   </p>
                 </div>
               </div>
@@ -326,7 +356,7 @@ const onSubmit = handleSubmit((values) => {
               <ol
                 class="space-y-2 text-sm font-medium list-decimal rounded-lg text-gray-1 marker:text-base"
               >
-                  <li v-for="(item, index) in options"
+                  <li v-for="(item, index) in pollData.options"
                   :key="index"
                     class="w-full p-2 transition duration-150 border-b rounded-3xl border-gray-4 hover:bg-primary-light"
                   >
@@ -340,7 +370,7 @@ const onSubmit = handleSubmit((values) => {
                           class="object-cover object-center w-full h-24"
                           :class="{ 'filter grayscale-[50%] opacity-50 cursor-auto': !isPollCanEdit }"
                         />
-                        <Field
+                        <input
                           class="hidden"
                           :name="item.imageUrl"
                           :id="item.imageUrl"
@@ -366,7 +396,7 @@ const onSubmit = handleSubmit((values) => {
                             class="text-base font-medium text-gray-1"
                             >選項名稱<span class="text-primary">*</span></label
                           >
-                          <Field
+                          <input
                             :id="item.title"
                             type="text"
                             :name="item.title"
@@ -378,13 +408,13 @@ const onSubmit = handleSubmit((values) => {
                         </div>
                         <div
                           class="flex flex-shrink-0"
-                          v-if="options.length > 1"
+                          v-if="pollData.options.length > 1"
                         >
                           <button
                             class="px-4 py-3 mr-3 text-red-600 transition duration-150 bg-white border border-red-600 rounded-3xl hover:bg-red-600 hover:text-white disabled:opacity-50 disabled:bg-gray-3 disabled:text-gray-2 disabled:border-gray-3"
                             :disabled="!isPollCanEdit"
                             @click.prevent="
-                              remove(index)
+                              pollData.options.splice(index, 1);
                             "
                           >
                             <i class="bi bi-x-lg"></i>
@@ -395,8 +425,8 @@ const onSubmit = handleSubmit((values) => {
                     </div>
                   </li>
               </ol>
-              <p v-if="optionsError" class="text-red-400">
-                {{ optionsError }}
+              <p v-if="formErrors.options" class="text-red-400">
+                {{ formErrors.options }}
               </p>
               <button
                 type="button"
@@ -415,20 +445,19 @@ const onSubmit = handleSubmit((values) => {
               >
               <p class="mb-2 text-sm text-gray-2">最多可新增三個標籤</p>
               <div class="flex items-center justify-between gap-4 mb-6">
-                <Field
+                <input
                   id="labelTag"
                   name="labelTag"
                   list="label-tag"
                   v-model="tagInput"
                   class="block w-full p-4 text-sm transition duration-150 bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary disabled:bg-gray-3/25 disabled:text-gray-1/50"
                   :disabled="!isPollCanEdit || selectedTags.length >= 3"
-                  @change.prevent="changeTag"
                   @keydown.enter.prevent="changeTag"
                 />
                 <button
                   type="button"
                   class="p-4 text-white transition duration-150 rounded-full bg-primary hover:bg-primary-dark shrink-0 disabled:opacity-50 disabled:bg-gray-3 disabled:text-gray-2"
-                  :disabled="!isPollCanEdit || selectedTags.length >= 3 || !tags || tags.length < 1"
+                  :disabled="!isPollCanEdit || selectedTags.length >= 3 || !tagInput"
                   @click.prevent="changeTag">
                   <i class="bi bi-plus-lg" />
                   新增標籤
@@ -472,14 +501,14 @@ const onSubmit = handleSubmit((values) => {
                   >
                     開始日期
                   </label>
-                  <Field
+                  <input
                     type="date"
                     id="startDate"
                     name="startDate"
                     :min="new Date().toISOString().split('T')[0]"
                     class="flex-1 block w-full min-w-0 px-3 py-4 text-sm text-gray-900 transition duration-150 border border-gray-300 rounded-none rounded-e-full bg-gray-50 focus:ring-primary focus:border-primary disabled:bg-gray-2/25 disabled:text-gray-1/25"
-                    :disabled="!isPollCanEdit || status === 'active'"
-                    v-model="startDate"
+                    :disabled="!isPollCanEdit || pollData.status === 'active'"
+                    v-model="pollData.startDate"
                   />
                 </div>
                 <div class="flex flex-auto w-full">
@@ -489,14 +518,14 @@ const onSubmit = handleSubmit((values) => {
                   >
                     結束日期
                   </label>
-                  <Field
+                  <input
                     type="date"
                     id="endDate"
                     name="endDate"
                     :min="new Date().toISOString().split('T')[0]"
                     class="flex-1 block w-full min-w-0 px-3 py-4 text-sm text-gray-900 transition duration-150 border border-gray-300 rounded-none rounded-e-full bg-gray-50 focus:ring-primary focus:border-primary disabled:bg-gray-2/25 disabled:text-gray-1/25"
                     :disabled="!isPollCanEdit"
-                    v-model="endDate"
+                    v-model="pollData.endDate"
                   />
                 </div>
               </div>
@@ -507,14 +536,14 @@ const onSubmit = handleSubmit((values) => {
                 <ul class="flex text-sm font-medium text-gray-1">
                   <li class="border-gray-200">
                     <div class="flex items-center ps-3">
-                      <Field
+                      <input
                         id="public"
                         type="radio"
                         name="private"
                         class="w-4 h-4 bg-gray-100 border-gray-300 text-primary focus:ring-primary-light focus:ring-2"
                         :disabled="!isPollCanEdit"
                         :value="false"
-                        v-model="isPrivate"
+                        v-model="pollData.isPrivate"
                       />
                       <label
                         for="public"
@@ -525,14 +554,14 @@ const onSubmit = handleSubmit((values) => {
                   </li>
                   <li class="border-gray-200">
                     <div class="flex items-center ps-3">
-                      <Field
+                      <input
                         id="private"
                         type="radio"
                         name="private"
                         class="w-4 h-4 bg-gray-100 border-gray-300 text-primary focus:ring-primary-light focus:ring-2"
                         :disabled="!isPollCanEdit"
                         :value="true"
-                        v-model="isPrivate"
+                        v-model="pollData.isPrivate"
                       />
                       <label
                         for="private"
@@ -548,14 +577,13 @@ const onSubmit = handleSubmit((values) => {
                 <ul class="flex text-sm font-medium text-gray-1">
                   <li class="border-gray-200">
                     <div class="flex items-center ps-3">
-                      <Field
+                      <input
                         id="status"
                         type="checkbox"
                         name="status"
-                        class="w-4 h-4 bg-gray-100 border-gray-300 text-primary focus:ring-primary-light focus:ring-2"
+                        class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary focus:ring-primary-light focus:ring-2"
                         :disabled="!isPollCanEdit"
-                        :value="'active'"
-                        v-model="status"
+                        v-model="pollStartNow"
                         @change="handleStartPoll"
                       />
                       <label
@@ -575,9 +603,11 @@ const onSubmit = handleSubmit((values) => {
             <div class="flex items-center justify-end w-full">
               <button
                 type="submit"
-                class="w-full px-6 py-3 text-base font-medium text-center text-white transition duration-150 bg-black rounded-full md:w-auto hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary-light disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-3 disabled:text-gray-2"
-                :disabled="isLoading"
+                class="w-full px-6 py-3 text-base font-medium text-center text-white transition duration-150 bg-black rounded-full md:w-auto hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary-light disabled:opacity-50 disabled:cursor-auto disabled:bg-gray-3 disabled:text-gray-2"
+                :disabled="isLoading || Object.keys(formErrors).length > 0 || !isPollCanEdit"
               >
+                <i v-if="isLoading" class="bi bi-arrow-clockwise animate-spin" />
+                <i v-if="formErrors && Object.keys(formErrors).length > 0" class="bi bi-exclamation-triangle" />
                 {{ functionType === '新增' ? '創造投票' : '儲存編輯'}}
               </button>
               <button
