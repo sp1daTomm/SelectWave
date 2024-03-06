@@ -1,48 +1,42 @@
 <template>
-  <Navbar />
-  <NavbarBackend />
-  <div class="max-w-screen-lg mx-auto px-3">
-    <div class="outline outline-1 outline-gray-3 rounded-2xl md:rounded-3xl
-    py-11 px-5 mb-10">
-      <div class="flex flex-wrap justify-between items-center mb-7 md:mb-8 max-w-3xl mx-auto">
+  <div class="max-w-screen-lg px-3 mx-auto">
+    <div class="px-5 mb-10 outline outline-1 outline-gray-3 rounded-2xl md:rounded-3xl py-11">
+      <div class="flex flex-wrap items-center justify-between max-w-3xl mx-auto mb-7 md:mb-8">
         <label
-          class="relative border-blue hover:bg-blue flex cursor-pointer flex-col items-center justify-center rounded-full border bg-white uppercase tracking-wide shadow-lg mb-5 md:mb-0"
+          class="relative flex flex-col items-center justify-center mb-5 tracking-wide uppercase bg-white border rounded-full shadow-lg cursor-pointer border-blue hover:bg-blue md:mb-0"
           style="width: 120px; height: 120px;">
           <input type="file" class="hidden" ref="fileInput" @change="uploadFile" />
-          <img :src="memberPerson.avatar" class="rounded-full object-cover object-center" style="width: 120px; height: 120px;">
-          <i class="absolute z-20 bottom-0 right-1 text-3xl bi bi-file-earmark-arrow-up"></i>
+          <img :src="memberPerson.avatar" class="object-cover object-center rounded-full" style="width: 120px; height: 120px;">
+          <i class="absolute bottom-0 text-3xl right-1 bi bi-image-fill"></i>
           <div
-            class="absolute z-10 inset-0 bg-gray-500 bg-opacity-50 rounded-full opacity-0 hover:opacity-100 transition-opacity">
+            class="absolute inset-0 z-10 transition-opacity bg-gray-500 bg-opacity-50 rounded-full opacity-0 hover:opacity-100">
             <div class="flex items-center justify-center h-full">
-              <span class="text-white font-semibold uppercase tracking-wide">
+              <span class="font-semibold tracking-wide text-white uppercase">
                 修改頭像
               </span>
             </div>
           </div>
         </label>
         <div class="flex">
-        <button type="button" class="px-6 py-3 flex items-center justify-center rounded-full border-2 mr-3
-          border-gray-1 bg-white text-gray-1 text-sm md:text-base font-medium hover:text-primary hover:border-primary"
+        <button type="button" class="flex items-center justify-center px-6 py-3 mr-3 text-sm font-medium transition duration-150 bg-white border-2 rounded-full border-gray-1 text-gray-1 md:text-base hover:text-primary-dark hover:border-primary-dark"
           @click="$refs.AccountResetPasswordModal.openModal()">
           重設密碼
         </button>
-        <button type="button" class="px-6 py-3 flex items-center justify-center rounded-full border-2
-          border-gray-1 bg-white text-gray-1 text-sm md:text-base font-medium hover:text-primary hover:border-primary"
+        <button type="button" class="flex items-center justify-center px-6 py-3 text-sm font-medium transition duration-150 bg-white border-2 rounded-full border-gray-1 text-gray-1 md:text-base hover:text-red-600 hover:border-red-600"
           @click="$refs.DelModal.openModal()">
           刪除帳號
         </button>
       </div>
       </div>
-      <form class="max-w-3xl mx-auto" @submit.prevent="updateMember">
-        <div class="mb-4">
+      <form class="flex flex-col max-w-3xl gap-4 mx-auto" @submit.prevent="updateMember">
+        <div>
           <label for="name" class="block mb-2 text-base font-medium text-gray-1">名稱</label>
-          <input type="text" id="name" class="bg-white border border-gray-3 text-sm rounded-full
-              focus:ring-primary focus:border-primary block w-full px-3 py-4" v-model="memberPerson.name" />
+          <input type="text" id="name" class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary" v-model="memberPerson.name" />
         </div>
-        <div class="mb-4">
+        <div>
           <label for="sex" class="block mb-2 text-base font-medium text-gray-1">性別</label>
           <select id="sex"
-            class="bg-white border border-gray-300 text-gray-900 text-sm  rounded-full focus:ring-primary focus:border-primary block w-full px-3 py-4"
+            class="block w-full p-4 text-sm text-gray-900 bg-white border border-gray-300 rounded-full focus:ring-primary focus:border-primary"
             v-model="memberPerson.gender">
             <option value="" selected disabled>請選擇性別</option>
             <option value="male">男</option>
@@ -50,25 +44,24 @@
             <option value="x">不方便透露</option>
           </select>
         </div>
-        <div class="mb-4">
+        <div>
           <label for="birthday" class="block mb-2 text-base font-medium text-gray-1">生日</label>
           <input v-if="!memberPerson.birthday"
-          type="date" id="birthday" class="bg-white border border-gray-3 text-sm rounded-full
-              focus:ring-primary focus:border-primary block w-full px-3 py-4" v-model="birthday" @input="clickDate" />
-          <input v-else type="date" id="birthday" class="bg-white border border-gray-3 text-sm rounded-full
-          focus:ring-primary focus:border-primary block w-full px-3 py-4" v-model="birthday" @input="clickDate" />
+          type="date" id="birthday" class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary" v-model="birthday" @input="clickDate" />
+          <input v-else type="date" id="birthday" class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary" v-model="birthday" @input="clickDate" />
         </div>
-        <div class="mb-4" v-for="(item, index) in memberPerson.socialMedia" :key="index">
-          <label for="facebookUrl" class="block mb-2 text-base font-medium text-gray-1">
-            {{ memberPerson.socialMedia[index].type }} 社群連結
-          </label>
-          <input type="url" class="bg-white border border-gray-3 text-sm rounded-full
-              focus:ring-primary focus:border-primary block w-full px-3 py-4 mb-2" placeholder="請填入社群網址"
-            v-model="memberPerson.socialMedia[index].id" />
+        <div class="flex flex-wrap gap-y-4">
+          <div class="flex-auto w-1/2 px-2" v-for="(item, index) in memberPerson.socialMedia" :key="index">
+            <label for="facebookUrl" class="block mb-2 text-base font-medium text-gray-1">
+              {{ memberPerson.socialMedia[index].type }} 社群連結
+            </label>
+            <input type="url" class="block w-full p-4 mb-2 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary" placeholder="請填入社群網址"
+              v-model="memberPerson.socialMedia[index].id" />
+          </div>
         </div>
-        <button type="submit" class="text-white bg-gray-1 hover:bg-primary focus:ring-4
+        <button type="submit" class="text-white bg-gray-1 hover:bg-primary-dark focus:ring-4
             focus:outline-none focus:ring-primary-light font-medium rounded-full
-            text-base w-full sm:w-auto px-5 py-2.5 text-center">
+            text-base w-full sm:w-auto px-5 py-2.5 text-center transition duration-150">
           更新
         </button>
       </form>
@@ -76,20 +69,13 @@
   </div>
   <AccountResetPasswordModal ref="AccountResetPasswordModal" />
   <DelModal ref="DelModal" :delContent="delContent"></DelModal>
-  <ComponentFooter></ComponentFooter>
 </template>
 <script>
 import AccountResetPasswordModal from '@/components/backend/AccountResetPasswordModal.vue';
 import DelModal from '@/components/backend/DelModal.vue';
-import NavbarBackend from '@/components/backend/NavbarBackend.vue';
-import ComponentFooter from '@/components/ComponentFooter.vue';
-import Navbar from '@/components/NavbarEl.vue';
 
 export default {
   components: {
-    Navbar,
-    NavbarBackend,
-    ComponentFooter,
     DelModal,
     AccountResetPasswordModal,
   },
@@ -248,5 +234,3 @@ export default {
   },
 };
 </script>
-
-<style scoped></style>

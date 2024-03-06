@@ -34,8 +34,8 @@ const closeDelModal = () => {
 
 const functionType = ref('新增');
 const memberId = ref('');
-const totalPage = ref('');
-const currentPage = ref('');
+const totalPage = ref(0);
+const currentPage = ref(1);
 const targetId = ref('');
 
 const delContent = ref('');
@@ -274,7 +274,7 @@ function filterPoll(status) {
 <template>
   <div class="container">
     <div class="outline outline-1 outline-gray-3 rounded-2xl md:rounded-3xl
-    pt-5 pb-10 md:pt-4 md:pb-16 px-3.5 md:px-5 mb-10">
+    pt-5 pb-10 md:pt-4 md:pb-16 px-3.5 md:px-5 mb-10 min-h-[45dvh]">
       <div class="flex justify-between mb-7 md:mb-8">
         <div class="relative">
           <button type="button" class="flex items-center justify-center px-6 py-3 text-base font-medium bg-white rounded-full text-gray-1 outline outline-2 outline-gray-1 hover:outline-primary hover:text-primary" @click="toggleCollapse">
@@ -330,9 +330,9 @@ function filterPoll(status) {
               </th>
             </tr>
           </thead>
-            <tbody>
-              <tr class="bg-white hover:bg-primary-light" :class="resultPolls.length - 1 !== index && 'border-b'" v-for="(item, index) in resultPolls" :key="item.id">
-                <th scope="row" class="px-6 py-4 font-medium text-left text-gray-900 whitespace-nowrap lg:text-center">
+            <tbody v-if="resultPolls.length > 0">
+              <tr class="bg-white hover:bg-primary-light/35 text-gray-1" :class="resultPolls.length - 1 !== index && 'border-b'" v-for="(item, index) in resultPolls" :key="item.id">
+                <th scope="row" class="px-6 py-4 font-medium text-left whitespace-nowrap lg:text-center">
                   <p class="text-left">{{ item.title }}</p>
                   <p class="block lg:hidden">顯示：{{ item.isPrivate ? '隱藏' : '公開' }}</p>
                   <p class="block lg:hidden">人數：{{ item.totalVoters }}</p>
@@ -381,6 +381,11 @@ function filterPoll(status) {
                     <i class="w-full text-xl bi bi-pencil" />
                   </button>
                 </td>
+              </tr>
+            </tbody>
+            <tbody v-else>
+              <tr>
+                <td class="px-6 py-4 text-center" colspan="8">目前沒有投票</td>
               </tr>
             </tbody>
         </table>
