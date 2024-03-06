@@ -1,4 +1,5 @@
 <script type="module">
+import axios from 'axios';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
 
@@ -21,56 +22,16 @@ export default {
     return {
       currentCardIndex: 0,
       myCards: [
-        // {
-        //   id: 1,
-        //   image: '/src/assets/vote 01.png',
-        //   deadline: '2024-03-10',
-        //   title: '最喜歡的電視節目',
-        //   description:
-        //     'luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
-        //   tags: ['p', 't', 'e'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 2,
-        //   image: '/src/assets/vote 05.png',
-        //   deadline: '2024-03-10',
-        //   title: '最喜歡的食物',
-        //   description:
-        //     'Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
-        //   tags: ['s', 'r', 'i'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 3,
-        //   image: '/src/assets/vote 06.png',
-        //   deadline: '2024-03-10',
-        //   title: '最想去的國家',
-        //   description:
-        //     'Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.',
-        //   tags: ['m', 'o', 'n'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 4,
-        //   image: '/src/assets/vote 07.png',
-        //   deadline: '2024-03-10',
-        //   title: '最喜歡的飲料',
-        //   description:
-        //     'Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.',
-        //   tags: ['m', 'o', 'n'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 5,
-        //   image: '/src/assets/vote 07.png',
-        //   deadline: '2024-03-10',
-        //   title: '最喜歡的飲料店',
-        //   description:
-        //     'Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.',
-        //   tags: ['m', 'o', 'n'],
-        //   voteQty: '3000',
-        // },
+        {
+          id: 1,
+          image: '/src/assets/vote 01.png',
+          deadline: '2024-03-10',
+          title: '最喜歡的電視節目',
+          description:
+            'luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
+          tags: ['p', 't', 'e'],
+          voteQty: '3000',
+        },
       ],
       allCards: [
         {
@@ -99,7 +60,7 @@ export default {
           deadline: '2024-03-10',
           title: '喜歡使用 Instagram還是 Twitter',
           description:
-            'Cupiditate voluptates animi blanditiis error! Beatae, ullam commodi officiis culpa perferendis reprehenderit assumenda.',
+            'Cupiditate vae, ullam commodi officiis culpa perferendis reprehenderit assumenda.',
           tags: ['m', 'o', 'n'],
           voteQty: '3000',
         },
@@ -212,9 +173,26 @@ export default {
       this.selectedOption = option;
       this.isDropdownOpen = false;
     },
+    fetchData() {
+      axios.get('https://select-wave-backend.onrender.com/api/poll')
+        .then((response) => {
+          this.allCards = response.data.map((card) => ({
+            id: card.id,
+            image: card.image,
+            deadline: card.deadline,
+            voteQty: card.voteQty,
+          }));
+          this.allCards.sort((a, b) => b.voteQty - a.voteQty);
+          this.myCards = this.allCards.slice(0, 5);
+        })
+        .catch((error) => {
+          console.error('Error fetching data:', error);
+        });
+    },
   },
   mounted() {
     console.log(this.$refs.swiper);
+    this.fetchData();
   },
 };
 </script>
