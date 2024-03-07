@@ -2,8 +2,9 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import ConformModal from '@/components/backend/ConformModal.vue';
 import DelModal from '@/components/backend/DelModal.vue';
-import EditModal from '@/components/backend/EditModal.vue';
+import PollModal from '@/components/backend/PollModal.vue';
 import ShareModal from '@/components/backend/ShareModal.vue';
 import Pagination from '@/components/PaginationView.vue';
 import { useMemberStore } from '@/stores/member';
@@ -22,15 +23,7 @@ const toggleCollapse = () => {
   showCollapse.value = !showCollapse.value;
 };
 
-const showShare = ref(false);
-const showDel = ref(false);
-
-const closeShareModal = () => {
-  showShare.value = false;
-};
-const closeDelModal = () => {
-  showDel.value = false;
-};
+const showModal = ref('');
 
 const functionType = ref('新增');
 const memberId = ref('');
@@ -60,7 +53,7 @@ const perPage = ref(0);
 
 const openModal = ref(false);
 const closeModal = () => {
-  openModal.value = false;
+  showModal.value = '';
   pollData.value = {
     title: '',
     description: '',
@@ -142,7 +135,7 @@ function openNewModal() {
     tags: [],
     status: 'pending',
   };
-  openModal.value = true;
+  showModal.value = 'poll';
 }
 async function createNewPoll(resultData) {
   const apiUrl = `${baseUrl}/api/poll/`;
@@ -168,7 +161,7 @@ async function createNewPoll(resultData) {
   closeModal();
 }
 
-async function openEditModal(item) {
+async function openPollModal(item) {
   functionType.value = '編輯';
   const apiUrl = `${baseUrl}/api/poll/${item.id}`;
   console.log('編輯modal', item.title);
@@ -176,15 +169,16 @@ async function openEditModal(item) {
     const { data } = await axios.get(apiUrl);
     pollData.value = {
       ...data.poll,
-      tags: data.poll.tags.map((tag) => tag.name),
+      tags: data.poll.tags && data.poll.tags.map((tag) => tag.name),
     };
   } catch (err) {
+    console.log(err);
     message.setMessage({
       title: `${err.response.data.message}`,
     });
     message.showToast(true, 'error');
   }
-  openModal.value = true;
+  showModal.value = 'poll';
   console.log('編輯modal', pollData.value);
   console.log('編輯modal', openModal.value);
 }
@@ -214,7 +208,7 @@ async function updateEditPoll(result) {
   closeModal();
 }
 function openDelModal(item) {
-  showDel.value = true;
+  showModal.value = 'del';
   targetId.value = item.id;
   delContent.value = `「${item.title}」`;
 }
@@ -242,11 +236,16 @@ const delPoll = async () => {
     });
     message.showToast(true, 'error');
   }
-  closeDelModal();
+  closeModal();
 };
 
+function handlePollAction(id, type) {
+  console.log('handlePollAction', id, type);
+  showModal.value = 'conform';
+}
+
 function openShareModal(id) {
-  showShare.value = true;
+  showModal.value = 'share';
   targetId.value = id;
 }
 
@@ -283,11 +282,14 @@ function filterPoll(status) {
     pt-5 pb-10 md:pt-4 md:pb-16 px-3.5 md:px-5 mb-10 min-h-[45dvh]">
       <div class="flex justify-between mb-7 md:mb-8">
         <div class="relative">
-          <button type="button" class="flex items-center justify-center px-6 py-3 text-base font-medium bg-white rounded-full text-gray-1 outline outline-2 outline-gray-1 hover:outline-primary hover:text-primary" @click="toggleCollapse">
+          <button type="button"
+                  class="flex items-center justify-center px-6 py-3 text-base font-medium bg-white rounded-full text-gray-1 outline outline-2 outline-gray-1 hover:outline-primary hover:text-primary"
+                  @click="toggleCollapse">
             篩選
           </button>
           <!-- Dropdown menu 篩選 -->
-          <div :class="`absolute z-10 ${showCollapse ? 'block' : 'hidden'} font-normal bg-white divide-y shadow-lg top-14 rounded-2xl w-44 animate-fade-down animate-once animate-ease-in-out`">
+          <div
+               :class="`absolute z-10 ${showCollapse ? 'block' : 'hidden'} font-normal bg-white divide-y shadow-lg top-14 rounded-2xl w-44 animate-fade-down animate-once animate-ease-in-out`">
             <ul class="py-3 text-sm text-gray-700">
               <li class="block py-2 px-7 hover:bg-gray-100" @click="filterPoll('ALL')">所有投票
               </li>
@@ -302,7 +304,9 @@ function filterPoll(status) {
             </ul>
           </div>
         </div>
-        <button type="button" class="flex items-center justify-center px-6 py-3 text-base font-medium text-white rounded-full bg-gray-1 hover:bg-primary" @click="openNewModal">
+        <button type="button"
+                class="flex items-center justify-center px-6 py-3 text-base font-medium text-white rounded-full bg-gray-1 hover:bg-primary"
+                @click="openNewModal">
           建立新投票
         </button>
       </div>
@@ -336,77 +340,81 @@ function filterPoll(status) {
               </th>
             </tr>
           </thead>
-            <tbody v-if="resultPolls.length > 0">
-              <tr class="bg-white hover:bg-primary-light/35 text-gray-1" :class="resultPolls.length - 1 !== index && 'border-b'" v-for="(item, index) in resultPolls" :key="item.id">
-                <th scope="row" class="px-6 py-4 font-medium text-left whitespace-nowrap lg:text-center">
-                  <p class="text-left">{{ item.title }}</p>
-                  <p class="block lg:hidden">顯示：{{ item.isPrivate ? '隱藏' : '公開' }}</p>
-                  <p class="block lg:hidden">人數：{{ item.totalVoters }}</p>
-                  <p class="block lg:hidden">開始：{{ turnDate(item.startDate) }}</p>
-                  <p class="block lg:hidden">結束：{{ turnDate(item.endDate) }}</p>
-                  <p class="block lg:hidden">狀態：{{ item.status === 'pending' ? '未開始' : item.status === 'active' ? '投票中' : item.status === 'ended' ? '投票截止' : '結束投票' }}</p>
-                </th>
-                <td class="hidden px-6 py-4 lg:table-cell">
-                  {{ item.isPrivate ? '隱藏' : '公開' }}
-                </td>
-                <td class="hidden px-6 py-4 lg:table-cell">
-                  {{ item.totalVoters }}
-                </td>
-                <td class="hidden px-6 py-4 lg:table-cell">
-                  {{ turnDate(item.startDate) }}
-                </td>
-                <td class="hidden px-6 py-4 lg:table-cell">
-                  {{ turnDate(item.endDate) }}
-                </td>
-                <td class="hidden px-6 py-4 lg:table-cell">
-                  {{
+          <tbody v-if="resultPolls.length > 0">
+            <tr class="bg-white hover:bg-primary-light/35 text-gray-1"
+                :class="resultPolls.length - 1 !== index && 'border-b'"
+                v-for="(item, index) in resultPolls" :key="item.id">
+              <th scope="row"
+                  class="px-6 py-4 font-medium text-left whitespace-nowrap lg:text-center">
+                <p class="text-left">{{ item.title }}</p>
+                <p class="block lg:hidden">顯示：{{ item.isPrivate ? '隱藏' : '公開' }}</p>
+                <p class="block lg:hidden">人數：{{ item.totalVoters }}</p>
+                <p class="block lg:hidden">開始：{{ turnDate(item.startDate) }}</p>
+                <p class="block lg:hidden">結束：{{ turnDate(item.endDate) }}</p>
+                <p class="block lg:hidden">狀態：{{ item.status === 'pending' ? '未開始' : item.status ===
+                    'active' ? '投票中' : item.status === 'ended' ? '投票截止' : '結束投票' }}</p>
+              </th>
+              <td class="hidden px-6 py-4 lg:table-cell">
+                {{ item.isPrivate ? '隱藏' : '公開' }}
+              </td>
+              <td class="hidden px-6 py-4 lg:table-cell">
+                {{ item.totalVoters }}
+              </td>
+              <td class="hidden px-6 py-4 lg:table-cell">
+                {{ turnDate(item.startDate) }}
+              </td>
+              <td class="hidden px-6 py-4 lg:table-cell">
+                {{ turnDate(item.endDate) }}
+              </td>
+              <td class="hidden px-6 py-4 lg:table-cell">
+                {{
                     item.status === 'pending' ? '未開始' :
-                    item.status === 'active' ? '投票中' :
-                    item.status === 'ended' ? '投票截止' : '結束投票'
+                      item.status === 'active' ? '投票中' :
+                        item.status === 'ended' ? '投票截止' : '結束投票'
                   }}
-                </td>
-                <td class="hidden px-6 py-4 lg:table-cell">
-                  <button type="button" class="hover:text-primary" @click="openShareModal(item.id)">
-                    <i class="w-full text-xl bi bi-share" />
-                  </button>
-                </td>
-                <td class="flex flex-col justify-center gap-4 px-6 py-4 lg:justify-between lg:flex-row">
-                  <button type="button"
-                  class="hover:text-primary lg:hidden mb-3.5 lg:mb-0"
-                    @click="openShareModal(item.id)">
-                    <i class="w-full text-xl bi bi-share" />
-                  </button>
-                  <button type="button"
-                  class="hover:text-primary mb-3.5 lg:mb-0"
-                  @click="openDelModal(item)">
-                    <i class="w-full text-xl bi bi-trash3" />
-                  </button>
-                  <button type="button"
-                  class="hover:text-primary mb-3.5 lg:mb-0"
-                  @click="openEditModal(item)">
-                    <i class="w-full text-xl bi bi-pencil" />
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-            <tbody v-else>
-              <tr>
-                <td class="px-6 py-4 text-center" colspan="8">目前沒有投票</td>
-              </tr>
-            </tbody>
+              </td>
+              <td class="hidden px-6 py-4 lg:table-cell">
+                <button type="button" class="hover:text-primary" @click="openShareModal(item.id)">
+                  <i class="w-full text-xl bi bi-share" />
+                </button>
+              </td>
+              <td
+                  class="flex flex-col justify-center gap-4 px-6 py-4 lg:justify-between lg:flex-row">
+                <button type="button" class="hover:text-primary lg:hidden mb-3.5 lg:mb-0"
+                        @click="openShareModal(item.id)">
+                  <i class="w-full text-xl bi bi-share" />
+                </button>
+                <button type="button" class="hover:text-primary mb-3.5 lg:mb-0"
+                        @click="openDelModal(item)">
+                  <i class="w-full text-xl bi bi-trash3" />
+                </button>
+                <button type="button" class="hover:text-primary mb-3.5 lg:mb-0"
+                        @click="openPollModal(item)">
+                  <i class="w-full text-xl bi bi-pencil" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+          <tbody v-else>
+            <tr>
+              <td class="px-6 py-4 text-center" colspan="8">目前沒有投票</td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>
     <Pagination :totalPage="totalPage" :currentPage="currentPage" @updatePage="getMemberPolls" />
   </div>
-  <EditModal
-  v-if="openModal" :functionType="functionType"
-  :propsPollData="pollData"
-  :allTags="allTags"
-    :selectedTagsProps="pollData.tags" :type="functionType"
-    :closeModal="closeModal" :openModal="openModal"
-    :submitFunction="functionType === '新增' ? createNewPoll : updateEditPoll" />
-  <DelModal v-if="showDel" :openModal="showDel" :closeModal="closeDelModal" :delPoll="delPoll"
-  :delContent="delContent" :contentType="'投票'" />
-  <shareModal v-if="showShare" :openModal="showShare" :closeModal="closeShareModal" :id="targetId" />
+  <PollModal v-if="showModal === 'poll'" :openModal="showModal === 'poll'"
+  :functionType="functionType" :propsPollData="pollData"
+             :allTags="allTags" :selectedTagsProps="pollData.tags"
+             :closeModal="closeModal" :propsHandlePollAction="handlePollAction"
+             :submitFunction="functionType === '新增' ? createNewPoll : updateEditPoll"
+             />
+  <DelModal v-if="showModal === 'del'" :openModal="showModal === 'del'" :closeModal="closeModal" :delPoll="delPoll"
+            :delContent="delContent" :contentType="'投票'" />
+  <ConformModal v-if="showModal === 'conform'" :openModal="showModal === 'conform'" :closeModal="closeModal"
+                :confirmContent="confirmContent" :fulfillsFunction="fulfillsFunction" />
+  <shareModal v-if="showModal === 'share'" :openModal="showModal === 'share'" :closeModal="closeModal"
+              :id="targetId" />
 </template>

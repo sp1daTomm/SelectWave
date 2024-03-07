@@ -28,11 +28,13 @@ const validationSchema = yup.object({
   ).min(1, '至少要有一個選項'),
 });
 
+const defaultOptionImage = 'https://imgur.com/TECsq2J.png';
+
 const pollData = ref({
   title: '',
   description: '',
   imageUrl: '',
-  options: [{ title: '', imageUrl: 'https://imgur.com/TECsq2J.png' }],
+  options: [{ title: '', imageUrl: defaultOptionImage }],
   startDate: turnDate(new Date().toISOString()),
   endDate: '',
   tags: [],
@@ -48,6 +50,7 @@ const props = defineProps({
   closeModal: Function,
   openModal: Boolean,
   submitFunction: Function,
+  propsHandlePollAction: Function,
 });
 
 const formErrors = ref({});
@@ -104,6 +107,13 @@ async function uploadImage(file) {
   return false;
 }
 
+function onImageError(id) {
+  const errorImageOption = pollData.value.options.find((option) => option.id === id);
+  if (errorImageOption) {
+    errorImageOption.imageUrl = defaultOptionImage;
+  }
+}
+
 async function uploadCoverFile(event) {
   isLoading.value = true;
   const uploadFile = event.target.files[0];
@@ -123,7 +133,7 @@ async function uploadOptionFile(event, index) {
   isLoading.value = false;
 }
 function createOption() {
-  pollData.value.options.push({ title: '', imageUrl: 'https://imgur.com/TECsq2J.png' });
+  pollData.value.options.push({ title: '', imageUrl: defaultOptionImage });
 }
 function changeTag() {
   // 標籤
@@ -171,6 +181,14 @@ const isPollCanEdit = computed(() => {
   if (props.propsPollData && props.propsPollData.status !== 'pending') return false;
   return true;
 });
+
+const handlePollAction = async (type) => {
+  if (type === 'start') {
+    props.propsHandlePollAction(pollData.value.id, 'start');
+  } else {
+    props.propsHandlePollAction(pollData.value.id, 'end');
+  }
+};
 
 const onSubmit = async () => {
   isLoading.value = true;
@@ -360,14 +378,15 @@ const onSubmit = async () => {
                   :key="index"
                     class="w-full p-2 transition duration-150 border-b rounded-3xl border-gray-4 hover:bg-primary-light"
                   >
-                    <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex flex-wrap items-center gap-4 md:flex-nowrap md:gap-6">
                       <label
                         :for="item.imageUrl"
-                        class="relative w-full overflow-hidden rounded-2xl md:w-auto"
+                        class="relative flex-auto overflow-hidden rounded-2xl md:w-1/2"
                       >
                         <img
                           :src="item.imageUrl"
-                          class="object-cover object-center w-full h-24"
+                          @error="onImageError(item.id)"
+                          class="flex-auto object-cover object-center w-full mx-auto max-h-32"
                           :class="{ 'filter grayscale-[50%] opacity-50 cursor-auto': !isPollCanEdit }"
                         />
                         <input
@@ -382,7 +401,7 @@ const onSubmit = async () => {
                         />
                         <div
                           v-if="item.imageUrl && isPollCanEdit"
-                          class="absolute inset-0 flex flex-col justify-end transition duration-150 cursor-pointer opacity-90 md:opacity-0 bg-gradient-to-b from-transparent to-gray-1 text-gray-4 hover:opacity-90"
+                          class="absolute inset-0 flex flex-col justify-end transition duration-150 cursor-pointer opacity-90 md:opacity-0 bg-gradient-to-b from-transparent to-gray-1/75 text-gray-4 hover:opacity-90"
                         >
                           <p class="py-2 mt-auto text-center">點擊變更圖片</p>
                         </div>
@@ -451,13 +470,13 @@ const onSubmit = async () => {
                   list="label-tag"
                   v-model="tagInput"
                   class="block w-full p-4 text-sm transition duration-150 bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary disabled:bg-gray-3/25 disabled:text-gray-1/50"
-                  :disabled="!isPollCanEdit || selectedTags.length >= 3"
+                  :disabled="!isPollCanEdit || selectedTags && selectedTags.length >= 3"
                   @keydown.enter.prevent="changeTag"
                 />
                 <button
                   type="button"
                   class="p-4 text-white transition duration-150 rounded-full bg-primary hover:bg-primary-dark shrink-0 disabled:opacity-50 disabled:bg-gray-3 disabled:text-gray-2"
-                  :disabled="!isPollCanEdit || selectedTags.length >= 3 || !tagInput"
+                  :disabled="!isPollCanEdit || selectedTags && selectedTags.length >= 3 || !tagInput"
                   @click.prevent="changeTag">
                   <i class="bi bi-plus-lg" />
                   新增標籤
@@ -581,7 +600,7 @@ const onSubmit = async () => {
                         id="status"
                         type="checkbox"
                         name="status"
-                        class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary focus:ring-primary-light focus:ring-2"
+                        class="w-4 h-4 rounded bg-gray-4 border-gray-3 text-primary focus:ring-primary-light focus:ring-2"
                         :disabled="!isPollCanEdit"
                         v-model="pollStartNow"
                         @change="handleStartPoll"
@@ -600,23 +619,37 @@ const onSubmit = async () => {
           <div
             class="sticky bottom-0 z-10 w-full p-4 bg-white border-t border-gray-4"
           >
-            <div class="flex items-center justify-end w-full">
-              <button
-                type="submit"
-                class="w-full px-6 py-3 text-base font-medium text-center text-white transition duration-150 bg-black rounded-full md:w-auto hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary-light disabled:opacity-50 disabled:cursor-auto disabled:bg-gray-3 disabled:text-gray-2"
-                :disabled="isLoading || Object.keys(formErrors).length > 0 || !isPollCanEdit"
-              >
-                <i v-if="isLoading" class="bi bi-arrow-clockwise animate-spin" />
-                <i v-if="formErrors && Object.keys(formErrors).length > 0" class="bi bi-exclamation-triangle" />
-                {{ functionType === '新增' ? '創造投票' : '儲存編輯'}}
-              </button>
-              <button
-                type="button"
-                class="w-full px-6 py-3 text-base font-medium text-gray-900 transition duration-150 bg-white border border-gray-200 rounded-full md:w-auto ms-3 focus:outline-none focus:z-10 focus:ring-4 focus:ring-gray-100 hover:text-white hover:bg-gray-3"
-                @click.prevent="closeModal()"
-              >
-                取消
-              </button>
+            <div class="flex items-center justify-between w-full">
+              <div class="flex gap-2">
+                <div v-if="functionType !== '新增' && pollData.status === 'active'">
+                  <button type="button" class="w-full px-6 py-3 text-base font-medium text-center text-white transition duration-150 bg-black rounded-full md:w-auto hover:bg-primary hover:text-gray-1 focus:ring-4 focus:outline-none focus:ring-primary-light disabled:opacity-50 disabled:cursor-auto disabled:bg-gray-3 disabled:text-gray-2" @click="handlePollAction('end')">
+                    設定: 結束投票
+                  </button>
+                </div>
+                <div v-if="functionType !== '新增' && pollData.status === 'pending'">
+                  <button type="button" class="w-full px-6 py-3 text-base font-medium text-center transition duration-150 border rounded-full border-gray-1 text-gray-1 md:w-auto hover:bg-primary hover:border-primary-dark focus:ring-4 focus:outline-none focus:ring-primary-light disabled:opacity-50 disabled:cursor-auto disabled:bg-gray-3 disabled:text-gray-2" @click="handlePollAction('start')">
+                    設定: 開始投票
+                  </button>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  type="submit"
+                  class="w-full px-6 py-3 text-base font-medium text-center text-white transition duration-150 bg-black rounded-full md:w-auto hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary-light disabled:opacity-50 disabled:cursor-auto disabled:bg-gray-3 disabled:text-gray-2"
+                  :disabled="isLoading || Object.keys(formErrors).length > 0 || !isPollCanEdit"
+                >
+                  <i v-if="isLoading" class="bi bi-arrow-clockwise animate-spin" />
+                  <i v-if="formErrors && Object.keys(formErrors).length > 0" class="bi bi-exclamation-triangle" />
+                  {{ functionType === '新增' ? '創造投票' : '儲存編輯'}}
+                </button>
+                <button
+                  type="button"
+                  class="w-full px-6 py-3 text-base font-medium transition duration-150 bg-white border rounded-full text-gray-1 border-gray-3 md:w-auto ms-3 focus:outline-none focus:z-10 focus:ring-4 focus:ring-gray-4 hover:text-white hover:bg-gray-3"
+                  @click.prevent="closeModal()"
+                >
+                  取消
+                </button>
+              </div>
             </div>
           </div>
         </form>
