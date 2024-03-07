@@ -263,6 +263,7 @@ async function handlePoll(id) {
     });
     message.showToast(true, 'error');
   }
+  closeModal();
 }
 
 function handlePollAction(data, type) {
@@ -446,7 +447,7 @@ function filterPoll(status) {
   <DelModal v-if="showModal === 'del'" :openModal="showModal === 'del'" :closeModal="closeModal" :delPoll="delPoll"
             :delContent="delContent" :contentType="'投票'" />
   <ConformModal v-if="showModal === 'conform'" :openModal="showModal === 'conform'" :closeModal="closeModal"
-                :conformContent="conformContent" :fulfillsFunction="handlePoll" />
+                :conformContent="conformContent" :fulfillsFunction="handlePoll(pollActionTarget)" />
   <shareModal v-if="showModal === 'share'" :openModal="showModal === 'share'" :closeModal="closeModal"
               :id="targetId" />
 </template>
