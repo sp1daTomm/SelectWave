@@ -31,7 +31,11 @@ const totalPage = ref(0);
 const currentPage = ref(1);
 const targetId = ref('');
 
+const pollActionType = ref('');
+const pollActionTarget = ref('');
+
 const delContent = ref('');
+const conformContent = ref('');
 const memberPolls = ref([]); // member投票資料
 const resultPolls = ref([]);
 const pollData = ref({
@@ -239,8 +243,38 @@ const delPoll = async () => {
   closeModal();
 };
 
-function handlePollAction(id, type) {
-  console.log('handlePollAction', id, type);
+async function handlePoll(id) {
+  const apiUrl = `${baseUrl}/api/poll/${id}/${pollActionType.value}`;
+  const { data } = await axios.get(apiUrl, {
+    headers: {
+      Authorization: `Bearer ${getCookie('selectWaveToken')}`,
+    },
+  });
+  if (data.status) {
+    message.setMessage({
+      message: `${data.message}`,
+    });
+    message.showToast(true);
+    await getMemberPolls(currentPage.value);
+    resultPolls.value = memberPolls.value.polls;
+  } else {
+    message.setMessage({
+      message: `${data.message}`,
+    });
+    message.showToast(true, 'error');
+  }
+}
+
+function handlePollAction(data, type) {
+  console.log('handlePollAction', data.id, type);
+  pollActionTarget.value = data.id;
+  if (type === 'start') {
+    conformContent.value = `開始 <span class="text-medium text-primary-dark">${data.title}</span> 投票`;
+    pollActionType.value = 'start';
+  } else if (type === 'end') {
+    conformContent.value = `結束 <span class="text-medium text-primary-dark">${data.title}</span> 投票`;
+    pollActionType.value = 'end';
+  }
   showModal.value = 'conform';
 }
 
@@ -412,7 +446,7 @@ function filterPoll(status) {
   <DelModal v-if="showModal === 'del'" :openModal="showModal === 'del'" :closeModal="closeModal" :delPoll="delPoll"
             :delContent="delContent" :contentType="'投票'" />
   <ConformModal v-if="showModal === 'conform'" :openModal="showModal === 'conform'" :closeModal="closeModal"
-                :confirmContent="confirmContent" :fulfillsFunction="fulfillsFunction" />
+                :conformContent="conformContent" :fulfillsFunction="handlePoll" />
   <shareModal v-if="showModal === 'share'" :openModal="showModal === 'share'" :closeModal="closeModal"
               :id="targetId" />
 </template>

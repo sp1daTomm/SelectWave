@@ -29,6 +29,7 @@ const validationSchema = yup.object({
 });
 
 const defaultOptionImage = 'https://imgur.com/TECsq2J.png';
+const defaultCoverImage = 'https://imgur.com/df933Ux.png';
 
 const pollData = ref({
   title: '',
@@ -108,9 +109,13 @@ async function uploadImage(file) {
 }
 
 function onImageError(id) {
-  const errorImageOption = pollData.value.options.find((option) => option.id === id);
-  if (errorImageOption) {
-    errorImageOption.imageUrl = defaultOptionImage;
+  if (id === 'cover') {
+    pollData.value.imageUrl = defaultCoverImage;
+  } else {
+    const errorImageOption = pollData.value.options.find((option) => option.id === id);
+    if (errorImageOption) {
+      errorImageOption.imageUrl = defaultOptionImage;
+    }
   }
 }
 
@@ -181,14 +186,6 @@ const isPollCanEdit = computed(() => {
   if (props.propsPollData && props.propsPollData.status !== 'pending') return false;
   return true;
 });
-
-const handlePollAction = async (type) => {
-  if (type === 'start') {
-    props.propsHandlePollAction(pollData.value.id, 'start');
-  } else {
-    props.propsHandlePollAction(pollData.value.id, 'end');
-  }
-};
 
 const onSubmit = async () => {
   isLoading.value = true;
@@ -298,6 +295,7 @@ const onSubmit = async () => {
                     <img
                       v-if="pollData.imageUrl"
                       :src="pollData.imageUrl"
+                      @error="onImageError('cover')"
                       class="block object-cover object-center w-32 h-32 mx-auto cursor-pointer rounded-3xl md:h-64 md:w-64"
                       :class="{ 'filter grayscale-[50%] opacity-50 cursor-auto': !isPollCanEdit }"
                       alt="封面照"
@@ -385,7 +383,7 @@ const onSubmit = async () => {
                       >
                         <img
                           :src="item.imageUrl"
-                          @error="onImageError(item.id)"
+                          @error="onImageError(item.id, 'option')"
                           class="flex-auto object-cover object-center w-full mx-auto max-h-32"
                           :class="{ 'filter grayscale-[50%] opacity-50 cursor-auto': !isPollCanEdit }"
                         />
@@ -622,12 +620,12 @@ const onSubmit = async () => {
             <div class="flex items-center justify-between w-full">
               <div class="flex gap-2">
                 <div v-if="functionType !== '新增' && pollData.status === 'active'">
-                  <button type="button" class="w-full px-6 py-3 text-base font-medium text-center text-white transition duration-150 bg-black rounded-full md:w-auto hover:bg-primary hover:text-gray-1 focus:ring-4 focus:outline-none focus:ring-primary-light disabled:opacity-50 disabled:cursor-auto disabled:bg-gray-3 disabled:text-gray-2" @click="handlePollAction('end')">
+                  <button type="button" class="w-full px-6 py-3 text-base font-medium text-center text-white transition duration-150 bg-black rounded-full md:w-auto hover:bg-primary hover:text-gray-1 focus:ring-4 focus:outline-none focus:ring-primary-light disabled:opacity-50 disabled:cursor-auto disabled:bg-gray-3 disabled:text-gray-2" @click="propsHandlePollAction(pollData, 'end')">
                     設定: 結束投票
                   </button>
                 </div>
                 <div v-if="functionType !== '新增' && pollData.status === 'pending'">
-                  <button type="button" class="w-full px-6 py-3 text-base font-medium text-center transition duration-150 border rounded-full border-gray-1 text-gray-1 md:w-auto hover:bg-primary hover:border-primary-dark focus:ring-4 focus:outline-none focus:ring-primary-light disabled:opacity-50 disabled:cursor-auto disabled:bg-gray-3 disabled:text-gray-2" @click="handlePollAction('start')">
+                  <button type="button" class="w-full px-6 py-3 text-base font-medium text-center transition duration-150 border rounded-full border-gray-1 text-gray-1 md:w-auto hover:bg-primary hover:border-primary-dark focus:ring-4 focus:outline-none focus:ring-primary-light disabled:opacity-50 disabled:cursor-auto disabled:bg-gray-3 disabled:text-gray-2" @click="propsHandlePollAction(pollData, 'start')">
                     設定: 開始投票
                   </button>
                 </div>

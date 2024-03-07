@@ -4,7 +4,7 @@ import { defineProps } from 'vue';
 const props = defineProps({
   openModal: Boolean,
   closeModal: Function,
-  confirmContent: String,
+  conformContent: String,
   fulfillsFunction: Function,
 });
 
@@ -28,7 +28,7 @@ const handleFulfills = () => {
       <div class="relative grid w-full h-full p-4 place-content-center" data-modal="backdrop" @click="clickOutsideModal">
         <div class="relative bg-white shadow rounded-2xl">
           <button type="button"
-            class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-red-200
+            class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-light
             hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center
             items-center" @click.prevent="closeModal()">
             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -42,8 +42,8 @@ const handleFulfills = () => {
             <div class="mb-4 space-y-4">
               <i class="text-5xl text-center text-primary-dark bi bi-check-square dark:text-gray-200" />
               <h3 class="mb-5 text-lg font-normal text-gray-01 dark:text-gray-400">
-                確定要
-                {{ conformContent }}
+                確定要進行此操作嗎？
+                <div v-html="conformContent" />
               </h3>
             </div>
             <button type="button"
