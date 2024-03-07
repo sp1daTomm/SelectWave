@@ -84,6 +84,8 @@ export default {
       delContent: '「此帳號後，需重新建立帳號」',
       memberId: '',
       memberPerson: { // 根據ID獲取會員詳細資料
+        name: '',
+        gender: 'x',
         avatar: 'https://i.imgur.com/xcLTrkV.png',
         follwing: [],
         followers: [],
@@ -160,6 +162,7 @@ export default {
       const apiUrl = `${import.meta.env.VITE_APP_API_URL}/api/member/${id}`;
       this.$http.get(apiUrl)
         .then((res) => {
+          console.log('memberResult', res.data.result);
           this.memberPerson = res.data.result;
           if (!this.memberPerson.socialMedia.length) {
             this.memberPerson.socialMedia.push(
@@ -224,7 +227,7 @@ export default {
   watch: {
     memberPerson: {
       handler() {
-        [this.birthday] = this.memberPerson.birthday.split('T');
+        [this.birthday] = (this.memberPerson.birthday && this.memberPerson.birthday.split('T')) || '';
       },
       deep: true,
     },

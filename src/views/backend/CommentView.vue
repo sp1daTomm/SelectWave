@@ -47,6 +47,7 @@ const getComments = async (page = 1) => {
     perPage.value = data.limit;
     totalMemberComments.value = data.total;
     totalPage.value = Math.ceil(totalMemberComments.value / perPage.value);
+    console.log('totalPage', totalPage.value);
   } catch (error) {
     message.setMessage({ message: error.response.data.message });
     message.showToast(true, 'error');
@@ -144,7 +145,7 @@ onMounted(() => {
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody v-if="userComments.length > 0">
           <tr class="bg-white hover:bg-primary-light/35 text-gray-1" :class="userComments.length - 1 !== index && 'border-b'" v-for="(item, index) in userComments" :key="item.id">
                 <th scope="row" class="px-6 py-4 font-medium text-left whitespace-nowrap lg:text-center">
                   <p class="text-left">{{ item.pollId.title }}</p>
@@ -176,6 +177,9 @@ onMounted(() => {
               </tr>
         </tbody>
       </table>
+      <div v-if="userComments.length === 0" class="grid w-full h-full px-6 py-4 text-center min-h-[30dvh] place-content-center">
+        <p class="text-gray-2">您沒有對任何投票有進行評論</p>
+      </div>
     </div>
     <Pagination :totalPage="totalPage" :currentPage="currentPage" @updatePage="getComments" />
   </div>

@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <nav v-if="parseInt(totalPage) !== 0">
     <ul class="inline-flex justify-center w-full h-10 -space-x-px text-base">
       <!-- 回到第一頁 -->
       <li>
@@ -30,7 +30,7 @@
       <!-- 下一頁 -->
       <li>
         <a href="#" class="h-8 w-8 flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
-           :class="{ 'pointer-events-none opacity-50' : currentPage === parseInt(totalPage) }"
+           :class="{ 'pointer-events-none opacity-50' : currentPage === parseInt(totalPage)}"
            @click.prevent="currentPage < parseInt(totalPage) && $emit('updatePage', currentPage + 1)">
           <span class="sr-only">Next</span>
           <i class="text-sm bi bi-chevron-right"></i>
@@ -39,7 +39,7 @@
       <!-- 到最後一頁 -->
       <li>
         <a href="#" class="flex items-center justify-center w-8 h-8 p-2 leading-tight bg-white border rounded-lg text-gray-1 border-gray-4 hover:bg-primary-light hover:text-primary-dark"
-           :class="{ 'pointer-events-none opacity-50' : currentPage === parseInt(totalPage) }"
+           :class="{ 'pointer-events-none opacity-50' : currentPage === parseInt(totalPage)}"
            @click.prevent="currentPage < parseInt(totalPage) && $emit('updatePage', parseInt(totalPage))">
           <span class="sr-only">到最後一頁</span>
           <i class="text-sm bi bi-chevron-double-right"></i>

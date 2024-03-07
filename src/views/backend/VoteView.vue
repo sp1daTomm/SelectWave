@@ -340,7 +340,7 @@ function filterPoll(status) {
               </th>
             </tr>
           </thead>
-          <tbody v-if="resultPolls.length > 0">
+          <tbody v-if="resultPolls && resultPolls.length > 0">
             <tr class="bg-white hover:bg-primary-light/35 text-gray-1"
                 :class="resultPolls.length - 1 !== index && 'border-b'"
                 v-for="(item, index) in resultPolls" :key="item.id">
@@ -395,12 +395,10 @@ function filterPoll(status) {
               </td>
             </tr>
           </tbody>
-          <tbody v-else>
-            <tr>
-              <td class="px-6 py-4 text-center" colspan="8">目前沒有投票</td>
-            </tr>
-          </tbody>
         </table>
+        <div v-if="resultPolls.length === 0" class="grid w-full h-full px-6 py-4 text-center min-h-[30dvh] place-content-center">
+          <p class="text-gray-2">您沒有目前沒有開啟任何投票</p>
+        </div>
       </div>
     </div>
     <Pagination :totalPage="totalPage" :currentPage="currentPage" @updatePage="getMemberPolls" />
