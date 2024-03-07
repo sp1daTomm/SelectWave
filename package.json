@@ -31,6 +31,7 @@
     "dotenv": "^16.3.1",
     "flowbite": "^2.2.1",
     "gsap": "^3.12.5",
+    "lucide-vue-next": "^0.341.0",
     "pinia": "^2.1.7",
     "sweetalert2": "^11.10.5",
     "swiper": "^11.0.7",
