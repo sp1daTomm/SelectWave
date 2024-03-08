@@ -199,6 +199,7 @@ export default {
           this.$swal({
             title: `${res.data.message}`,
           });
+          window.location.reload();
         })
         .catch((err) => {
           this.$swal({

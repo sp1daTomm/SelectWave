@@ -29,7 +29,7 @@ const userModal = (data) => swal({
   position: 'top-end',
   html: `
               <div class="flex items-center gap-4">
-                <img src=${data.result.avatar} class="w-20 h-20 object-fit" />
+                <img src=${data.result.avatar} class="w-20 h-20 border-2 rounded-full md:border-4 object-fit border-gray-3" />
                 <h2 class="space-y-2">
                   <span class="block font-bold">歡迎回來</span>
                   ${data.result.name}

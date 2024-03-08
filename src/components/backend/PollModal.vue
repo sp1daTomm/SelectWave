@@ -135,6 +135,7 @@ async function uploadOptionFile(event, index) {
   const imgurUrl = await uploadImage(imageBlob);
   pollData.value.options[index].imageUrl = imgurUrl;
   fileInputOption.value = '';
+  console.log(pollData.value.options);
   isLoading.value = false;
 }
 function createOption() {
@@ -173,10 +174,10 @@ watchEffect(() => {
   if (props.propsPollData) {
     pollData.value = { ...props.propsPollData };
 
-    const [startDate] = props.propsPollData.startDate.split('T');
+    const [startDate] = props.propsPollData.startDate ? props.propsPollData.startDate.split('T')[0] : '';
     pollData.value.startDate = startDate;
     pollData.value.endDate = props.propsPollData.endDate ? props.propsPollData.endDate.split('T')[0] : '';
-    pollData.value.status = props.propsPollData.status === 'active' ? 'active' : 'pending';
+    pollData.value.status = props.propsPollData.status;
     selectedTags.value = props.selectedTagsProps;
   }
 });
@@ -297,7 +298,9 @@ const onSubmit = async () => {
                       :src="pollData.imageUrl"
                       @error="onImageError('cover')"
                       class="block object-cover object-center w-32 h-32 mx-auto cursor-pointer rounded-3xl md:h-64 md:w-64"
-                      :class="{ 'filter grayscale-[50%] opacity-50 cursor-auto': !isPollCanEdit }"
+                      :class="{
+      'filter grayscale-[50%] opacity-50 cursor-auto': !isPollCanEdit,
+      'opacity-80': pollData.status === 'closed' }"
                       alt="封面照"
                     />
                     <div
@@ -332,7 +335,7 @@ const onSubmit = async () => {
                     id="title"
                     name="title"
                     class="w-full p-4 text-sm transition duration-150 bg-white border rounded-full disabled:bg-gray-3/25 disabled:text-gray-1/50 border-gray-3 focus:ring-primary focus:border-primary"
-                    :class="{ 'is-invalid': formErrors.title }"
+                    :class="{'disabled:text-gray-1/75': pollData.status === 'closed', 'is-invalid': formErrors.title }"
                     :disabled="!isPollCanEdit"
                     v-model="pollData.title"
                     required
@@ -354,6 +357,7 @@ const onSubmit = async () => {
                     rows="4"
                     required
                     class="p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary focus:border-primary  disabled:bg-gray-3/25 disabled:text-gray-1/50 transition duration-150"
+                    :class="{'disabled:text-gray-1/75': pollData.status === 'closed'}"
                     :disabled="!isPollCanEdit"
                     placeholder="請在此寫下投票說明.."
                     v-model="pollData.description"
@@ -385,7 +389,7 @@ const onSubmit = async () => {
                           :src="item.imageUrl"
                           @error="onImageError(item.id, 'option')"
                           class="flex-auto object-cover object-center w-full mx-auto max-h-32"
-                          :class="{ 'filter grayscale-[50%] opacity-50 cursor-auto': !isPollCanEdit }"
+                          :class="{ 'filter grayscale-[50%] opacity-50 cursor-auto': !isPollCanEdit,'opacity-80': pollData.status === 'closed' }"
                         />
                         <input
                           class="hidden"
@@ -395,7 +399,7 @@ const onSubmit = async () => {
                           ref="fileInputOption"
                           accept="image/png, image/jpeg, image/jpg"
                           :disabled="!isPollCanEdit"
-                          @change="uploadOptionFile(event, index)"
+                          @change="uploadOptionFile($event, index)"
                         />
                         <div
                           v-if="item.imageUrl && isPollCanEdit"
@@ -418,6 +422,7 @@ const onSubmit = async () => {
                             type="text"
                             :name="item.title"
                             class="block w-full p-3 text-sm transition duration-150 bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary disabled:bg-gray-3/25 disabled:text-gray-1/50"
+                            :class="{'disabled:text-gray-1/75': pollData.status === 'closed'}"
                             :disabled="!isPollCanEdit"
                             placeholder="請輸入選項內容"
                             v-model="item.title"
@@ -551,13 +556,13 @@ const onSubmit = async () => {
               <div>
                 <p class="mb-2 text-base font-medium text-center text-gray-1">顯示狀態</p>
                 <ul class="flex text-sm font-medium text-gray-1">
-                  <li class="border-gray-200">
+                  <li class="border-gray-3">
                     <div class="flex items-center ps-3">
                       <input
                         id="public"
                         type="radio"
                         name="private"
-                        class="w-4 h-4 bg-gray-100 border-gray-300 text-primary focus:ring-primary-light focus:ring-2"
+                        class="w-4 h-4 bg-gray-4 border-gray-3 text-primary focus:ring-primary-light focus:ring-2 disabled:text-gray-2"
                         :disabled="!isPollCanEdit"
                         :value="false"
                         v-model="pollData.isPrivate"
@@ -592,13 +597,13 @@ const onSubmit = async () => {
               <div>
                 <p class="mb-2 text-base font-medium text-center text-gray-1">投票狀態</p>
                 <ul class="flex text-sm font-medium text-gray-1">
-                  <li class="border-gray-200">
+                  <li class="border-gray-3">
                     <div class="flex items-center ps-3">
                       <input
                         id="status"
                         type="checkbox"
                         name="status"
-                        class="w-4 h-4 rounded bg-gray-4 border-gray-3 text-primary focus:ring-primary-light focus:ring-2"
+                        class="w-4 h-4 rounded bg-gray-4 border-gray-3 text-primary focus:ring-primary-light focus:ring-2 disabled:text-gray-2"
                         :disabled="!isPollCanEdit"
                         v-model="pollStartNow"
                         @change="handleStartPoll"
