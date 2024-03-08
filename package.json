@@ -33,7 +33,7 @@
     "sweetalert2": "^11.10.5",
     "swiper": "^11.0.6",
     "tailwindcss-animated": "^1.0.1",
-    "vee-validate": "^4.12.5",
+    "vee-validate": "^4.5.8",
     "vue": "^3.3.11",
     "vue-axios": "^3.5.2",
     "vue-router": "^4.2.5",
