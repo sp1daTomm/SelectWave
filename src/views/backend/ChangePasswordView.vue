@@ -54,14 +54,16 @@
 </template>
 
 <script setup>
-import { inject, ref } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useMemberStore } from '@/stores/member';
-import useCookie from '@/utils';
+import { useMessageStore } from '@/stores/message';
+import { deleteCookie, getCookie } from '@/utils';
+
+const message = useMessageStore();
 
 const router = useRouter();
-const swal = inject('$swal');
 const member = useMemberStore();
 
 const user = ref({
@@ -74,7 +76,7 @@ const isLoading = ref(false);
 const changePassword = async () => {
   const baseUrl = import.meta.env.VITE_APP_API_URL;
   isLoading.value = true;
-  const cookieToken = useCookie.getCookie('selectWaveToken');
+  const cookieToken = getCookie('selectWaveToken');
   const { data } = await axios.post(`${baseUrl}/api/auth/change-password`, {
     password: user.value.password,
     confirmPassword: user.value.confirmPassword,
@@ -84,16 +86,12 @@ const changePassword = async () => {
     },
   });
   if (data.status) {
-    useCookie.deleteCookie('selectWaveToken');
+    deleteCookie('selectWaveToken');
     member.setMemberLoginStatus(false);
     member.setMemberStatus(false);
     member.setMemberData({});
-    swal({
-      icon: 'success',
-      title: '密碼變更成功',
-      text: '請重新登入',
-      timer: 1000,
-    });
+    message.setMessage({ title: '密碼變更成功', message: '請重新登入' });
+    message.showModal('success');
     router.push('/login');
   }
 };

@@ -1,10 +1,21 @@
 <template>
+  <Navbar />
+  <NavbarBackend />
   <router-view v-if="status" />
+  <ComponentFooter />
 </template>
 <script>
-import { useMemberStore } from '../../stores/member';
+import NavbarBackend from '@/components/backend/NavbarBackend.vue';
+import ComponentFooter from '@/components/ComponentFooter.vue';
+import Navbar from '@/components/NavbarEl.vue';
+import { useMemberStore } from '@/stores/member';
 
 export default {
+  components: {
+    Navbar,
+    NavbarBackend,
+    ComponentFooter,
+  },
   data() {
     return {
       status: false,

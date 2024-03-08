@@ -52,7 +52,7 @@ const routes = [
         component: () => import('../views/PollView.vue'),
       },
       {
-        path: '/voting',
+        path: 'voting/:id',
         name: 'Voting',
         component: () => import('../views/VoteContent.vue'),
       },
@@ -81,6 +81,16 @@ const routes = [
         path: 'account',
         name: 'Account',
         component: () => import('../views/backend/AccountView.vue'),
+      },
+      {
+        path: 'comment',
+        name: 'CommentView',
+        component: () => import('../views/backend/CommentView.vue'),
+      },
+      {
+        path: 'resetpassword',
+        name: 'ResetPassword',
+        component: () => import('../views/backend/ResetPassword.vue'),
       },
       {
         path: 'change-password',
