@@ -1,12 +1,13 @@
 <script setup>
-import { defineProps, ref } from 'vue';
+import { defineEmits, defineProps, ref } from 'vue';
 import { useMessageStore } from '@/stores/message';
 
 const props = defineProps({
   openModal: Boolean,
-  closeModal: Function,
   id: String,
 });
+
+const emits = defineEmits(['closeModal']);
 
 const message = useMessageStore();
 
@@ -23,7 +24,7 @@ const copyUrl = () => {
         message.showToast(true);
         setTimeout(() => {
           message.closeModel();
-          props.closeModal();
+          emits('closeModal');
         }, 2000);
       })
       .catch(() => {
@@ -36,13 +37,13 @@ const copyUrl = () => {
 };
 const clickOutsideModal = (event) => {
   if (event.target.dataset.modal === 'backdrop') {
-    props.closeModal();
+    emits('closeModal');
   }
 };
 </script>
 
 <template>
-  <div :class="`${props.openModal ? 'block' : 'hidden'}`"
+  <div :class="`${openModal ? 'block' : 'hidden'}`"
     class="overflow-hidden fixed inset-0 z-50 bg-gray-1/35 backdrop-blur
     justify-center items-center w-full h-[calc(100%-1rem)] max-h-full">
     <div class="relative grid w-full h-full p-4 my-auto place-content-center" @click="clickOutsideModal" data-modal="backdrop">
@@ -54,7 +55,7 @@ const clickOutsideModal = (event) => {
           <button type="button"
             class="end-2.5 text-primary bg-transparent hover:bg-primary-light hover:text-gray-900
             rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
-            @click.prevent="props.closeModal()">
+            @click.prevent="emits('closeModal')">
             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
               stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />

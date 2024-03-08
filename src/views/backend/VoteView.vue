@@ -51,7 +51,6 @@ const pollData = ref({
 });
 
 const allTags = ref([]);
-const startDate = ref('');
 const totalMemberPolls = ref(0);
 const perPage = ref(0);
 
@@ -123,46 +122,18 @@ async function getInitialize() {
 function openNewModal() {
   functionType.value = '新增';
   // 時間格式轉換: Mon Feb 26 2024 17:07:15 GMT+0800 (台北標準時間) → YYYY-MM-DDTHH:mm:ss.sssZ
-  const currentDate = new Date();
-  const isoDateString = currentDate.toISOString();
-  startDate.value = `${isoDateString.slice(0, 23)}Z`;
-  const taipeiDate = new Date(currentDate.getTime() + 8 * 60 * 60 * 1000);
-  startDate.value = `${taipeiDate.toISOString().slice(0, 23)}Z`;
 
   pollData.value = {
     title: '',
     description: '',
     imageUrl: 'https://i.imgur.com/df933Ux.png',
     options: [],
-    startDate: startDate.value,
+    startDate: '',
     isPrivate: false,
     tags: [],
     status: 'pending',
   };
   showModal.value = 'poll';
-}
-async function createNewPoll(resultData) {
-  const apiUrl = `${baseUrl}/api/poll/`;
-  console.log('新增', resultData.value);
-  const { data } = await axios.post(apiUrl, resultData, {
-    headers: {
-      Authorization: `Bearer ${getCookie('selectWaveToken')}`,
-    },
-  });
-  if (data.status) {
-    message.setMessage({
-      message: `${data.message}`,
-    });
-    message.showToast(true);
-    await getMemberPolls(currentPage.value);
-    resultPolls.value = memberPolls.value.polls;
-  } else {
-    message.setMessage({
-      message: `${data.message}`,
-    });
-    message.showToast(true, 'error');
-  }
-  closeModal();
 }
 
 async function openPollModal(item) {
@@ -186,31 +157,42 @@ async function openPollModal(item) {
   console.log('編輯modal', pollData.value);
   console.log('編輯modal', openModal.value);
 }
-async function updateEditPoll(result) {
-  console.log('update poll', result);
-  const apiUrl = `${baseUrl}/api/poll/${pollData.value.id}`;
-  const { data } = await axios.put(apiUrl, result, {
-    headers: {
-      Authorization: `Bearer ${getCookie('selectWaveToken')}`,
-    },
-  });
-  console.log('編輯modal成功', data);
+
+async function submitFunction(result) {
+  console.log('submitFunction', result);
+  let data = {};
+  const apiUrl = `${baseUrl}/api/poll/`;
+  if (functionType.value === '新增') {
+    const res = await axios.post(apiUrl, result, {
+      headers: {
+        Authorization: `Bearer ${getCookie('selectWaveToken')}`,
+      },
+    });
+    data = res.data;
+  } else {
+    const res = await axios.put(apiUrl, result, {
+      headers: {
+        Authorization: `Bearer ${getCookie('selectWaveToken')}`,
+      },
+    });
+    data = res.data;
+  }
   if (data.status) {
-    console.log('編輯modal成功editPollData', data.result);
     message.setMessage({
-      title: `${data.message}`,
+      message: `${data.message}`,
     });
     message.showToast(true);
     await getMemberPolls(currentPage.value);
     resultPolls.value = memberPolls.value.polls;
   } else {
     message.setMessage({
-      title: `${data.message}`,
+      message: `${data.message}`,
     });
     message.showToast(true, 'error');
   }
   closeModal();
 }
+
 function openDelModal(item) {
   showModal.value = 'del';
   targetId.value = item.id;
@@ -266,8 +248,7 @@ async function handlePoll(id) {
   closeModal();
 }
 
-function handlePollAction(data, type) {
-  console.log('handlePollAction', data.id, type);
+function handlePollAction({ data, type }) {
   pollActionTarget.value = data.id;
   if (type === 'start') {
     conformContent.value = `開始 <span class="text-medium text-primary-dark">${data.title}</span> 投票`;
@@ -431,7 +412,8 @@ function filterPoll(status) {
             </tr>
           </tbody>
         </table>
-        <div v-if="resultPolls.length === 0" class="grid w-full h-full px-6 py-4 text-center min-h-[30dvh] place-content-center">
+        <div v-if="resultPolls.length === 0"
+             class="grid w-full h-full px-6 py-4 text-center min-h-[30dvh] place-content-center">
           <p class="text-gray-2">您沒有目前沒有開啟任何投票</p>
         </div>
       </div>
@@ -439,15 +421,14 @@ function filterPoll(status) {
     <Pagination :totalPage="totalPage" :currentPage="currentPage" @updatePage="getMemberPolls" />
   </div>
   <PollModal v-if="showModal === 'poll'" :openModal="showModal === 'poll'"
-  :functionType="functionType" :propsPollData="pollData"
-             :allTags="allTags" :selectedTagsProps="pollData.tags"
-             :closeModal="closeModal" :propsHandlePollAction="handlePollAction"
-             :submitFunction="functionType === '新增' ? createNewPoll : updateEditPoll"
-             />
-  <DelModal v-if="showModal === 'del'" :openModal="showModal === 'del'" :closeModal="closeModal" :delPoll="delPoll"
-            :delContent="delContent" :contentType="'投票'" />
-  <ConformModal v-if="showModal === 'conform'" :openModal="showModal === 'conform'" :closeModal="closeModal"
-                :conformContent="conformContent" :fulfillsFunction="handlePoll(pollActionTarget)" />
-  <shareModal v-if="showModal === 'share'" :openModal="showModal === 'share'" :closeModal="closeModal"
-              :id="targetId" />
+             :functionType="functionType" :propsPollData="pollData"
+             :selectedTagsProps="pollData.tags" :allTags="allTags"
+             @submitFunction="submitFunction"
+             @closeModal="closeModal" @handlePollAction="handlePollAction" />
+  <DelModal v-if="showModal === 'del'" :openModal="showModal === 'del'" :delContent="delContent"
+            :contentType="'投票'" @closeModal="closeModal" @delFunction="delPoll" />
+  <ConformModal v-if="showModal === 'conform'" :openModal="showModal === 'conform'" :conformContent="conformContent"
+                @closeModal="closeModal" @fulfillsFunction="handlePoll(pollActionTarget)" />
+  <shareModal v-if="showModal === 'share'" :openModal="showModal === 'share'"
+              @closeModal="closeModal" :id="targetId" />
 </template>

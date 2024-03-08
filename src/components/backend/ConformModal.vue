@@ -1,21 +1,21 @@
 <script setup>
-import { defineProps } from 'vue';
+import { defineEmits, defineProps } from 'vue';
 
-const props = defineProps({
+defineProps({
   openModal: Boolean,
-  closeModal: Function,
   conformContent: String,
-  fulfillsFunction: Function,
 });
+
+const emits = defineEmits(['closeModal', 'fulfillsFunction']);
 
 const clickOutsideModal = (event) => {
   if (event.target.dataset.modal === 'backdrop') {
-    props.closeModal();
+    emits('closeModal');
   }
 };
 const handleFulfills = () => {
-  props.fulfillsFunction();
-  props.closeModal();
+  emits('fulfillsFunction');
+  emits('closeModal');
 };
 
 </script>
@@ -30,7 +30,7 @@ const handleFulfills = () => {
           <button type="button"
             class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-light
             hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center
-            items-center" @click.prevent="closeModal()">
+            items-center" @click.prevent="emits('closeModal')">
             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
               stroke-width="2"
@@ -51,7 +51,7 @@ const handleFulfills = () => {
               確認
             </button>
             <button type="button"
-              class="px-6 py-3 text-base font-medium transition duration-150 bg-white border text-gray-1 border-gray-2 hover:bg-gray-02 focus:ring-4 focus:outline-none focus:ring-gray-02 rounded-3xl border-gray-02 hover:text-gray-1 hover:border-gray-2 hover:bg-gray-3 focus:z-10" @click.prevent="closeModal()">取消</button>
+              class="px-6 py-3 text-base font-medium transition duration-150 bg-white border text-gray-1 border-gray-2 hover:bg-gray-02 focus:ring-4 focus:outline-none focus:ring-gray-02 rounded-3xl border-gray-02 hover:text-gray-1 hover:border-gray-2 hover:bg-gray-3 focus:z-10" @click.prevent="emits('closeModal')">取消</button>
           </div>
         </div>
       </div>

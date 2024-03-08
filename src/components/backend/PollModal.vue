@@ -1,7 +1,8 @@
 <script setup>
 import {
   computed,
-  defineProps, ref, watch,
+  defineEmits, defineProps,
+  ref, watch,
   watchEffect,
 } from 'vue';
 import axios from 'axios';
@@ -10,7 +11,6 @@ import { useMessageStore } from '@/stores/message';
 import {
   formatImage,
   getCookie,
-  turnDate,
 } from '@/utils';
 
 const message = useMessageStore();
@@ -31,12 +31,24 @@ const validationSchema = yup.object({
 const defaultOptionImage = 'https://imgur.com/TECsq2J.png';
 const defaultCoverImage = 'https://imgur.com/df933Ux.png';
 
+function formatDate(date) {
+  const d = new Date(date);
+  let month = `${d.getMonth() + 1}`;
+  let day = `${d.getDate()}`;
+  const year = d.getFullYear();
+
+  if (month.length < 2) month = `0${month}`;
+  if (day.length < 2) day = `0${day}`;
+
+  return [year, month, day].join('-');
+}
+
 const pollData = ref({
   title: '',
   description: '',
   imageUrl: '',
   options: [{ title: '', imageUrl: defaultOptionImage }],
-  startDate: turnDate(new Date().toISOString()),
+  startDate: formatDate(new Date()),
   endDate: '',
   tags: [],
   isPrivate: false,
@@ -48,11 +60,10 @@ const props = defineProps({
   functionType: String,
   propsPollData: Object,
   selectedTagsProps: Array,
-  closeModal: Function,
   openModal: Boolean,
-  submitFunction: Function,
-  propsHandlePollAction: Function,
 });
+
+const emit = defineEmits(['closeModal', 'submitFunction', 'handlePollAction']);
 
 const formErrors = ref({});
 
@@ -135,7 +146,6 @@ async function uploadOptionFile(event, index) {
   const imgurUrl = await uploadImage(imageBlob);
   pollData.value.options[index].imageUrl = imgurUrl;
   fileInputOption.value = '';
-  console.log(pollData.value.options);
   isLoading.value = false;
 }
 function createOption() {
@@ -156,7 +166,7 @@ function changeTag() {
 
 const clickOutsideModal = (event) => {
   if (event.target.dataset.modal === 'backdrop') {
-    props.closeModal();
+    emit('closeModal');
   }
 };
 
@@ -168,6 +178,13 @@ function handleStartPoll() {
     pollData.value.status = 'pending';
     pollData.value.startDate = props.propsPollData.startDate;
   }
+}
+
+function handlePollAction(action) {
+  emit('handlePollAction', {
+    data: pollData.value,
+    type: action,
+  });
 }
 
 watchEffect(() => {
@@ -197,7 +214,7 @@ const onSubmit = async () => {
       ...pollData.value,
       tags: selectedTags.value,
     };
-    props.submitFunction(formValues);
+    emit('submitFunction', formValues);
     isLoading.value = false;
   } catch (error) {
     isLoading.value = false;
@@ -225,7 +242,7 @@ const onSubmit = async () => {
     v-if="openModal" data-modal="backdrop"
     class="fixed bg-gray-1/35 backdrop-blur top-0 left-0 right-0 z-50 w-full p-4
         overflow-hidden md:inset-0 h-[calc(100%-1rem)] max-h-full transition duration-150"
-    :class="openModal ? '' : 'hidden'" @click="clickOutsideModal" @keydown.esc="openModal && closeModal()"
+    :class="openModal ? '' : 'hidden'" @click="clickOutsideModal" @keydown.esc="openModal && emits('closeModal')"
   >
     <div id="modal" class="relative w-full max-w-2xl max-h-screen py-4 mx-auto">
       <div
@@ -240,7 +257,7 @@ const onSubmit = async () => {
           <button
             type="button"
             class="grid w-6 h-6 p-4 text-gray-400 transition duration-150 bg-transparent rounded-lg place-content-center hover:bg-gray-200 hover:text-gray-900 ms-auto dark:hover:bg-gray-600 dark:hover:text-white"
-            @click.prevent="closeModal()"
+            @click.prevent="emit('closeModal')"
           >
             <i class="text-3xl bi bi-x"></i>
             <span class="sr-only">Close modal</span>
@@ -288,7 +305,7 @@ const onSubmit = async () => {
                         accept="image/png, image/jpeg, image/jpg"
                         class="hidden"
                         ref="fileInput"
-                        :disabled="!isPollCanEdit"
+                        :disabled="!isPollCanEdit || isLoading"
                         @change="uploadCoverFile"
                       />
                     </label>
@@ -316,7 +333,7 @@ const onSubmit = async () => {
                       ref="fileInput"
                       accept="image/png, image/jpeg, image/jpg"
                       class="hidden"
-                      :disabled="!isPollCanEdit"
+                      :disabled="!isPollCanEdit || isLoading"
                       @change="uploadCoverFile"
                     />
                   </div>
@@ -398,7 +415,7 @@ const onSubmit = async () => {
                           type="file"
                           ref="fileInputOption"
                           accept="image/png, image/jpeg, image/jpg"
-                          :disabled="!isPollCanEdit"
+                          :disabled="!isPollCanEdit || isLoading"
                           @change="uploadOptionFile($event, index)"
                         />
                         <div
@@ -453,7 +470,7 @@ const onSubmit = async () => {
               <button
                 type="button"
                 class="rounded-3xl border border-gray-1 hover:bg-gray-1 hover:text-white bg-white px-4 py-2.5 mt-3 w-full  disabled:opacity-50 disabled:bg-gray-3 disabled:text-gray-2 disabled:border-gray-3 transition duration-150"
-                :disabled="!isPollCanEdit"
+                :disabled="!isPollCanEdit || isLoading"
                 @click.prevent="createOption"
               >
                 新增選項
@@ -479,7 +496,7 @@ const onSubmit = async () => {
                 <button
                   type="button"
                   class="p-4 text-white transition duration-150 rounded-full bg-primary hover:bg-primary-dark shrink-0 disabled:opacity-50 disabled:bg-gray-3 disabled:text-gray-2"
-                  :disabled="!isPollCanEdit || selectedTags && selectedTags.length >= 3 || !tagInput"
+                  :disabled="!isPollCanEdit || selectedTags && selectedTags.length >= 3 || !tagInput || isLoading"
                   @click.prevent="changeTag">
                   <i class="bi bi-plus-lg" />
                   新增標籤
@@ -504,6 +521,7 @@ const onSubmit = async () => {
                   <button
                     type="button"
                     class="px-1 cursor-pointer hover:text-primary-dark"
+                    :disabled="!isPollCanEdit || isLoading"
                     @click.prevent="selectedTags.splice(index, 1)"
                   >
                     <i class="bi bi-x-lg"></i>
@@ -529,7 +547,7 @@ const onSubmit = async () => {
                     name="startDate"
                     :min="new Date().toISOString().split('T')[0]"
                     class="flex-1 block w-full min-w-0 px-3 py-4 text-sm text-gray-900 transition duration-150 border border-gray-300 rounded-none rounded-e-full bg-gray-50 focus:ring-primary focus:border-primary disabled:bg-gray-2/25 disabled:text-gray-1/25"
-                    :disabled="!isPollCanEdit || pollData.status === 'active'"
+                    :disabled="!isPollCanEdit || pollData.status === 'active' || isLoading"
                     v-model="pollData.startDate"
                   />
                 </div>
@@ -546,7 +564,7 @@ const onSubmit = async () => {
                     name="endDate"
                     :min="new Date().toISOString().split('T')[0]"
                     class="flex-1 block w-full min-w-0 px-3 py-4 text-sm text-gray-900 transition duration-150 border border-gray-300 rounded-none rounded-e-full bg-gray-50 focus:ring-primary focus:border-primary disabled:bg-gray-2/25 disabled:text-gray-1/25"
-                    :disabled="!isPollCanEdit"
+                    :disabled="!isPollCanEdit || isLoading"
                     v-model="pollData.endDate"
                   />
                 </div>
@@ -563,7 +581,7 @@ const onSubmit = async () => {
                         type="radio"
                         name="private"
                         class="w-4 h-4 bg-gray-4 border-gray-3 text-primary focus:ring-primary-light focus:ring-2 disabled:text-gray-2"
-                        :disabled="!isPollCanEdit"
+                        :disabled="!isPollCanEdit || isLoading"
                         :value="false"
                         v-model="pollData.isPrivate"
                       />
@@ -581,7 +599,7 @@ const onSubmit = async () => {
                         type="radio"
                         name="private"
                         class="w-4 h-4 bg-gray-100 border-gray-300 text-primary focus:ring-primary-light focus:ring-2"
-                        :disabled="!isPollCanEdit"
+                        :disabled="!isPollCanEdit || isLoading"
                         :value="true"
                         v-model="pollData.isPrivate"
                       />
@@ -604,7 +622,7 @@ const onSubmit = async () => {
                         type="checkbox"
                         name="status"
                         class="w-4 h-4 rounded bg-gray-4 border-gray-3 text-primary focus:ring-primary-light focus:ring-2 disabled:text-gray-2"
-                        :disabled="!isPollCanEdit"
+                        :disabled="!isPollCanEdit || isLoading"
                         v-model="pollStartNow"
                         @change="handleStartPoll"
                       />
@@ -625,12 +643,16 @@ const onSubmit = async () => {
             <div class="flex items-center justify-between w-full">
               <div class="flex gap-2">
                 <div v-if="functionType !== '新增' && pollData.status === 'active'">
-                  <button type="button" class="w-full px-6 py-3 text-base font-medium text-center text-white transition duration-150 bg-black rounded-full md:w-auto hover:bg-primary hover:text-gray-1 focus:ring-4 focus:outline-none focus:ring-primary-light disabled:opacity-50 disabled:cursor-auto disabled:bg-gray-3 disabled:text-gray-2" @click="propsHandlePollAction(pollData, 'end')">
+                  <button type="button" class="w-full px-6 py-3 text-base font-medium text-center text-white transition duration-150 bg-black rounded-full md:w-auto hover:bg-primary hover:text-gray-1 focus:ring-4 focus:outline-none focus:ring-primary-light disabled:opacity-50 disabled:cursor-auto disabled:bg-gray-3 disabled:text-gray-2"
+                  :disabled="isLoading"
+                  @click="handlePollAction('end')">
                     設定: 結束投票
                   </button>
                 </div>
                 <div v-if="functionType !== '新增' && pollData.status === 'pending'">
-                  <button type="button" class="w-full px-6 py-3 text-base font-medium text-center transition duration-150 border rounded-full border-gray-1 text-gray-1 md:w-auto hover:bg-primary hover:border-primary-dark focus:ring-4 focus:outline-none focus:ring-primary-light disabled:opacity-50 disabled:cursor-auto disabled:bg-gray-3 disabled:text-gray-2" @click="propsHandlePollAction(pollData, 'start')">
+                  <button type="button" class="w-full px-6 py-3 text-base font-medium text-center transition duration-150 border rounded-full border-gray-1 text-gray-1 md:w-auto hover:bg-primary hover:border-primary-dark focus:ring-4 focus:outline-none focus:ring-primary-light disabled:opacity-50 disabled:cursor-auto disabled:bg-gray-3 disabled:text-gray-2"
+                  :disabled="isLoading"
+                  @click="handlePollAction('start')">
                     設定: 開始投票
                   </button>
                 </div>
@@ -648,7 +670,8 @@ const onSubmit = async () => {
                 <button
                   type="button"
                   class="w-full px-6 py-3 text-base font-medium transition duration-150 bg-white border rounded-full text-gray-1 border-gray-3 md:w-auto ms-3 focus:outline-none focus:z-10 focus:ring-4 focus:ring-gray-4 hover:text-white hover:bg-gray-3"
-                  @click.prevent="closeModal()"
+                  @click.prevent="emit('closeModal')"
+                  :disabled="isLoading"
                 >
                   取消
                 </button>
