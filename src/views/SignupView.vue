@@ -67,7 +67,7 @@
   </div>
 </template>
 <script>
-import useCookie from '../utils';
+import { setCookie } from '@/utils';
 
 export default {
   data() {
@@ -90,7 +90,7 @@ export default {
         .then(({ data }) => {
           if (data.status) {
             const { token } = data.result;
-            useCookie.setCookie('selectWaveToken', token, 7);
+            setCookie('selectWaveToken', token, 7);
             this.$swal({
               title: `${data.message}`,
               icon: 'success',

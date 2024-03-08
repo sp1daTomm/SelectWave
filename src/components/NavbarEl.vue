@@ -76,8 +76,8 @@
 </template>
 <script>
 
-import { useMemberStore } from '../stores/member';
-import useCookie from '../utils';
+import { useMemberStore } from '@/stores/member';
+import { deleteCookie, getCookie } from '@/utils';
 
 export default {
   data() {
@@ -116,7 +116,7 @@ export default {
     },
     doLogout() {
       const api = `${import.meta.env.VITE_APP_API_URL}/api/auth/logout`;
-      const token = useCookie.getCookie('selectWaveToken');
+      const token = getCookie('selectWaveToken');
       this.$http.get(api, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -128,7 +128,7 @@ export default {
           this.$swal({
             title: `${res.data.message}`,
           });
-          useCookie.deleteCookie('selectWaveToken');
+          deleteCookie('selectWaveToken');
           this.$router.push('/');
         })
         .catch(() => {
