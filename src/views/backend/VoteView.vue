@@ -265,6 +265,10 @@ function openShareModal(id) {
   targetId.value = id;
 }
 
+const linkToPollDetail = (id) => {
+  router.push({ name: 'Voting', params: { id } });
+};
+
 onMounted(async () => {
   await getInitialize();
   resultPolls.value = memberPolls.value.polls;
@@ -407,6 +411,10 @@ function filterPoll(status) {
                 <button type="button" class="hover:text-primary mb-3.5 lg:mb-0"
                         @click="openPollModal(item)">
                   <i class="w-full text-xl bi bi-pencil" />
+                </button>
+                <button type="button" class="hover:text-primary mb-3.5 lg:mb-0"
+                        @click="linkToPollDetail(item.id)">
+                  <i class="w-full text-2xl bi-eye-fill" />
                 </button>
               </td>
             </tr>

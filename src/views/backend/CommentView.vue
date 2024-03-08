@@ -30,7 +30,7 @@ const closeModal = () => {
 };
 
 const linkToPollDetail = (id) => {
-  router.push({ name: 'PollDetail', params: { id } });
+  router.push({ name: 'Voting', params: { id } });
 };
 
 const getComments = async (page = 1) => {

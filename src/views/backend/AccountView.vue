@@ -2,14 +2,14 @@
   <div class="container max-w-screen-lg">
     <div class="px-5 mb-10 outline outline-1 outline-gray-3 rounded-2xl md:rounded-3xl py-11">
       <div class="flex flex-wrap items-center justify-between max-w-3xl mx-auto mb-7 md:mb-8">
-        <label
-          class="relative flex flex-col items-center justify-center mb-5 tracking-wide uppercase bg-white border rounded-full shadow-lg cursor-pointer border-blue hover:bg-blue md:mb-0"
-          style="width: 120px; height: 120px;">
+        <label class="relative flex flex-col items-center justify-center mb-5 tracking-wide uppercase bg-white border rounded-full shadow-lg cursor-pointer border-blue hover:bg-blue md:mb-0"
+               style="width: 120px; height: 120px;">
           <input type="file" class="hidden" ref="fileInput" @change="uploadFile" />
-          <img :src="memberPerson.avatar" class="object-cover object-center rounded-full" style="width: 120px; height: 120px;">
+          <img :src="memberPerson.avatar" class="object-cover object-center rounded-full"
+               style="width: 120px; height: 120px;">
           <i class="absolute bottom-0 text-3xl right-1 bi bi-image-fill"></i>
           <div
-            class="absolute inset-0 z-10 transition-opacity bg-gray-500 bg-opacity-50 rounded-full opacity-0 hover:opacity-100">
+               class="absolute inset-0 z-10 transition-opacity bg-gray-500 bg-opacity-50 rounded-full opacity-0 hover:opacity-100">
             <div class="flex items-center justify-center h-full">
               <span class="font-semibold tracking-wide text-white uppercase">
                 修改頭像
@@ -18,26 +18,28 @@
           </div>
         </label>
         <div class="flex">
-        <button type="button" class="flex items-center justify-center px-6 py-3 mr-3 text-sm font-medium transition duration-150 bg-white border-2 rounded-full border-gray-1 text-gray-1 md:text-base hover:text-primary-dark hover:border-primary-dark"
-          @click="$refs.AccountResetPasswordModal.openModal()">
-          重設密碼
-        </button>
-        <button type="button" class="flex items-center justify-center px-6 py-3 text-sm font-medium transition duration-150 bg-white border-2 rounded-full border-gray-1 text-gray-1 md:text-base hover:text-red-600 hover:border-red-600"
-          @click="$refs.DelModal.openModal()">
-          刪除帳號
-        </button>
-      </div>
+          <RouterLink :to="{ name: 'ChangePassword' }"
+                      class="flex items-center justify-center px-6 py-3 mr-3 text-sm font-medium transition duration-150 bg-white border-2 rounded-full border-gray-1 text-gray-1 md:text-base hover:text-primary-dark hover:border-primary-dark">
+            更改密碼</RouterLink>
+          <button type="button"
+                  class="flex items-center justify-center px-6 py-3 text-sm font-medium transition duration-150 bg-white border-2 rounded-full border-gray-1 text-gray-1 md:text-base hover:text-red-600 hover:border-red-600"
+                  @click="$refs.DelModal.openModal()">
+            刪除帳號
+          </button>
+        </div>
       </div>
       <form class="flex flex-col max-w-3xl gap-4 mx-auto" @submit.prevent="updateMember">
         <div>
           <label for="name" class="block mb-2 text-base font-medium text-gray-1">名稱</label>
-          <input type="text" id="name" class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary" v-model="memberPerson.name" />
+          <input type="text" id="name"
+                 class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
+                 v-model="memberPerson.name" />
         </div>
         <div>
           <label for="sex" class="block mb-2 text-base font-medium text-gray-1">性別</label>
           <select id="sex"
-            class="block w-full p-4 text-sm text-gray-900 bg-white border border-gray-300 rounded-full focus:ring-primary focus:border-primary"
-            v-model="memberPerson.gender">
+                  class="block w-full p-4 text-sm text-gray-900 bg-white border border-gray-300 rounded-full focus:ring-primary focus:border-primary"
+                  v-model="memberPerson.gender">
             <option value="" selected disabled>請選擇性別</option>
             <option value="male">男</option>
             <option value="female">女</option>
@@ -46,17 +48,22 @@
         </div>
         <div>
           <label for="birthday" class="block mb-2 text-base font-medium text-gray-1">生日</label>
-          <input v-if="!memberPerson.birthday"
-          type="date" id="birthday" class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary" v-model="birthday" @input="clickDate" />
-          <input v-else type="date" id="birthday" class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary" v-model="birthday" @input="clickDate" />
+          <input v-if="!memberPerson.birthday" type="date" id="birthday"
+                 class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
+                 v-model="birthday" @input="clickDate" />
+          <input v-else type="date" id="birthday"
+                 class="block w-full p-4 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
+                 v-model="birthday" @input="clickDate" />
         </div>
         <div class="flex flex-wrap gap-y-4">
-          <div class="flex-auto w-1/2 px-2" v-for="(item, index) in memberPerson.socialMedia" :key="index">
+          <div class="flex-auto w-1/2 px-2" v-for="(item, index) in memberPerson.socialMedia"
+               :key="index">
             <label for="facebookUrl" class="block mb-2 text-base font-medium text-gray-1">
-              {{ memberPerson.socialMedia[index].type }} 社群連結
+              {{ memberPerson.socialMedia[ index ].type }} 社群連結
             </label>
-            <input type="url" class="block w-full p-4 mb-2 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary" placeholder="請填入社群網址"
-              v-model="memberPerson.socialMedia[index].id" />
+            <input type="url"
+                   class="block w-full p-4 mb-2 text-sm bg-white border rounded-full border-gray-3 focus:ring-primary focus:border-primary"
+                   placeholder="請填入社群網址" v-model="memberPerson.socialMedia[ index ].id" />
           </div>
         </div>
         <button type="submit" class="text-white bg-gray-1 hover:bg-primary-dark focus:ring-4
