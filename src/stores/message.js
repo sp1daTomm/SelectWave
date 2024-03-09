@@ -9,7 +9,7 @@ export const useMessageStore = defineStore('messageStore', {
   actions: {
     setMessage(data) {
       this.message = data.message;
-      this.title = data.title;
+      this.title = data.title || '';
     },
     showToast(status, icon) {
       if (status) {
@@ -30,6 +30,22 @@ export const useMessageStore = defineStore('messageStore', {
         icon: icon || 'success',
         title: this.title,
         text: this.message,
+      });
+    },
+    showConfirm(callback) {
+      Swal.fire({
+        title: this.title,
+        text: this.message,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#F49E00',
+        cancelButtonColor: '#1E1E1E',
+        confirmButtonText: '是的',
+        cancelButtonText: '取消',
+      }).then((result) => {
+        if (result.isConfirmed && callback) {
+          callback();
+        }
       });
     },
     resetMessage() {

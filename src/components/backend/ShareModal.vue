@@ -11,7 +11,7 @@ const emits = defineEmits(['closeModal']);
 
 const message = useMessageStore();
 
-const Url = ref(`${window.location.href.split('#')[0]}#/vote/${props.id}`);
+const Url = ref(`${window.location.href.split('#')[0]}#/voting/${props.id}`);
 
 const copyUrl = () => {
   if (navigator.clipboard && window.isSecureContext) {

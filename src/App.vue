@@ -57,8 +57,7 @@ const checkUser = async (path, token) => {
   return member;
 };
 
-const authCheck = async () => {
-  const { token } = route.query;
+const authCheck = async (token) => {
   const baseUrl = import.meta.env.VITE_APP_API_URL;
   const api = `${baseUrl}/api/auth/check`;
   if (token) {
@@ -75,8 +74,10 @@ const authCheck = async () => {
 };
 
 onMounted(
-  async () => {
-    await authCheck();
+  () => {
+    const { token } = route.query;
+    if (token) authCheck(token);
   },
 );
+
 </script>

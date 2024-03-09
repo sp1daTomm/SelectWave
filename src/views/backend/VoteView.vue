@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import ConformModal from '@/components/backend/ConformModal.vue';
@@ -9,12 +9,14 @@ import ShareModal from '@/components/backend/ShareModal.vue';
 import Pagination from '@/components/PaginationView.vue';
 import { useMemberStore } from '@/stores/member';
 import { useMessageStore } from '@/stores/message';
+import { usePollStore } from '@/stores/poll';
 import { getCookie, turnDate } from '@/utils';
 
 const baseUrl = import.meta.env.VITE_APP_API_URL;
 
 const member = useMemberStore();
 const message = useMessageStore();
+const poll = usePollStore();
 
 const router = useRouter();
 
@@ -27,8 +29,6 @@ const showModal = ref('');
 
 const functionType = ref('新增');
 const memberId = ref('');
-const totalPage = ref(0);
-const currentPage = ref(1);
 const targetId = ref('');
 
 const pollActionType = ref('');
@@ -36,7 +36,7 @@ const pollActionTarget = ref('');
 
 const delContent = ref('');
 const conformContent = ref('');
-const memberPolls = ref([]); // member投票資料
+const memberPolls = computed(() => poll.allPolls); // member投票資料
 const resultPolls = ref([]);
 const pollData = ref({
   title: '',
@@ -51,8 +51,6 @@ const pollData = ref({
 });
 
 const allTags = ref([]);
-const totalMemberPolls = ref(0);
-const perPage = ref(0);
 
 const openModal = ref(false);
 const closeModal = () => {
@@ -73,22 +71,8 @@ const closeModal = () => {
 };
 
 async function getMemberPolls(page = 1) {
-  const apiUrl = `${baseUrl}/api/poll?createdBy=${memberId.value}&page=${page}`;
-  try {
-    const { data } = await axios.get(apiUrl);
-    console.log('getMemberPolls', data);
-    memberPolls.value = data;
-    totalMemberPolls.value = data.total;
-    // 頁碼
-    currentPage.value = data.page;
-    perPage.value = data.limit;
-    totalPage.value = Math.ceil(totalMemberPolls.value / perPage.value);
-  } catch (err) {
-    message.setMessage({
-      message: err.response.data.message,
-    });
-    message.showToast(true, 'error');
-  }
+  poll.updateCreatedBy(memberId.value);
+  await poll.getPolls(page);
 }
 
 async function getTags() {
@@ -96,7 +80,7 @@ async function getTags() {
   try {
     const { data } = await axios.get(apiUrl);
     console.log('所有標籤', data.result);
-    allTags.value = data.result.flatMap((poll) => poll.name);
+    allTags.value = data.result.flatMap((tag) => tag.name);
   } catch (err) {
     console.log(err);
   }
@@ -117,6 +101,7 @@ async function getInitialize() {
     message.showToast(true, 'error');
     router.push('/login');
   }
+  return verify.status;
 }
 
 function openNewModal() {
@@ -170,7 +155,7 @@ async function submitFunction(result) {
     });
     data = res.data;
   } else {
-    const res = await axios.put(apiUrl, result, {
+    const res = await axios.put(`${apiUrl + result.id}`, result, {
       headers: {
         Authorization: `Bearer ${getCookie('selectWaveToken')}`,
       },
@@ -182,7 +167,7 @@ async function submitFunction(result) {
       message: `${data.message}`,
     });
     message.showToast(true);
-    await getMemberPolls(currentPage.value);
+    await getMemberPolls();
     resultPolls.value = memberPolls.value.polls;
   } else {
     message.setMessage({
@@ -213,7 +198,7 @@ const delPoll = async () => {
         message: '刪除成功',
       });
       message.showToast(true);
-      await getMemberPolls(currentPage.value);
+      await getMemberPolls();
       resultPolls.value = memberPolls.value.polls;
     }
   } catch (error) {
@@ -237,7 +222,7 @@ async function handlePoll(id) {
       message: `${data.message}`,
     });
     message.showToast(true);
-    await getMemberPolls(currentPage.value);
+    await getMemberPolls();
     resultPolls.value = memberPolls.value.polls;
   } else {
     message.setMessage({
@@ -270,12 +255,12 @@ const linkToPollDetail = (id) => {
 };
 
 onMounted(async () => {
-  await getInitialize();
-  resultPolls.value = memberPolls.value.polls;
+  const status = await getInitialize();
+  if (status) resultPolls.value = memberPolls.value;
 });
 
 function filterPoll(status) {
-  resultPolls.value = memberPolls.value.polls.filter((item) => {
+  resultPolls.value = memberPolls.value.filter((item) => {
     switch (status) {
       case '隱藏':
         return item.isPrivate === true;
@@ -290,7 +275,7 @@ function filterPoll(status) {
     }
   });
   if (status === 'ALL') {
-    resultPolls.value = memberPolls.value.polls;
+    resultPolls.value = memberPolls.value;
   }
   toggleCollapse();
 }
@@ -420,13 +405,13 @@ function filterPoll(status) {
             </tr>
           </tbody>
         </table>
-        <div v-if="resultPolls.length === 0"
+        <div v-if="resultPolls?.length === 0"
              class="grid w-full h-full px-6 py-4 text-center min-h-[30dvh] place-content-center">
           <p class="text-gray-2">您沒有目前沒有開啟任何投票</p>
         </div>
       </div>
     </div>
-    <Pagination :totalPage="totalPage" :currentPage="currentPage" @updatePage="getMemberPolls" />
+    <Pagination @updatePage="getMemberPolls" />
   </div>
   <PollModal v-if="showModal === 'poll'" :openModal="showModal === 'poll'"
              :functionType="functionType" :propsPollData="pollData"

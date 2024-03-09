@@ -240,8 +240,7 @@ const onSubmit = async () => {
 <template>
   <div
     v-if="openModal" data-modal="backdrop"
-    class="fixed bg-gray-1/35 backdrop-blur top-0 left-0 right-0 z-50 w-full p-4
-        overflow-hidden md:inset-0 h-[calc(100%-1rem)] max-h-full transition duration-150"
+    class="fixed top-0 left-0 right-0 z-50 w-full h-full max-h-screen p-4 overflow-hidden transition duration-150 bg-gray-1/35 backdrop-blur md:inset-0"
     :class="openModal ? '' : 'hidden'" @click="clickOutsideModal" @keydown.esc="openModal && emits('closeModal')"
   >
     <div id="modal" class="relative w-full max-w-2xl max-h-screen py-4 mx-auto">
