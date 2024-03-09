@@ -51,7 +51,7 @@ import { inject, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { useMemberStore } from '@/stores/member';
-import useCookie from '@/utils';
+import { deleteCookie } from '@/utils';
 
 const route = useRoute();
 const router = useRouter();
@@ -76,7 +76,7 @@ const resetPassword = async () => {
       token,
     });
     if (data.status) {
-      useCookie.deleteCookie('selectWaveToken');
+      deleteCookie('selectWaveToken');
       swal({
         icon: 'success',
         title: '密碼重設成功',
@@ -97,7 +97,7 @@ const resetPassword = async () => {
 };
 
 onMounted(() => {
-  useCookie.deleteCookie('selectWaveToken');
+  deleteCookie('selectWaveToken');
   member.setMemberLoginStatus(false);
   member.setMemberStatus(false);
   member.setMemberData({});
