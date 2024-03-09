@@ -170,7 +170,7 @@ async function submitFunction(result) {
     });
     data = res.data;
   } else {
-    const res = await axios.put(apiUrl, result, {
+    const res = await axios.put(`${apiUrl + result.id}`, result, {
       headers: {
         Authorization: `Bearer ${getCookie('selectWaveToken')}`,
       },
