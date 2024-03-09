@@ -36,7 +36,7 @@ export const usePollStore = defineStore('pollStore', {
   actions: {
     async getPolls(page = 1) {
       const baseUrl = import.meta.env.VITE_APP_API_URL;
-      const path = `/api/poll?page=${page}&sort=${this.selectedSort}${
+      const path = `/api/poll?status=active&page=${page}${this.selectedSort && `&sort=${this.selectedSort}`}${
         this.query && `&q=${this.query}`
       }${this.createdBy && `&createdBy=${this.createdBy}`}`;
       const { data } = await axios.get(`${baseUrl}${path}`);
