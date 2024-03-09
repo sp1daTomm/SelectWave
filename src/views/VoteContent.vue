@@ -105,39 +105,39 @@
       <div class="flex md:w-8/12">
         <div class="flex justify-between w-full items-center">
           <h2 class="text-gray-1 pt-6 pb-4 text-xl md:text-3xl text-center leading-normal font-semibold md:pb-8">討論區</h2>
-          <p class="text-gray-1">2則留言</p>
+          <p class="text-gray-1">{{commentData.length}}則留言</p>
         </div>
       </div>
       <ul class="flex flex-col gap-3 md:w-8/12">
-        <li class="border rounded-3xl border-2 py-3 px-4 flex flex-col md:py-5" data-message="send">
+        <li v-if="isLogin && commentData.length === 0" class="border rounded-3xl border-2 py-3 px-4 flex flex-col md:py-5" data-message="send">
           <div class="flex items-center md:pb-6 pb-2">
-            <div :style="{ backgroundImage:bgPersonImg}" class="w-8 h-8 rounded-full bg-cover"></div>
-            <p class="pl-3 pr-4 font-medium">王小明</p>
+            <div :style="{ backgroundImage:'url('+ memberImg +')'}" class="w-8 h-8 rounded-full bg-cover"></div>
+            <p class="pl-3 pr-4 font-medium">{{ memberName }}</p>
           </div>
           <input v-model="messageComment" type="text" class="focus:ring-primary focus:bg-white rounded-full px-4 py-2 block bg-gray-4 border-0 w-full mb-2 md:mb-4 placeholder:text-gray-3" placeholder="請輸入評論...">
           <button type="button" class=" px-6 py-2 border-2 rounded-full bg-black text-white hover:border-gray-2 hover:bg-gray-2 transition ml-auto" @click="sentComment('message')">送出</button>
         </li>
-        <li class="border rounded-3xl border-2 py-3 px-4 flex flex-col md:py-5">
-          <div class="flex" data-message="one">
-            <div :style="{ backgroundImage:bgPersonImg}" class="w-8 h-8 shrink rounded-full bg-cover"></div>
+        <li v-if="commentData.length > 0" class="border rounded-3xl border-2 py-3 px-4 flex flex-col md:py-5">
+          <div v-for="comment in commentData" :key="comment.id" class="flex" data-message="one">
+            <div :style="{ backgroundImage:'url('+comment.author.avatar+')'}" class="w-8 h-8 shrink rounded-full bg-cover"></div>
             <div class="grow">
               <div class="flex justify-between">
-                <p class="pl-3 pr-4 pt-1 font-medium">王小明</p>
-                <p class="text-gray-2">2023/12/31</p>
+                <p class="pl-3 pr-4 pt-1 font-medium">{{comment.author.name}}</p>
+                <p class="text-gray-2">{{dateForm(comment.createdTime)}}</p>
               </div>
-              <p class="py-2 pl-3 leading-normal">我超喜歡！</p>
+              <p class="py-2 pl-3 leading-normal">{{ comment.content }}</p>
             </div>
           </div>
-          <div class="bg-gray-4 py-3 px-4 rounded-lg">
+          <div v-if="isLogin" class="bg-gray-4 py-3 px-4 rounded-lg">
             <div class="flex" data-message="list">
-              <div :style="{ backgroundImage:bgPersonImg}" class="w-8 h-8 shrink rounded-full bg-cover"></div>
+              <div :style="{ backgroundImage:'url('+ memberImg +')'}" class="w-8 h-8 shrink rounded-full bg-cover"></div>
               <div class="grow">
                 <div class="flex items-center">
-                  <p class="pl-3 pr-4 font-medium">王小明</p>
-                  <div class="px-3 py-1 border-gray-2 border rounded-full border-2 text-gray-2 bg-white">發起人</div>
-                  <p class="ml-auto text-gray-2">2023/12/31</p>
+                  <p class="pl-3 pr-4 font-medium">{{ memberName }}</p>
+                  <!-- <div class="px-3 py-1 border-gray-2 border rounded-full border-2 text-gray-2 bg-white">發起人</div> -->
+                  <p class="ml-auto text-gray-2">{{ dateForm(new Date()) }}</p>
                 </div>
-                <p class="py-2 pl-3 leading-normal md:pb-3">我也是！</p>
+                <p class="py-2 pl-3 leading-normal md:pb-3"></p>
               </div>
             </div>
             <div class="flex flex-col">
@@ -150,6 +150,7 @@
       </ul>
     </div>
     </section>
+
   </main>
 </template>
 <script>
@@ -175,6 +176,8 @@ export default {
     const pollId = route.params.id;
     const memberStore = useMemberStore();
     const memberId = memberStore.member.id;
+    const memberName = memberStore.member.name;
+    const memberImg = memberStore.member.avatar;
     const show = ref(true);
     const bgPersonImg = 'url("/images/loginCover.png")';
     const bgImg = 'url("/images/bg-01.svg")';
@@ -187,7 +190,51 @@ export default {
     const message = useMessageStore();
     const thisPollData = ref([]);
     const votedAll = ref(false);
+    const isLogin = ref(false);
+    const commentData = ref([]);
+    async function fetchCommentData() {
+      try {
+        const token = getCookie('selectWaveToken');
+        const api = `${import.meta.env.VITE_APP_API_URL}/api/comment`;
+        const response = await axios.get(api, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const filterComment = response.data.result.filter((data) => {
+          return data.pollId.id === pollId;
+        });
+        commentData.value = filterComment;
+      } catch (error) {
 
+        // console.error('Error fetching poll data:', error);
+      }
+    }
+    async function pushComment(state) {
+      let stateValue = null;
+      if (state === 'message') {
+        stateValue = messageComment.value;
+      } else if (state === 'reply') {
+        stateValue = replyComment.value;
+      }
+
+      const token = getCookie('selectWaveToken');
+      const api = `${import.meta.env.VITE_APP_API_URL}/api/comment`;
+      const postComment = {
+        pollId,
+        content: stateValue,
+      };
+      axios.post(api, postComment, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      message.setMessage({
+        message: '已完成留言',
+      });
+      message.showToast(true, 'success');
+      fetchCommentData();
+    }
     function sentComment(state) {
       if (state === 'reply') {
         const trimmedComment = replyComment.value.trim();
@@ -196,6 +243,7 @@ export default {
           return;
         }
         if (replyComment.value.trim() !== '') {
+          pushComment('reply');
           show.value = !show.value;
           replyComment.value = '';
         }
@@ -206,9 +254,29 @@ export default {
           return;
         }
         if (messageComment.value.trim() !== '' && trimmedComment.length > 0) {
+          pushComment('message');
           messageComment.value = '';
         }
       }
+    }
+    function dateForm(date) {
+      // const date = '2024-03-09T16:16:56.548Z';
+      const utcDate = new Date(date);
+
+      const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false, // 使用 24 小時制
+        timeZone: 'Asia/Taipei', // 設定時區為 UTC
+      };
+
+      const formatter = new Intl.DateTimeFormat('en-US', options);
+      const formattedDate = formatter.format(utcDate);
+
+      return formattedDate.replace(',', '');
     }
     function isSelectedRadio(value) {
       return selectedRadio.value === value;
@@ -244,7 +312,6 @@ export default {
         const api = `${import.meta.env.VITE_APP_API_URL}/api/poll/${pollId}`;
         const response = await axios.get(api);
         thisPollData.value = response.data.poll;
-
         votedNum(thisPollData.value.options);
       } catch (error) {
 
@@ -299,13 +366,16 @@ export default {
     onMounted(() => {
       const token = getCookie('selectWaveToken');
       if (token) {
+        isLogin.value = true;
         isCanVoting.value = true;
         doNotVotingText.value = '送出投票';
       } else {
+        isLogin.value = false;
         isCanVoting.value = false;
         doNotVotingText.value = '登入後即可投票';
       }
       fetchPollData();
+      fetchCommentData();
     });
 
     return {
@@ -327,6 +397,11 @@ export default {
       memberId,
       pollId,
       isVoted,
+      commentData,
+      memberName,
+      memberImg,
+      isLogin,
+      dateForm,
     };
   },
 };
