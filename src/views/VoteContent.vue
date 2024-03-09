@@ -28,67 +28,79 @@
           :navigation="navigation"
           :modules="modules"
         >
-        <swiper-slide v-for="card in myCards" :key="card.id">
-              <div class="relative flex flex-col overflow-hidden rounded-3xl">
-                <div>
-                  <div :data-test="card.image" v-bind:style="{ backgroundImage:card.image }"
-                  class=" bg-cover rounded-3xl pb-[70%] relative">
-                    <p class="text-white p-4 absolute bottom-0 drop-shadow-md">{{ card.title }}</p>
-                  </div>
+        <swiper-slide>
+            <div class="relative flex flex-col overflow-hidden rounded-3xl">
+              <div>
+                <div v-bind:style="{ backgroundImage:'url('+ thisPollData.imageUrl +')' }"
+                    class=" bg-cover rounded-3xl pb-[70%] relative">
+                  <p class="text-white p-4 absolute bottom-0 drop-shadow-md"></p>
                 </div>
               </div>
-            </swiper-slide>
-            <div class="h-10"></div>
+            </div>
+          </swiper-slide>
+          <swiper-slide v-for="(optionImg, idx) in thisPollData.options" :key="optionImg.id+'Img'">
+            <div class="relative flex flex-col overflow-hidden rounded-3xl">
+              <div>
+                <div v-bind:style="{ backgroundImage:'url('+optionImg.imageUrl+')' }"
+                    class=" bg-cover rounded-3xl pb-[70%] relative">
+                  <p class="text-white p-4 absolute bottom-0 drop-shadow-md"><span class="pr-2">{{ idx+1 }}.</span>{{ optionImg.title }}</p>
+                </div>
+                </div>
+            </div>
+          </swiper-slide>
+        <div class="h-10"></div>
         </swiper>
           <div class="absolute mx-3 left-0 right-0 bottom-3 top-10 bg-primary-light rounded-2xl
           md:bottom-[unset] md:top-10 md:left-0 md:right-0 md:pb-[68%]"></div>
       </section>
 
       <section class="py-8 md:py-4 max-w-screen-lg px-3">
-        <h1 class="text-2xl md:text-3xl leading-normal md:leading-relaxed font-semibold">輕鬆建立投票所，讓您的聲音成為力量。</h1>
-        <p class="md:text-xl  text-gray-2 py-3 md:py-4">目前電視節目玲琅滿目，你最喜歡哪一台呢？</p>
+        <h1 class="text-2xl md:text-3xl leading-normal md:leading-relaxed font-semibold">{{thisPollData.title}}</h1>
+        <p class="md:text-xl text-gray-2 py-3 md:py-4">{{thisPollData.description}}</p>
         <ul class="flex gap-3 flex-wrap">
-          <li><span class="text-primary pr-1 font-bold">#</span>公開投票</li>
-          <li><span class="text-primary pr-1 font-bold">#</span>標籤01</li>
-          <li><span class="text-primary pr-1 font-bold">#</span>標籤02</li>
-          <li><span class="text-primary pr-1 font-bold">#</span>標籤03</li>
+          <li v-for="tag in thisPollData.tags" :key="tag.id">
+            <span class="text-primary pr-1 font-bold">#</span>
+            {{ tag.name }}
+          </li>
         </ul>
         <div class="flex items-center py-6">
-          <div :style="{ backgroundImage:bgPersonImg}" class="w-8 h-8 rounded-full bg-cover"></div>
-          <p class="pl-3 pr-4 font-medium">王小明</p>
+          <div :style="{ backgroundImage:'url('+thisPollData.createdBy?.avatar+')'}" class="w-8 h-8 rounded-full bg-cover"></div>
+          <p class="pl-3 pr-4 font-medium" :data-userId="thisPollData.createdBy?.id">{{ thisPollData.createdBy?.name }}</p>
           <div class="px-3 py-1 border-gray-2 border rounded-full border-2 text-gray-2">發起人</div>
         </div>
         <ul class="flex flex-col gap-3">
-          <li class="flex items-center border rounded-3xl border-2 border-gray-3 p-3 relative" :class="{ 'border-primary': isSelectedRadio('a') }">
-            <input type="radio" name="flexRadioDefault" value="a" id="flexCheckDefault01" class="focus:ring-primary text-primary" v-model="selectedRadio">
-            <label for="flexCheckDefault01" class="flex items-center justify-between w-full gap-3">
-              <p class="pl-3 flex-grow">a.晚間新聞</p><p class="text-gray-2 flex-shrink-0" >38票</p>
-            </label>
-            <div class="absolute bg-gray-4 inset-y-0 right-0 left-[62%] z-[-1] rounded-r-3xl"
-            :class="{ 'bg-primary-light': isSelectedRadio('a') }"
-            >
+          <li v-for="(option, idx) in thisPollData.options" :key="option.id"
+           >
+            <div class="overflow-hidden flex items-center border rounded-3xl border-2 border-gray-3 p-3 relative"
+            :class="{ 'border-primary': isSelectedRadio(option.id) }">
+              <input type="radio" :disabled="!isCanVoting || thisPollData.status!=='active' || isVoted(option.voters)"  name="flexRadioDefault" :value="option.id" :id="'flexCheckDefault'+idx" class="focus:ring-primary text-primary" v-model="selectedRadio">
+              <label :for="'flexCheckDefault'+idx" class="flex items-center justify-between w-full gap-3">
+                <p class="pl-3 flex-grow"><span class="pr-2">{{ idx+1 }}.</span>{{ option.title }}</p><p class="text-gray-2 flex-shrink-0" >{{option.voters.length}} 票</p>
+              </label>
+              <div v-if="option.voters.length>0" class="absolute bg-gray-4 inset-y-0 right-0 z-[-1] rounded-r-3xl"
+              :class="{ 'bg-primary-light': isSelectedRadio(option.id) }"
+              :style="{left:( option.voters.length / thisPollData.totalVoters )+'%'}"
+              >
+              </div>
             </div>
-          </li>
-          <li class="flex items-center border rounded-3xl border-2 border-gray-3 p-3 relative" :class="{ 'border-primary': isSelectedRadio('b') }">
-            <input type="radio" name="flexRadioDefault" value="b" id="flexCheckDefault02" class="focus:ring-primary text-primary" v-model="selectedRadio">
-            <label for="flexCheckDefault02" class="flex items-center justify-between w-full gap-3">
-              <p class="pl-3 flex-grow">b.晚間新聞</p><p class="text-gray-2 flex-shrink-0" >38票</p>
-            </label>
-            <div class="absolute bg-gray-4 inset-y-0 right-0 left-[62%] z-[-1] rounded-r-3xl"
-            :class="{ 'bg-primary-light': isSelectedRadio('b') }"
-            >
-            </div>
+            <p v-if="isVoted(option.voters)" class="pr-2 float-right text-gray-3">已投票</p>
+
           </li>
         </ul>
         <div class="px-3 flex gap-4 py-3">
           <button class="w-10 h-10 bg-gray-4 rounded-full" type="button"><i class="bi bi-link"></i></button>
-          <button type="button" class="px-6 py-2 border-2 rounded-full bg-black text-white hover:border-gray-2 hover:bg-gray-2 transition grow">送出投票</button>
+          <button v-if="thisPollData.status==='active'" type="button" @click="doVoting(selectedRadio)" class="px-6 py-2 border-2 rounded-full bg-black text-white hover:border-gray-2 hover:bg-gray-2 transition grow">
+            {{ doNotVotingText }}
+          </button>
+          <button v-else type="button" @click="isEndVotingMessage" class="px-6 py-2 border-2 rounded-full bg-black text-white hover:border-gray-2 hover:bg-gray-2 transition grow">
+            投票已結束
+          </button>
         </div>
 
       </section>
     </div>
     <section class="relative">
-      <div :style="{ backgroundImage:bgImg}" class="bg-no-repeat bg-right absolute inset-0 bg-40% hidden md:block"></div>
+      <div :style="{ backgroundImage:bgImg}" class="bg-no-repeat bg-right absolute inset-0 bg-40% hidden z-[-1] md:block"></div>
       <div class=" max-w-screen-lg mx-auto px-3  gap-4 py-6 ">
       <div class="flex md:w-8/12">
         <div class="flex justify-between w-full items-center">
@@ -138,13 +150,17 @@
       </ul>
     </div>
     </section>
-
   </main>
 </template>
 <script>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
+import { useMessageStore } from '@/stores/message';
+import { getCookie } from '@/utils';
+import { useMemberStore } from '../stores/member';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
@@ -155,6 +171,10 @@ export default {
     SwiperSlide,
   },
   setup() {
+    const route = useRoute();
+    const pollId = route.params.id;
+    const memberStore = useMemberStore();
+    const memberId = memberStore.member.id;
     const show = ref(true);
     const bgPersonImg = 'url("/images/loginCover.png")';
     const bgImg = 'url("/images/bg-01.svg")';
@@ -162,65 +182,11 @@ export default {
     const replyComment = ref('');
     const messageComment = ref('');
     const widthIsShow = true;
-    const myCards = [
-      {
-        id: 1,
-        image: 'url("/src/assets/vote 01.png")',
-        deadline: '2024-03-10',
-        title: '最喜歡的電視節目',
-        description:
-            'luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
-        tags: ['p', 't', 'e'],
-        voteQty: '3000',
-      },
-      {
-        id: 2,
-        image: 'url("/src/assets/vote 05.png")',
-        deadline: '2024-03-10',
-        title: '最喜歡的食物',
-        description:
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
-        tags: ['s', 'r', 'i'],
-        voteQty: '3000',
-      },
-      {
-        id: 3,
-        image: 'url("/src/assets/vote 06.png")',
-        deadline: '2024-03-10',
-        title: '最想去的國家',
-        description:
-            'Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.',
-        tags: ['m', 'o', 'n'],
-        voteQty: '3000',
-      },
-      {
-        id: 4,
-        image: 'url("/src/assets/vote 07.png")',
-        deadline: '2024-03-10',
-        title: '最喜歡的飲料',
-        description:
-            'Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.',
-        tags: ['m', 'o', 'n'],
-        voteQty: '3000',
-      },
-      {
-        id: 5,
-        image: 'url("/src/assets/vote 07.png")',
-        deadline: '2024-03-10',
-        title: '最喜歡的飲料店',
-        description:
-            'Cupiditate voluptates animi is culpa perferendis reprehenderit assumenda.',
-        tags: ['m', 'o', 'n'],
-        voteQty: '3000',
-      },
-    ];
-    function formatDeadline(deadline) {
-      const formattedDate = new Date(deadline);
-      const year = formattedDate.getFullYear();
-      const month = (formattedDate.getMonth() + 1).toString().padStart(2, '0');
-      const day = formattedDate.getDate().toString().padStart(2, '0');
-      return `${year}/${month}/${day}`;
-    }
+    const isCanVoting = ref(false);
+    const doNotVotingText = ref('');
+    const message = useMessageStore();
+    const thisPollData = ref([]);
+    const votedAll = ref(false);
 
     function sentComment(state) {
       if (state === 'reply') {
@@ -248,6 +214,100 @@ export default {
       return selectedRadio.value === value;
     }
 
+    function isEndVotingMessage() {
+      message.setMessage({
+        message: '投票已結束，無法投票',
+      });
+      message.showToast(true, 'error');
+    }
+    function votedNum(options) {
+      let num = 0;
+      options.forEach((option) => {
+        option.voters.forEach((user) => {
+          if (user.user.id === memberId) {
+            num += 1;
+          }
+        });
+      });
+      if (options.length === num) {
+        votedAll.value = true;
+      }
+
+      if (votedAll.value === true) {
+        isCanVoting.value = false;
+        doNotVotingText.value = '都已投票過';
+      }
+    }
+
+    async function fetchPollData() {
+      try {
+        const api = `${import.meta.env.VITE_APP_API_URL}/api/poll/${pollId}`;
+        const response = await axios.get(api);
+        thisPollData.value = response.data.poll;
+
+        votedNum(thisPollData.value.options);
+      } catch (error) {
+
+        // console.error('Error fetching poll data:', error);
+      }
+    }
+
+    function isVoted(voters) {
+      const isMe = voters.filter((userId) => {
+        return userId.user.id === memberId;
+      });
+      if (isMe.length > 0) {
+        return true;
+      }
+      return false;
+    }
+    function doVoting(id) {
+      if (isCanVoting.value === false) {
+        message.setMessage({
+          message: '投票失敗',
+        });
+        message.showToast(true, 'error');
+        return;
+      }
+      const optionId = {
+        optionId: id,
+      };
+      const token = getCookie('selectWaveToken');
+      const api = `${import.meta.env.VITE_APP_API_URL}/api/vote`;
+      axios.post(api, optionId, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then(({ data }) => {
+          if (data.status) {
+            message.setMessage({
+              message: '已完成投票',
+            });
+            message.showToast(true, 'success');
+            fetchPollData();
+          }
+        })
+        .catch(() => {
+          message.setMessage({
+            message: '投票失敗',
+          });
+          message.showToast(true, 'error');
+        });
+    }
+
+    onMounted(() => {
+      const token = getCookie('selectWaveToken');
+      if (token) {
+        isCanVoting.value = true;
+        doNotVotingText.value = '送出投票';
+      } else {
+        isCanVoting.value = false;
+        doNotVotingText.value = '登入後即可投票';
+      }
+      fetchPollData();
+    });
+
     return {
       show,
       bgPersonImg,
@@ -256,11 +316,17 @@ export default {
       messageComment,
       modules: [Autoplay, Pagination, Navigation],
       widthIsShow,
-      myCards,
       bgImg,
       sentComment,
-      formatDeadline,
       isSelectedRadio,
+      thisPollData,
+      isCanVoting,
+      doNotVotingText,
+      doVoting,
+      isEndVotingMessage,
+      memberId,
+      pollId,
+      isVoted,
     };
   },
 };
