@@ -7,8 +7,8 @@
       </RouterLink>
       <ul class="hidden gap-2 pl-6 md:flex">
         <li class="relative group">
-          <RouterLink :to="{name: 'Terms'}" :class="[ isActive('Terms') ? 'text-primary' : '']" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">關於我們</RouterLink>
-          <div :class="[ isActive('Terms') ? 'after:absolute after:bottom-0 after:rounded after:left-1/2 after:-translate-x-1/2 after:w-4 after:h-1 after:bg-primary' : '']"
+          <RouterLink :to="{name: 'About'}" :class="[ isActive('About') ? 'text-primary' : '']" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">關於我們</RouterLink>
+          <div :class="[ isActive('About') ? 'after:absolute after:bottom-0 after:rounded after:left-1/2 after:-translate-x-1/2 after:w-4 after:h-1 after:bg-primary' : '']"
           class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
         </li>
         <li class="relative group">
@@ -66,7 +66,7 @@
       </button>
     </div>
     <ul class="gap-2">
-      <li><RouterLink to="/terms" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">關於我們</RouterLink></li>
+      <li><RouterLink to="/about" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">關於我們</RouterLink></li>
       <li><RouterLink to="/none" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">開始投票</RouterLink></li>
       <li><RouterLink to="/faq" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">常見問題</RouterLink></li>
     </ul>

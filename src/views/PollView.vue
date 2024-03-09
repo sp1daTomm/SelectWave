@@ -393,11 +393,11 @@ export default {
               <input id="search" type="text" class="z-0 px-4 transition duration-150 rounded search-input focus:border-primary focus:shadow focus:outline-none focus:ring-2 focus:ring-primary" v-model="searchQuery"
                      placeholder="搜尋投票" />
               <label for="search" class="absolute top-2 right-4">
-                <i v-if="!searchQuery" class="z-20 text-gray-2 hover:text-gray-3 bi bi-search"></i>
+                <i v-if="!searchQuery" class="z-20 text-gray-2 hover:text-gray-3 bi bi-search-heart" />
               </label>
             </div>
               <button type="button" class="px-3 py-2 ml-2 transition duration-150 rounded-lg cursor-pointer hover:bg-primary-dark bg-gray-1 text-gray-4 hover:text-white" @click="handleSearchFiler">
-                <i class="bi bi-box-arrow-in-right"></i>
+                <i class="bi bi-box-search" />
               </button>
           </div>
         </div>

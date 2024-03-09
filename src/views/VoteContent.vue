@@ -6,12 +6,12 @@
 </style>
 <template>
   <main>
-    <div class="flex flex-col md:flex-row max-w-screen-lg mx-auto">
-      <section class="relative max-w-screen-lg mx-auto px-8 py-5 md:w-8/12 w-full">
+    <div class="flex flex-col max-w-screen-lg mx-auto md:flex-row">
+      <section class="relative w-full max-w-screen-lg px-8 py-5 mx-auto md:w-8/12">
         <ul class="hidden">
           <li>
             <button type="button">
-              <div :style="{ backgroundImage:bgPersonImg}" class="w-8 h-8 rounded-full bg-cover"></div>
+              <div :style="{ backgroundImage:bgPersonImg}" class="w-8 h-8 bg-cover rounded-full"></div>
             </button>
           </li>
         </ul>
@@ -33,7 +33,7 @@
               <div>
                 <div v-bind:style="{ backgroundImage:'url('+ thisPollData.imageUrl +')' }"
                     class=" bg-cover rounded-3xl pb-[70%] relative">
-                  <p class="text-white p-4 absolute bottom-0 drop-shadow-md"></p>
+                  <p class="absolute bottom-0 p-4 text-white drop-shadow-md"></p>
                 </div>
               </div>
             </div>
@@ -42,8 +42,10 @@
             <div class="relative flex flex-col overflow-hidden rounded-3xl">
               <div>
                 <div v-bind:style="{ backgroundImage:'url('+optionImg.imageUrl+')' }"
-                    class=" bg-cover rounded-3xl pb-[70%] relative">
-                  <p class="text-white p-4 absolute bottom-0 drop-shadow-md"><span class="pr-2">{{ idx+1 }}.</span>{{ optionImg.title }}</p>
+                    class="bg-cover rounded-3xl pb-[70%] relative">
+                  <div
+                       class="absolute inset-0 bg-gradient-to-t from-gray-1 via-transparent to-transparent" />
+                  <p class="absolute bottom-0 p-4 text-white drop-shadow-md"><span class="pr-2">{{ idx+1 }}.</span>{{ optionImg.title }}</p>
                 </div>
                 </div>
             </div>
@@ -54,45 +56,47 @@
           md:bottom-[unset] md:top-10 md:left-0 md:right-0 md:pb-[68%]"></div>
       </section>
 
-      <section class="py-8 md:py-4 max-w-screen-lg px-3">
-        <h1 class="text-2xl md:text-3xl leading-normal md:leading-relaxed font-semibold">{{thisPollData.title}}</h1>
-        <p class="md:text-xl text-gray-2 py-3 md:py-4">{{thisPollData.description}}</p>
-        <ul class="flex gap-3 flex-wrap">
+      <section class="max-w-screen-lg px-3 py-8 md:py-4">
+        <h1 class="text-2xl font-semibold leading-normal md:text-3xl md:leading-relaxed">{{thisPollData.title}}</h1>
+        <p class="py-3 md:text-xl text-gray-2 md:py-4">{{thisPollData.description}}</p>
+        <ul class="flex flex-wrap gap-3">
           <li v-for="tag in thisPollData.tags" :key="tag.id">
-            <span class="text-primary pr-1 font-bold">#</span>
+            <span class="pr-1 font-bold text-primary">#</span>
             {{ tag.name }}
           </li>
         </ul>
         <div class="flex items-center py-6">
-          <div :style="{ backgroundImage:'url('+thisPollData.createdBy?.avatar+')'}" class="w-8 h-8 rounded-full bg-cover"></div>
+          <div :style="{ backgroundImage:'url('+thisPollData.createdBy?.avatar+')'}" class="w-8 h-8 bg-cover rounded-full"></div>
           <p class="pl-3 pr-4 font-medium" :data-userId="thisPollData.createdBy?.id">{{ thisPollData.createdBy?.name }}</p>
-          <div class="px-3 py-1 border-gray-2 border rounded-full border-2 text-gray-2">發起人</div>
+          <div class="px-3 py-1 border border-2 rounded-full border-gray-2 text-gray-2">發起人</div>
         </div>
         <ul class="flex flex-col gap-3">
           <li v-for="(option, idx) in thisPollData.options" :key="option.id"
            >
-            <div class="overflow-hidden flex items-center border rounded-3xl border-2 border-gray-3 p-3 relative"
+            <div class="relative flex items-center p-3 overflow-hidden border-2 rounded-3xl border-gray-3"
             :class="{ 'border-primary': isSelectedRadio(option.id) }">
               <input type="radio" :disabled="!isCanVoting || thisPollData.status!=='active' || isVoted(option.voters)"  name="flexRadioDefault" :value="option.id" :id="'flexCheckDefault'+idx" class="focus:ring-primary text-primary" v-model="selectedRadio">
               <label :for="'flexCheckDefault'+idx" class="flex items-center justify-between w-full gap-3">
-                <p class="pl-3 flex-grow"><span class="pr-2">{{ idx+1 }}.</span>{{ option.title }}</p><p class="text-gray-2 flex-shrink-0" >{{option.voters.length}} 票</p>
+                <p class="flex-grow pl-3"><span class="pr-2">{{ idx+1 }}.</span>{{ option.title }}</p><p class="flex-shrink-0 text-gray-2" >{{option.voters.length}} 票</p>
               </label>
-              <div v-if="option.voters.length>0" class="absolute bg-gray-4 inset-y-0 right-0 z-[-1] rounded-r-3xl"
-              :class="{ 'bg-primary-light': isSelectedRadio(option.id) }"
-              :style="{left:( option.voters.length / thisPollData.totalVoters )+'%'}"
-              >
-              </div>
+              <div v-if="option.voters.length>0" class="absolute inset-y-0 right-0 z-[-1] w-full origin-right transition duration-300 ease-in-out"
+              :class="( option.voters.length / thisPollData.totalVoters )*100 >= 50 ? 'bg-primary/75' : ( option.voters.length / thisPollData.totalVoters )*100 >= 80 ? 'bg-primary/90' : 'bg-gray-3/50'"
+              :style="{
+                transform:
+                  `scaleX( ${(option.voters.length / thisPollData.totalVoters * 100)}%)`
+              }"
+              />
             </div>
-            <p v-if="isVoted(option.voters)" class="pr-2 float-right text-gray-3">已投票</p>
+            <p v-if="isVoted(option.voters)" class="float-right pr-2 text-gray-3">已投票</p>
 
           </li>
         </ul>
-        <div class="px-3 flex gap-4 py-3">
-          <button class="w-10 h-10 bg-gray-4 rounded-full" type="button"><i class="bi bi-link"></i></button>
-          <button v-if="thisPollData.status==='active'" type="button" @click="doVoting(selectedRadio)" class="px-6 py-2 border-2 rounded-full bg-black text-white hover:border-gray-2 hover:bg-gray-2 transition grow">
+        <div class="flex gap-4 px-3 py-3">
+          <button class="w-10 h-10 rounded-full bg-gray-4" type="button"><i class="bi bi-link"></i></button>
+          <button v-if="thisPollData.status==='active'" type="button" @click="doVoting(selectedRadio)" class="px-6 py-2 text-white transition bg-black border-2 rounded-full hover:border-gray-2 hover:bg-gray-2 grow">
             {{ doNotVotingText }}
           </button>
-          <button v-else type="button" @click="isEndVotingMessage" class="px-6 py-2 border-2 rounded-full bg-black text-white hover:border-gray-2 hover:bg-gray-2 transition grow">
+          <button v-else type="button" @click="isEndVotingMessage" class="px-6 py-2 text-white transition bg-black border-2 rounded-full hover:border-gray-2 hover:bg-gray-2 grow">
             投票已結束
           </button>
         </div>
@@ -101,49 +105,49 @@
     </div>
     <section class="relative">
       <div :style="{ backgroundImage:bgImg}" class="bg-no-repeat bg-right absolute inset-0 bg-40% hidden z-[-1] md:block"></div>
-      <div class=" max-w-screen-lg mx-auto px-3  gap-4 py-6 ">
+      <div class="max-w-screen-lg gap-4 px-3 py-6 mx-auto ">
       <div class="flex md:w-8/12">
-        <div class="flex justify-between w-full items-center">
-          <h2 class="text-gray-1 pt-6 pb-4 text-xl md:text-3xl text-center leading-normal font-semibold md:pb-8">討論區</h2>
+        <div class="flex items-center justify-between w-full">
+          <h2 class="pt-6 pb-4 text-xl font-semibold leading-normal text-center text-gray-1 md:text-3xl md:pb-8">討論區</h2>
           <p class="text-gray-1">{{commentData.length}}則留言</p>
         </div>
       </div>
       <ul class="flex flex-col gap-3 md:w-8/12">
-        <li v-if="isLogin && commentData.length === 0" class="border rounded-3xl border-2 py-3 px-4 flex flex-col md:py-5" data-message="send">
-          <div class="flex items-center md:pb-6 pb-2">
-            <div :style="{ backgroundImage:'url('+ memberImg +')'}" class="w-8 h-8 rounded-full bg-cover"></div>
+        <li v-if="isLogin && commentData.length === 0" class="flex flex-col px-4 py-3 border border-2 rounded-3xl md:py-5" data-message="send">
+          <div class="flex items-center pb-2 md:pb-6">
+            <div :style="{ backgroundImage:'url('+ memberImg +')'}" class="w-8 h-8 bg-cover rounded-full"></div>
             <p class="pl-3 pr-4 font-medium">{{ memberName }}</p>
           </div>
-          <input v-model="messageComment" type="text" class="focus:ring-primary focus:bg-white rounded-full px-4 py-2 block bg-gray-4 border-0 w-full mb-2 md:mb-4 placeholder:text-gray-3" placeholder="請輸入評論...">
-          <button type="button" class=" px-6 py-2 border-2 rounded-full bg-black text-white hover:border-gray-2 hover:bg-gray-2 transition ml-auto" @click="sentComment('message')">送出</button>
+          <input v-model="messageComment" type="text" class="block w-full px-4 py-2 mb-2 border-0 rounded-full focus:ring-primary focus:bg-white bg-gray-4 md:mb-4 placeholder:text-gray-3" placeholder="請輸入評論...">
+          <button type="button" class="px-6 py-2 ml-auto text-white transition bg-black border-2 rounded-full hover:border-gray-2 hover:bg-gray-2" @click="sentComment('message')">送出</button>
         </li>
-        <li v-if="commentData.length > 0" class="border rounded-3xl border-2 py-3 px-4 flex flex-col md:py-5">
+        <li v-if="commentData.length > 0" class="flex flex-col px-4 py-3 border border-2 rounded-3xl md:py-5">
           <div v-for="comment in commentData" :key="comment.id" class="flex" data-message="one">
-            <div :style="{ backgroundImage:'url('+comment.author.avatar+')'}" class="w-8 h-8 shrink rounded-full bg-cover"></div>
+            <div :style="{ backgroundImage:'url('+comment.author.avatar+')'}" class="w-8 h-8 bg-cover rounded-full shrink"></div>
             <div class="grow">
               <div class="flex justify-between">
-                <p class="pl-3 pr-4 pt-1 font-medium">{{comment.author.name}}</p>
+                <p class="pt-1 pl-3 pr-4 font-medium">{{comment.author.name}}</p>
                 <p class="text-gray-2">{{dateForm(comment.createdTime)}}</p>
               </div>
               <p class="py-2 pl-3 leading-normal">{{ comment.content }}</p>
             </div>
           </div>
-          <div v-if="isLogin" class="bg-gray-4 py-3 px-4 rounded-lg">
+          <div v-if="isLogin" class="px-4 py-3 rounded-lg bg-gray-4">
             <div class="flex" data-message="list">
-              <div :style="{ backgroundImage:'url('+ memberImg +')'}" class="w-8 h-8 shrink rounded-full bg-cover"></div>
+              <div :style="{ backgroundImage:'url('+ memberImg +')'}" class="w-8 h-8 bg-cover rounded-full shrink"></div>
               <div class="grow">
                 <div class="flex items-center">
                   <p class="pl-3 pr-4 font-medium">{{ memberName }}</p>
-                  <!-- <div class="px-3 py-1 border-gray-2 border rounded-full border-2 text-gray-2 bg-white">發起人</div> -->
+                  <!-- <div class="px-3 py-1 bg-white border border-2 rounded-full border-gray-2 text-gray-2">發起人</div> -->
                   <p class="ml-auto text-gray-2">{{ dateForm(new Date()) }}</p>
                 </div>
                 <p class="py-2 pl-3 leading-normal md:pb-3"></p>
               </div>
             </div>
             <div class="flex flex-col">
-              <button :class="show ? '' : 'hidden'"  @click="show = !show" type="button" class="bg-white border rounded-3xl border-2 text-left px-4 py-2 w-full"><i class="bi bi-arrow-90deg-left mr-3"></i>回覆</button>
-              <input v-model="replyComment" :class="show ? 'hidden' : ''" type="text" class="focus:ring-primary focus:bg-white rounded-full px-4 py-2 block bg-white border-0 w-full mb-2 md:mb-4 placeholder:text-gray-3" placeholder="請輸入評論...">
-              <button type="button" class=" px-6 py-2 border-2 rounded-full bg-black text-white hover:border-gray-2 hover:bg-gray-2 transition ml-auto" :class="show ? 'hidden' : ''" @click="sentComment('reply')">送出</button>
+              <button :class="show ? '' : 'hidden'"  @click="show = !show" type="button" class="w-full px-4 py-2 text-left bg-white border border-2 rounded-3xl"><i class="mr-3 bi bi-arrow-90deg-left"></i>回覆</button>
+              <input v-model="replyComment" :class="show ? 'hidden' : ''" type="text" class="block w-full px-4 py-2 mb-2 bg-white border-0 rounded-full focus:ring-primary focus:bg-white md:mb-4 placeholder:text-gray-3" placeholder="請輸入評論...">
+              <button type="button" class="px-6 py-2 ml-auto text-white transition bg-black border-2 rounded-full hover:border-gray-2 hover:bg-gray-2" :class="show ? 'hidden' : ''" @click="sentComment('reply')">送出</button>
             </div>
           </div>
         </li>
@@ -194,17 +198,11 @@ export default {
     const commentData = ref([]);
     async function fetchCommentData() {
       try {
-        const token = getCookie('selectWaveToken');
-        const api = `${import.meta.env.VITE_APP_API_URL}/api/comment`;
-        const response = await axios.get(api, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const filterComment = response.data.result.filter((data) => {
-          return data.pollId.id === pollId;
-        });
-        commentData.value = filterComment;
+        const api = `${import.meta.env.VITE_APP_API_URL}/api/poll/${pollId}/comment`;
+        const { data } = await axios.get(api);
+        if (data.status) {
+          commentData.value = data.result;
+        }
       } catch (error) {
 
         // console.error('Error fetching poll data:', error);
