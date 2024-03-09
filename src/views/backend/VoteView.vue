@@ -199,7 +199,7 @@ const delPoll = async () => {
       });
       message.showToast(true);
       await getMemberPolls();
-      resultPolls.value = memberPolls.value.polls;
+      resultPolls.value = memberPolls.value;
     }
   } catch (error) {
     message.setMessage({
@@ -223,7 +223,7 @@ async function handlePoll(id) {
     });
     message.showToast(true);
     await getMemberPolls();
-    resultPolls.value = memberPolls.value.polls;
+    resultPolls.value = memberPolls.value;
   } else {
     message.setMessage({
       message: `${data.message}`,
