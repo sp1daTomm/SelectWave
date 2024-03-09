@@ -73,11 +73,12 @@ const authCheck = async (token) => {
   return member;
 };
 
-onMounted(
-  () => {
-    const { token } = route.query;
-    if (token) authCheck(token);
-  },
-);
+onMounted(() => {
+  const { token } = route.query;
+  if (token !== undefined && token !== null && token !== '') {
+    authCheck(token);
+  }
+  authCheck(getCookie('selectWaveToken'));
+});
 
 </script>
