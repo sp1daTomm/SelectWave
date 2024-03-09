@@ -20,66 +20,74 @@
     "content": "我們的團隊由一群熱愛技術、熱愛民主的年輕人組成。我們來自不同的背景，但有著共同的理想和目標。我們相信，科技可以讓民主更加公平、透明，讓每個人都能參與其中。",
     "members": [
     {
-      "name": "王小明",
-      "title": "創辦人兼 CEO",
+      "name": "黃士桓",
+      "title": "全端工程師",
       "imageUrl": "https://images-ext-2.discordapp.net/external/8e8eTOitRKQTy6oLjm4cguM6tna-tLJHIbBc4B9NjmY/%3FshareUri%3Dk53rxSlf6nzc2FPQ%26c%3DColor_0%257E2945ff%26w%3D800%26h%3D800%26fm%3Dpng/https/blush.design/api/download?format=webp&width=647&height=647",
-      "content": "",
+      "content": "主要為前端工程師本次side project網站服務，負責開發選集的後端資料庫程式。我喜歡研究新技術，並將其應用到產品開發中。",
       "socialMedia": [
         {
-          "name": "LinkedIn",
-          "url": "https://www.linkedin.com/in/username"
+          "type": "email",
+          "icon": "bi-envelope-fill",
+          "url": "mailto:huan5678@gmail.com"
         },
         {
-          "name": "Twitter",
-          "url": "https://twitter.com/username"
+          "type": "github",
+          "icon": "bi-github",
+          "url": "https://github.com/huan5678"
+        },
+        {
+          "type": "instagram",
+          "icon": "bi-instagram",
+          "url": "https://www.instagram.com/ah_sean1982/"
         }
       ]
     },
     {
-      "name": "陳小美",
-      "title": "創辦人兼 CTO",
-      "imageUrl": "https://media.discordapp.net/attachments/1203724362964803616/1203923150191198218/Shiny_Happy_-_Avatar_and_Backdrop.png?ex=65dc164e&is=65c9a14e&hm=b8818640403a274ab39824470cdb3be5ed1cad75b5a9147e8a8a5816401a3870&=&format=webp&quality=lossless",
-      "content": "",
+      "name": "Carrie",
+      "title": "家庭主婦",
+      "imageUrl": "https://i.imgur.com/9QYd6Oq.png",
+      "content": "現職家庭主婦，因為對前端有興趣，所以加入六角這個大家庭，很開心能參與選集的開發。",
       "socialMedia": [
         {
-          "name": "LinkedIn",
-          "url": "https://www.linkedin.com/in/username"
-        },
-        {
-          "name": "Twitter",
-          "url": "https://twitter.com/username"
+          "type": "github",
+          "icon": "bi-github",
+          "url": "https://github.com/echocarriet"
         }
       ]
     },
     {
-      "name": "張小華",
-      "title": "創辦人兼 COO",
-      "imageUrl": "https://media.discordapp.net/attachments/1203724362964803616/1204022359036796938/Shiny_Happy_-_Avatar_and_Backdrop-2.png?ex=65dc72b4&is=65c9fdb4&hm=ba2324f68f725ebfb463deabf3f999d22e6cc4aa9d84dca0fec4ce67a9e24506&=&format=webp&quality=lossless",
-      "content": "",
+      "name": "Tom",
+      "title": "專任助理",
+      "imageUrl": "https://i.imgur.com/1XT0RMH.png",
+      "content": "兼顧工作和專案有點應接不暇。不過透過課程認識到不同領域厲害的人，以及了解到自己的不足，是十分寶貴的經驗。",
       "socialMedia": [
         {
-          "name": "LinkedIn",
-          "url": "https://www.linkedin.com/in/username"
+          "type": "email",
+          "icon": "bi-envelope-fill",
+          "url": "mailto:"
         },
         {
-          "name": "Twitter",
-          "url": "https://twitter.com/username"
+          "type": "github",
+          "icon": "bi-github",
+          "url": "https://github.com/sp1daTomm"
         }
       ]
     },
     {
-      "name": "李小強",
-      "title": "創辦人兼 CMO",
+      "name": "Pei Ying",
+      "title": "前端工程師",
       "imageUrl": "https://blush.design/api/download?shareUri=x-NkEuESdyc4Yaa9&c=Color_0%7Eff2967&w=800&h=800&fm=png",
-      "content": "",
+      "content": "本來是設計師，後來變成前端工程師，一邊開發選集一邊上班，真是不容易，雖然貢獻的地方不多，還是很高興能一起開發。",
       "socialMedia": [
         {
-          "name": "LinkedIn",
-          "url": "https://www.linkedin.com/in/username"
+          "type": "email",
+          "icon": "bi-envelope-fill",
+          "url": "mailto:eee317@gmail.com"
         },
         {
-          "name": "Twitter",
-          "url": "https://twitter.com/username"
+          "type": "github",
+          "icon": "bi-github",
+          "url": "https://github.com/eee317"
         }
       ]
     }

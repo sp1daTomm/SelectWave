@@ -17,9 +17,9 @@
         </router-link>
       </li>
       <li class="relative">
-        <router-link :to="{ name: '' }"
+        <router-link :to="{ name: 'CommentView' }"
         class="bg-gray-4 rounded-e-3xl block px-6 py-3 hover:text-primary font-medium hover:after:absolute hover:after:rounded hover:after:left-4 hover:after:inset-y-3.5 hover:after:-translate-x-1 hover:after:w-1 hover:after:h-5 hover:after:bg-primary"
-        :class="[ isActive('') ? ' active:text-primary font-medium after:absolute after:rounded after:left-4 \after:inset-y-3.5 after:-translate-x-1 after:w-1 after:h-5 after:bg-primary text-primary' : '']">
+        :class="[ isActive('CommentView') ? ' active:text-primary font-medium after:absolute after:rounded after:left-4 \after:inset-y-3.5 after:-translate-x-1 after:w-1 after:h-5 after:bg-primary text-primary' : '']">
           投票評論
         </router-link>
       </li>

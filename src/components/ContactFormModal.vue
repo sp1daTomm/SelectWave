@@ -150,8 +150,8 @@ onMounted(() => {
 <template>
   <Transition name="fade" :duration="550">
     <div v-if="props.isShowModal" data-modal="backdrop"
-         class="fixed bg-gray-1/35 backdrop-blur top-0 left-0 right-0 z-50 w-full p-4
-         overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+         class="fixed bg-gray-1/35 backdrop-blur z-50 w-full p-4
+         overflow-x-hidden overflow-y-auto inset-0 h-[calc(100%-1rem)] max-h-full"
          :class="props.isShowModal ? '' : 'hidden'" @click="clickOutsideModal" @keydown.esc="props.isShowModal && props.closeModal()">
         <div id="modal" class="relative w-full max-h-full mx-auto transition duration-300 max-w-7xl">
 

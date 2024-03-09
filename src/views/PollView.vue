@@ -1,601 +1,438 @@
 <script type="module">
+import {
+  computed, onMounted, ref, watchEffect,
+} from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
+import PollModal from '@/components/backend/PollModal.vue';
+import Pagination from '@/components/PaginationView.vue';
+import { useMemberStore } from '@/stores/member';
+import { useMessageStore } from '@/stores/message';
+import { usePollStore } from '@/stores/poll';
+import { getCookie, turnDate } from '@/utils';
 import 'swiper/css';
 
 export default {
   components: {
     Swiper,
     SwiperSlide,
+    Pagination,
+    PollModal,
   },
   setup() {
-    const onSwiper = (swiper) => {
-      console.log(swiper);
+    const navigation = ref({
+      nextEl: '#swiper-btn-next',
+      prevEl: '#swiper-btn-prev',
+    });
+
+    const poll = usePollStore();
+    const message = useMessageStore();
+
+    const router = useRouter();
+
+    const allPolls = computed(() => poll.allPolls);
+    const sort = ref('-totalVoters');
+    const selectedSort = ref('最熱門');
+    const isDropdownOpen = ref(false);
+    const getPolls = ref();
+    const allTags = ref([]);
+    const filterStatus = ref('active');
+    const searchQuery = ref('');
+
+    const updatePage = async (page = 1) => {
+      await poll.getPolls(page);
     };
-    const onSlideChange = () => {};
+
+    async function getAllTags() {
+      const baseUrl = import.meta.env.VITE_APP_API_URL;
+      const { data } = await axios.get(`${baseUrl}/api/tag`);
+      allTags.value = data.tags;
+    }
+
+    const sortPolls = (select) => {
+      selectedSort.value = select;
+      isDropdownOpen.value = false;
+      switch (select) {
+        case '最熱門':
+          sort.value = '-totalVoters';
+          break;
+        case '新到舊':
+          sort.value = '-createdTime';
+          break;
+        case '舊到新':
+          sort.value = 'createdTime';
+          break;
+        case '已結束':
+          filterStatus.value = 'closed';
+          break;
+        case '進行中':
+          filterStatus.value = 'active';
+          break;
+        default:
+          break;
+      }
+      poll.updateSelectedSort(sort.value);
+    };
+
+    function toggleDropdown() {
+      isDropdownOpen.value = !isDropdownOpen.value;
+    }
+
+    function handleSearchFiler() {
+      if (searchQuery.value === '') {
+        poll.updateQuery('');
+      } else {
+        poll.updateQuery(searchQuery.value);
+      }
+    }
+
+    watchEffect(() => {
+      poll.updateSelectedSort(sort.value);
+    });
+
+    async function handleDeletePoll(id) {
+      const baseUrl = import.meta.env.VITE_APP_API_URL;
+      try {
+        const { data } = await axios.delete(`${baseUrl}/api/poll/${id}`, {
+          headers: {
+            Authorization: `Bearer ${getCookie('selectWaveToken')}`,
+          },
+        });
+        if (data.success) {
+          this.message.setMessage({
+            message: data.message,
+          });
+          this.message.showToast(true);
+          this.getUserPolls();
+        }
+      } catch (error) {
+        this.message.setMessage({
+          message: error.response.data.message,
+        });
+        this.message.showToast(true, 'error');
+      }
+    }
+
+    async function handleDropDown(type, id) {
+      const Url = `${window.location.href.split('#')[0]}#/voting/${id}`;
+      switch (type) {
+        case 'ShowDetail':
+          router.push(`/voting/${id}`);
+          break;
+        case 'CopyLink':
+          if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(Url)
+              .then(() => {
+                message.setMessage({
+                  message: '複製成功',
+                });
+                message.showToast(true);
+              })
+              .catch(() => {
+                message.setMessage({
+                  message: '複製失敗',
+                });
+                message.showToast(true, 'error');
+              });
+          }
+          break;
+        case 'DelPoll':
+          message.setMessage({
+            title: '刪除投票',
+            message: '確定要刪除此投票嗎？',
+          });
+          message.showConfirm(
+            await handleDeletePoll(id),
+          );
+          break;
+        default:
+          break;
+      }
+    }
+    onMounted(async () => {
+      getPolls.value = await updatePage();
+      await getAllTags();
+    });
+
     return {
-      onSwiper,
-      onSlideChange,
+      navigation,
+      modules: [Navigation],
+      allPolls,
+      sort,
+      sortPolls,
+      selectedSort,
+      isDropdownOpen,
+      toggleDropdown,
+      updatePage,
+      searchQuery,
+      handleSearchFiler,
+      handleDropDown,
     };
   },
   data() {
     return {
       currentCardIndex: 0,
-      myCards: [
-        {
-          id: 1,
-          image: '/src/assets/vote 01.png',
-          deadline: '2024-03-10',
-          title: '最喜歡的電視節目',
-          description:
-            'luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
-          tags: ['p', 't', 'e'],
-          voteQty: '3000',
-        },
-      ],
-      allCards: [
-        // {
-        //   id: 1,
-        //   image: '/src/assets/vote 04.png',
-        //   deadline: '2024-03-10',
-        //   title: '喜歡狗還是貓',
-        //   description:
-        //     'luptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
-        //   tags: ['p', 't', 'e'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 2,
-        //   image: '/src/assets/vote 08.png',
-        //   deadline: '2024-03-10',
-        //   title: '更喜歡健身房還是戶外運動',
-        //   description:
-        //     'Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
-        //   tags: ['s', 'r', 'i'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 3,
-        //   image: '/src/assets/vote 09.png',
-        //   deadline: '2024-03-10',
-        //   title: '喜歡使用 Instagram還是 Twitter',
-        //   description:
-        //     'Cupiditate vae, ullam commodi officiis culpa perferendis reprehenderit assumenda.',
-        //   tags: ['m', 'o', 'n'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 4,
-        //   image: '/src/assets/vote 10.png',
-        //   deadline: '2024-03-10',
-        //   title: '想要什麼超能力',
-        //   description:
-        //     'Consectetur adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
-        //   tags: ['w', 'a', 'r'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 5,
-        //   image: '/src/assets/vote 11.png',
-        //   deadline: '2024-03-10',
-        //   title: '喜歡的音樂風格',
-        //   description: 'Adipisicing elit. Dolores ipsum iure nostrum exercitationem.',
-        //   tags: ['b', 'r', 'i'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 6,
-        //   image: '/src/assets/vote 12.png',
-        //   deadline: '2024-03-10',
-        //   title: '喜歡咖啡還是茶',
-        //   description: 'Dolores ipsum iure nostrum exercitationem.',
-        //   tags: ['d', 'e', 'e'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 7,
-        //   image: '/src/assets/vote 13.png',
-        //   deadline: '2024-03-10',
-        //   title: '喜歡在週末做什麼',
-        //   description: 'Dolores ipsum iure nostrum exercitationem.',
-        //   tags: ['d', 'e', 'e'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 8,
-        //   image: '/src/assets/vote 14.png',
-        //   deadline: '2024-03-10',
-        //   title: '戶外活動還是宅在家',
-        //   description: 'Dolores ipsum iure nostrum exercitationem.',
-        //   tags: ['d', 'e', 'e'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 9,
-        //   image: '/src/assets/vote 15.png',
-        //   deadline: '2024-03-10',
-        //   title: '最喜歡的電影',
-        //   description: 'Dolores ipsum iure nostrum exercitationem.',
-        //   tags: ['d', 'e', 'e'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 10,
-        //   image: '/src/assets/vote 16.png',
-        //   deadline: '2024-03-10',
-        //   title: '最喜歡的旅遊景點',
-        //   description: 'Dolores ipsum iure nostrum exercitationem.',
-        //   tags: ['d', 'e', 'e'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 11,
-        //   image: '/src/assets/vote 17.png',
-        //   deadline: '2024-03-10',
-        //   title: '最喜歡的國家',
-        //   description: 'Dolores ipsum iure nostrum exercitationem.',
-        //   tags: ['d', 'e', 'e'],
-        //   voteQty: '3000',
-        // },
-        // {
-        //   id: 12,
-        //   image: '/src/assets/vote 18.png',
-        //   deadline: '2024-03-10',
-        //   title: '最喜歡的動漫角色',
-        //   description: 'Dolores ipsum iure nostrum exercitationem.',
-        //   tags: ['d', 'e', 'e'],
-        //   voteQty: '3000',
-        // },
-      ],
+      myPolls: [],
+      pollData: {},
       currentDate: new Date(),
-      isDropdownOpen: false,
-      selectedOption: '最熱門',
+      turnDate,
+      isLogin: false,
+      memberData: {},
+      showCollapse: '',
+      showPollModal: false,
     };
   },
-  methods: {
-    prevSlide() {
-      this.$refs.swiper.swiper.slidePrev();
+  computed: {
+    member() {
+      return useMemberStore();
     },
-    nextSlide() {
-      this.$refs.swiper.swiper.slideNext();
-    },
-    formatDeadline(deadline) {
-      const formattedDate = new Date(deadline);
-      const year = formattedDate.getFullYear();
-      const month = (formattedDate.getMonth() + 1).toString().padStart(2, '0');
-      const day = formattedDate.getDate().toString().padStart(2, '0');
-      return `${year}/${month}/${day}`;
-    },
-    toggleDropdown() {
-      this.isDropdownOpen = !this.isDropdownOpen;
-    },
-    selectOption(option) {
-      this.selectedOption = option;
-      this.isDropdownOpen = false;
-    },
-    fetchData() {
-      axios.get('https://select-wave-backend.ai-404.app/api/poll')
-        .then((response) => {
-          this.allCards = response.data.polls.map((card) => ({
-            id: card.id,
-            image: card.image,
-            deadline: card.deadline,
-            voteQty: card.voteQty,
-          }));
-          this.allCards.sort((a, b) => b.voteQty - a.voteQty);
-          this.myCards = this.allCards.slice(0, 5);
-        })
-        .catch((error) => {
-          console.error('Error fetching data:', error);
-        });
+    message() {
+      return useMessageStore();
     },
   },
+  watch: {
+    member: {
+      handler() {
+        this.authCheck();
+      },
+      deep: true,
+    },
+  },
+  methods: {
+    async getUserPolls(page = 1) {
+      const baseUrl = import.meta.env.VITE_APP_API_URL;
+      if (!this.member.isLogin) return;
+      const { data } = await axios.get(`${baseUrl}/api/poll?createdBy=${this.memberData.id}&page=${page}`);
+      this.myPolls = data.polls;
+    },
+    authCheck() {
+      this.isLogin = this.member.isLogin;
+      this.memberData = this.member.member;
+    },
+    toggleCollapse(id) {
+      this.showCollapse = this.showCollapse === id ? '' : id;
+    },
+    clickOutside(event) {
+      if (event.target.dataset.modal === 'myCard') {
+        return;
+      }
+      if (!event.target.closest('[data-modal="myCard"]')) {
+        this.showCollapse = '';
+      }
+    },
+    openNewModal() {
+      this.pollData.value = {
+        title: '',
+        description: '',
+        imageUrl: 'https://i.imgur.com/df933Ux.png',
+        options: [],
+        startDate: '',
+        isPrivate: false,
+        tags: [],
+        status: 'pending',
+      };
+      this.showPollModal = true;
+    },
+    async handleCreatePoll(result) {
+      const baseUrl = import.meta.env.VITE_APP_API_URL;
+      const { data } = await axios.post(`${baseUrl}/api/poll`, result, {
+        headers: {
+          Authorization: `Bearer ${getCookie('selectWaveToken')}`,
+        },
+      });
+      if (data.success) {
+        this.message.setMessage({
+          message: data.message,
+        });
+        this.message.showToast(true);
+        this.getUserPolls();
+        this.showPollModal = false;
+      }
+    },
+    closePollModal() {
+      this.showPollModal = false;
+    },
+  },
+  created() {
+    this.authCheck();
+  },
   mounted() {
-    console.log(this.$refs.swiper);
-    this.fetchData();
+    this.getUserPolls();
+    window.addEventListener('click', this.clickOutside);
+  },
+  beforeMount() {
+    window.removeEventListener('click', this.clickOutside);
   },
 };
 </script>
 <template>
-  <div class="container flex justify-center">
-    <div class="pull-content m-auto">
-      <div></div>
-      <div class="container-my">
-        <div class="myCard-container">
-          <div class="flex flex-row justify-between">
-            <div class="title font-bold text-2xl">我的投票</div>
-            <div class="button-group flex flex-row flex-nowrap">
-              <button class="h-10 w-30 rounded-md pull-manage px-4 py-2" v-show="myCards.length > 0">
-                投票管理
-                <i class="bi bi-arrow-right"></i>
-              </button>
-              <button class="h-10 w-30 rounded-md ml-4 create-pull px-4 py-2" v-show="myCards.length > 0">
-                建立投票
-                <i class="bi bi-plus-lg"></i>
-              </button>
-            </div>
-          </div>
-          <div v-if="myCards.length === 0" class="no-data-message flex justify-center">
-            <div class="flex flex-col items-center">
-              <div class="flex justify-center items-center bg-gray-100 rounded-full h-16 w-16 p-4 mb-4">
-  <img src="/src/assets/how_to_vote.svg" alt="Logo" class="h-16 w-16">
-</div>
-              <p class="text-gray-500 text-base leading-6">這裡還沒有任何投票！</p>
-              <p class="text-gray-500 text-base line-height-24">快點來開始一個新的投票活動吧！</p>
-              <button class="create-button text-white text-base py-3 px-6 rounded-full mt-6">
-                建立投票
-              </button>
-            </div>
-          </div>
-          <div class="swiper-container" v-else>
-            <div class="swiper-button-prev prev-left">
-              <img src="../assets/arrow.png" alt="Icon" />
-            </div>
-            <div class="swiper-button-next prev-right">
-              <img src="../assets/arrow-2.png" alt="Icon" />
-            </div>
-            <swiper
-              :slides-per-view="4"
-              :space-between="24"
-              :loop="true"
-              @swiper="onSwiper"
-              @slideChange="onSlideChange"
-              :pagination="{ clickable: true }"
-              :navigation="{
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-              }"
-            >
-              <swiper-slide v-for="card in myCards" :key="card.id" class="card-size">
-                <div
-                  class="max-w-sm overflow-hidden border-2 border-gray-300 rounded-3xl flex flex-wrap bg-white"
-                >
-                  <div class="card-container relative">
-                    <img :src="card.image" class="w-full img-size" alt="Card Image" />
-                    <div
-                      class="card-more absolute px-1 z-50 right-2 top-2 rounded-md transition-colors duration-300"
-                    >
-                      <i class="bi bi-three-dots dot-icon"></i>
-                    </div>
-                    <div
-                      class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent h-115"
-                    ></div>
-                    <p class="card-deadline absolute bottom-3 left-7 text-white z-10">
-                      {{ formatDeadline(myCards[currentCardIndex].deadline) }}止
-                    </p>
-                  </div>
-                  <div class="px-6 py-4">
-                    <div class="font-bold text-xl mb-2">{{ card.title }}</div>
-                  </div>
-                  <div class="px-6 pt-4 pb-2">
-                    <span
-                      class="inline-block rounded-full px-3 py-1 text-gray-500 -m-3 mb-2"
-                    >
-                      已有{{ card.voteQty }}人投票
-                    </span>
-                  </div>
-                </div>
-              </swiper-slide>
-            </swiper>
+    <section class="relative" v-if="isLogin">
+      <div class="container flex flex-col max-w-screen-lg gap-6 pt-6 pb-12 md:py-20 md:gap-8">
+        <div class="flex flex-col justify-between md:items-center md:flex-row">
+          <div class="text-2xl font-bold md:text-3xl">我的投票</div>
+          <div v-if="myPolls.length" class="flex flex-row w-full gap-4 button-group flex-nowrap md:w-auto">
+            <RouterLink to="/admin" type="button" class="h-10 px-4 py-2 transition duration-150 rounded-md ring-transparent text-gray-1 bg-gray-4 hover:bg-white hover:ring hover:text-primary hover:ring-primary">
+              投票管理
+              <i class="bi bi-arrow-right"></i>
+            </RouterLink>
+            <button
+                    class="h-10 px-4 py-2 transition duration-150 rounded-md ring-transparent text-gray-1 bg-gray-4 hover:bg-white hover:ring hover:text-primary hover:ring-primary" @click="openNewModal">
+              建立投票
+              <i class="bi bi-plus-lg"></i>
+            </button>
           </div>
         </div>
-      </div>
-      <div class="container-all">
-        <div class="flex flex-row justify-between">
-          <div class="title title-all font-bold text-2xl">所有投票</div>
-          <div>
-            <div class="flex flex-row flex-nowrap">
-              <div class="relative inline-block mt-20">
-                <button
-                  @click="toggleDropdown"
-                  class="drop-down bg-white px-4 py-2 rounded-lg cursor-pointer flex flex-row"
-                >
-                  {{ selectedOption }}
-                  <i class="bi bi-chevron-down pl-1"></i>
-                </button>
-                <div
-                  :class="{ hidden: !isDropdownOpen }"
-                  id="myDropdown"
-                  class="absolute mt-2 w-32 bg-white rounded-2xl shadow-lg -left-2"
-                >
-                  <div class="flex flex-col items-center text-center px-3 py-3">
-                    <a
-                      href="#home"
-                      class="w-28 px-4 py-2 drop-item rounded-2xl hover:bg-primary-light hover:text-primary-dark"
-                      @click.prevent="selectOption('最熱門')"
-                      >最熱門</a
-                    >
-                    <a
-                      href="#about"
-                      class="w-28 px-4 py-2 drop-item rounded-2xl hover:bg-primary-light hover:text-primary-dark"
-                      @click.prevent="selectOption('新到舊')"
-                      >新到舊</a
-                    >
-                    <a
-                      href="#contact"
-                      class="w-28 px-4 py-2 drop-item rounded-2xl hover:bg-primary-light hover:text-primary-dark"
-                      @click.prevent="selectOption('舊到新')"
-                      >舊到新</a
-                    >
-                  </div>
-                </div>
-              </div>
-              <div class="search-bar flex justify-center items-end ml-4 py-1">
+        <div v-if="myPolls.length === 0" class="flex flex-col gap-6">
+          <div class="flex flex-col items-center justify-center">
+            <div class="grid w-24 h-24 mb-4 rounded-full bg-gray-4 place-content-center">
+              <img src="@/assets/how_to_vote.svg" class="w-20 h-20 p-4" alt="empty" />
+            </div>
+            <p class="text-center text-gray-2">
+              這裡還沒有任何投票！<br/>
+              快點來開始一個新的投票活動吧！
+            </p>
+          </div>
+          <button
+                  class="inline-block px-6 py-2 mx-auto mt-4 text-white transition rounded-full bg-primary-dark hover:bg-primary" @click="openNewModal">
+            建立投票
+          </button>
+        </div>
+        <div class="relative">
+          <swiper :slides-per-view="myPolls.length >= 4 ? 4 : Math.max(myPolls.length, 2)"
+                  :breakpoints="{ 640: 2, 768: 3, 1024: 4 }" :space-between="24"
+                  :loop="myPolls.length >= 4" :modules="modules"
+                  :navigation="myPolls.length >= 4 ? navigation : false">
+            <swiper-slide v-for="poll in myPolls" :key="poll.id">
+              <div
+                   class="relative flex flex-col overflow-hidden bg-white border-2 border-gray-300 rounded-3xl group">
                 <div class="relative">
-                  <input
-                    type="text"
-                    class="search-input rounded z-0 focus:shadow focus:outline-none px-4"
-                    placeholder="搜尋投票"
-                  />
-                  <div class="absolute top-2 right-4">
-                    <i
-                      class="fa fa-search text-gray-500 z-20 hover:text-gray-500 bi bi-search"
-                    ></i>
+                  <div
+                       :class="`absolute z-10 ${showCollapse === poll.id ? 'block' : 'hidden'} shadow-lg top-16 right-2 w-44 animate-fade-down animate-once animate-ease-in-out rounded-2xl overflow-hidden`">
+                    <ul data-modal="myCard"
+                        class="p-3 overflow-hidden text-sm font-normal text-gray-700 bg-white">
+                      <li class="block py-4 px-7 hover:bg-gray-100"
+                          @click="handleDropDown('ShowDetail', poll.id)">預覽
+                      </li>
+                      <li class="block py-4 border-b px-7 hover:bg-gray-100 border-gray-3"
+                          @click="handleDropDown('CopyLink', poll.id)">複製連結
+                      </li>
+                      <li class="block py-4 px-7 hover:bg-gray-100"
+                          @click="handleDropDown('DelPoll', poll.id)">刪除投票
+                      </li>
+                    </ul>
                   </div>
                 </div>
+                <div class="relative">
+                  <img :src="poll.imageUrl" class="object-cover w-full min-h-48 max-h-32"
+                       alt="Card Image" />
+                  <div
+                       class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                  <p class="absolute text-sm leading-normal text-white bottom-3 left-3">
+                    {{ poll.endDate === null ? turnDate(poll.endDate) : `${turnDate(poll.endDate)}止`
+                    }}
+                  </p>
+                </div>
+                <button type="button" data-modal="myCard"
+                        class="absolute z-50 block px-3 py-2 transition duration-300 rounded-md poll-more right-4 top-4 text-gray-4 md:opacity-0 md:group-hover:opacity-100"
+                        :class="showCollapse === poll.id ? 'bg-primary-dark/80' : 'bg-gray-1/80'"
+                        @click="toggleCollapse(poll.id)">
+                  <i class="bi bi-three-dots dot-icon" />
+                </button>
+                <div class="flex flex-col justify-between h-full gap-8 p-4 pt-3 md:pt-5 md:p-6">
+                  <h3 class="font-medium">{{ poll.title }}</h3>
+                  <p class="text-gray-500  text-sm leading-[1.2] md:text-base md:leading-normal">
+                    {{ poll.totalVoters > 0 ? `目前已投票 ${poll.totalVoters} 票` : '尚無人投票' }}
+                  </p>
+                </div>
               </div>
+            </swiper-slide>
+          </swiper>
+          <button type="button" id="swiper-btn-prev" v-if="myPolls.length >= 4"
+                  class="absolute hidden -translate-x-full -translate-y-1/2 md:block -left-6 top-1/2">
+            <i
+               class="text-3xl transition duration-150 text-gray-2 bi bi-arrow-left-circle hover:text-primary" />
+          </button>
+          <button type="button" id="swiper-btn-next" v-if="myPolls.length >= 4"
+                  class="absolute hidden translate-x-full -translate-y-1/2 md:block -right-6 top-1/2">
+            <i
+               class="text-3xl transition duration-150 text-gray-2 bi bi-arrow-right-circle hover:text-primary" />
+          </button>
+        </div>
+      </div>
+      <img src="@/assets/bg.png" class="absolute bottom-0 w-full -z-10" alt="image" />
+    </section>
+    <section class="container max-w-screen-lg flex flex-col pt-6 pb-12 gap-6 md:pt-20 md:pb-[7.5rem] md:gap-8">
+      <div class="flex flex-col justify-between md:items-center md:flex-row">
+        <div class="text-2xl font-bold md:text-3xl">所有投票</div>
+        <div class="flex flex-row items-center gap-4 flex-nowrap">
+          <div class="relative inline-block">
+            <button @click="toggleDropdown"
+                    class="flex flex-row px-4 py-2 bg-white border-2 rounded-lg cursor-pointer text-primary border-primary">
+              {{ selectedSort }}
+              <i class="pl-1 bi bi-chevron-down"></i>
+            </button>
+            <div :class="{ hidden: !isDropdownOpen }" id="myDropdown"
+                 class="absolute z-10 w-32 mt-2 bg-white shadow-lg rounded-2xl -left-2">
+              <ul class="flex flex-col items-center px-3 py-3 text-center">
+                <li
+                   class="px-4 py-2 w-28 text-gray-1 rounded-2xl hover:bg-primary-light hover:text-primary-dark"
+                   @click.prevent="sortPolls('最熱門')">最熱門</li>
+                <li
+                   class="px-4 py-2 w-28 text-gray-1 rounded-2xl hover:bg-primary-light hover:text-primary-dark"
+                   @click.prevent="sortPolls('新到舊')">新到舊</li>
+                <li
+                   class="px-4 py-2 w-28 text-gray-1 rounded-2xl hover:bg-primary-light hover:text-primary-dark"
+                   @click.prevent="sortPolls('舊到新')">舊到新</li>
+              </ul>
             </div>
           </div>
-        </div>
-        <div class="all-card mx-auto">
-          <div class="flex flex-row container-all">
-            <div class="flex flex-row flex-wrap justify-between">
-              <div v-for="card in allCards" :key="card.id" class="w-full card-size mb-12">
-                <div
-                  class="max-w-sm border-2 border-gray-300 rounded-3xl overflow-hidden"
-                >
-                  <div class="card-container relative">
-                    <img :src="card.image" class="w-full img-size" alt="image" />
-                    <div
-                      class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent h-115"
-                    ></div>
-                    <p class="card-deadline absolute bottom-3 left-7 text-white">
-                      {{ formatDeadline(card.deadline) }}止
-                    </p>
-                  </div>
-                  <div class="px-6 pt-4">
-                    <div class="font-bold text-xl mb-2 h-12">
-                      {{ card.title }}
-                    </div>
-                    <p class="text-gray-700 text-base"></p>
-                  </div>
-                  <div class="px-6 pt-2 pb-2">
-                    <span class="inline-block rounded-full py-1 text-gray-500 pr-3 mb-2"
-                      >已有{{ card.voteQty }}人投票
-                    </span>
-                  </div>
-                </div>
-              </div>
+          <div class="flex justify-end items-enter">
+            <div class="relative">
+              <input id="search" type="text" class="z-0 px-4 transition duration-150 rounded search-input focus:border-primary focus:shadow focus:outline-none focus:ring-2 focus:ring-primary" v-model="searchQuery"
+                     placeholder="搜尋投票" />
+              <label for="search" class="absolute top-2 right-4">
+                <i v-if="!searchQuery" class="z-20 text-gray-2 hover:text-gray-3 bi bi-search"></i>
+              </label>
             </div>
+              <button type="button" class="px-3 py-2 ml-2 transition duration-150 rounded-lg cursor-pointer hover:bg-primary-dark bg-gray-1 text-gray-4 hover:text-white" @click="handleSearchFiler">
+                <i class="bi bi-box-arrow-in-right"></i>
+              </button>
           </div>
         </div>
       </div>
-      <div class="paginate">
-        <ul class="inline-flex -space-x-px text-base h-10 w-full justify-center">
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
-            >
-              <span class="sr-only">回到第一頁</span>
-              <i class="bi bi-chevron-double-left"></i>
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
-            >
-              <span class="sr-only">Previous</span>
-              <i class="bi bi-chevron-left"></i>
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
-            >
-              1
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
-            >
-              2
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
-            >
-              3
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
-            >
-              10
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white hover:bg-primary-light rounded-lg hover:text-primary-dark mr-1.5"
-            >
-              <span class="sr-only">...</span>
-              <i class="bi bi-three-dots"></i>
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark mr-1.5"
-            >
-              <span class="sr-only">Next</span>
-              <i class="bi bi-chevron-right"></i>
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="pagination-w flex items-center justify-center p-2.5 leading-tight text-gray-1 bg-white border border-gray-4 rounded-lg hover:bg-primary-light hover:text-primary-dark"
-            >
-              <span class="sr-only">到最後一頁</span>
-              <i class="bi bi-chevron-double-right"></i>
-            </a>
-          </li>
-        </ul>
+      <div class="grid grid-cols-2 gap-x-3 gap-y-6 md:gap-x-6 md:gap-y-12 md:grid-cols-4">
+        <div v-for="poll in allPolls" :key="poll.id"
+             class="relative flex flex-col h-full overflow-hidden transition duration-300 bg-white border-2 border-gray-300 rounded-3xl hover:shadow hover:cursor-pointer group"
+             @click="handleDropDown('ShowDetail', poll.id)">
+          <div class="relative">
+            <div class="overflow-hidden">
+              <img :src="poll.imageUrl"
+                   class="relative object-cover w-full transition duration-300 origin-center min-h-48 max-h-32 group-hover:scale-105 poll-image-gradient"
+                   alt="Card Image" />
+                   <div
+                       class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+            </div>
+            <p class="absolute text-white bottom-3 left-3">
+              {{ poll.endDate === null ? turnDate(poll.endDate) : `${turnDate(poll.endDate)} 止` }}
+            </p>
+          </div>
+          <div class="flex flex-col justify-between h-full gap-8 p-4 pt-3 md:pt-5 md:p-6">
+            <h3 class="font-medium">{{ poll.title }}</h3>
+            <p class="text-gray-500  text-sm leading-[1.2] md:text-base md:leading-normal">
+              {{ poll.totalVoters > 0 ? `目前已投票 ${poll.totalVoters} 票` : '尚無人投票' }}
+            </p>
+          </div>
+        </div>
       </div>
-      <!-- <div class="pagination-container flex flex-row justify-center pt-3">
-        <i class="bi bi-chevron-double-left"></i>
-        <i class="bi bi-chevron-left"></i>
-        123
-        <i class="bi bi-three-dots"></i>
-        10
-        <i class="bi bi-chevron-right"></i>
-        <i class="bi bi-chevron-double-right"></i>
-      </div> -->
-    </div>
-  </div>
-  <div class="relative">
-    <img src="../assets/bg.png" class="absolute -z-50 w-screen screen-img" alt="image" />
-  </div>
+      <Pagination @updatePage="updatePage" />
+    </section>
+    <PollModal v-if="showPollModal" :openModal="showPollModal" :functionType="'新增'"
+              :propsPollData="pollData" :selectedTagsProps="pollData.tags" :allTags="allTags"
+              @submitFunction="handleCreatePoll" @closeModal="closePollModal"
+              />
 </template>
 
 <style scoped>
-* {
-  box-sizing: border-box;
-}
-
-/* .container {
-  width: 1920px;
-} */
-.pull-content {
-  width: 1296px;
-}
-
-.title {
-  font-size: 32px;
-  margin-bottom: 32px;
-}
-
-.card-more {
-  background-color: #1e1e1e;
-  opacity: 80%;
-}
-
-.card-more:hover {
-  background-color: #f49e00;
-}
-
-.dot-icon {
-  color: #ffffff;
-}
-.create-button {
-  background-color:#f49e00;
-}
-.paginate {
-  margin-bottom: 120px;
-}
-
-/* .pagina {
-  padding: 10px;
-} */
-.pull-manage {
-  color: #1e1e1e;
-  font-size: 16px;
-  background-color: #f5f5f5;
-}
-
-.create-pull {
-  color: #1e1e1e;
-  font-size: 16px;
-  background-color: #fff4e0;
-}
-
-.screen-img {
-  bottom: 1520px;
-  z-index: -10;
-}
-
-.title-all {
-  margin-top: 80px;
-}
-
-.search-input {
-  width: 306px;
-  height: 40px;
-  border: none;
-  background-color: #f5f5f5;
-}
-
-.drop-down {
-  color: #fcb738;
-  border: 2px solid #fcb738;
-}
-
-#myDropDown {
-  right: 100px;
-}
-
-.drop-item {
-  color: #1e1e1e;
-}
-
-.container-my {
-  width: 1296px;
-  position: relative;
-  padding-top: 80px;
-  padding-bottom: 80px;
-}
-
-.prev-left {
-  position: absolute;
-  left: -50px;
-  top: 290px;
-}
-
-.prev-right {
-  position: absolute;
-  right: -50px;
-  top: 290px;
-}
-
-.container-all {
-  width: 1296px;
-}
-
-/* .my-card {
-  } */
-/* .all-card {
-  } */
-.card-size {
-  width: 306px;
-}
-
-.img-size {
-  background-color: #fcb738;
-}
-
-/* .card-style {
-  } */
-.add-box {
-  background-color: #fff4e0;
-}
-
-.add-group {
-  left: 130px;
-  top: 130px;
-}
-
-@media screen and (max-width: 768px) {
-}
-
-@media screen and (min-width: 769px) {
-}
 </style>

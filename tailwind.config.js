@@ -31,6 +31,12 @@ export default {
         1: '#1E1E1E',
       },
     },
+    backgroundSize: {
+      auto: 'auto',
+      cover: 'cover',
+      contain: 'contain',
+      '40%': '40%',
+    },
     fontFamily: {
       sans: ['Noto Sans TC', 'sans-serif'],
     },
