@@ -12,7 +12,7 @@
           class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
         </li>
         <li class="relative group">
-          <RouterLink :to="{name:'Poll'}" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">開始投票</RouterLink>
+          <RouterLink :to="{name:'Poll'}" :class="[ isActive('Poll') ? 'text-primary' : '']" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">開始投票</RouterLink>
           <div :class="[ isActive('Poll') ? 'after:absolute after:bottom-0 after:rounded after:left-1/2 after:-translate-x-1/2 after:w-4 after:h-1 after:bg-primary' : '']"
           class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
         </li>
@@ -42,7 +42,7 @@
               <RouterLink :to="{name:'Vote'}"  :class="[ isActive('Vote') ? 'text-primary' : '']" class="w-full py-2 transition hover:text-primary" type="button">投票項目</RouterLink>
             </li>
             <li>
-              <RouterLink :to="{name:'ChangePassword'}" :class="[ isActive('ChangePassword') ? 'text-primary' : '']" class="w-full py-2 transition hover:text-primary" type="button">更改密碼</RouterLink>
+              <RouterLink :to="{name:'CommentView'}" :class="[ isActive('CommentView') ? 'text-primary' : '']" class="w-full py-2 transition hover:text-primary" type="button">投票評論</RouterLink>
             </li>
             <li>
               <button class="w-full py-2 transition hover:text-primary" type="button" v-if="isMember" @click="doLogout()">登出</button>
