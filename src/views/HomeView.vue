@@ -4,7 +4,7 @@
         <h1 ref="headerTitle" class="text-2xl font-semibold leading-normal text-center md:text-3xl">輕鬆建立投票所，讓您的聲音成為力量。</h1>
         <p ref="headerSubTitle" class="py-4 leading-normal text-center text-gray-2 md:text-xl">一個平台，千種可能。「選集」，讓每個聲音都有影響。</p>
         <div class="flex justify-center">
-          <RouterLink to="/login" class="inline-block px-6 py-2 mx-auto mt-4 text-white transition rounded-full bg-primary-dark hover:bg-primary">立即註冊</RouterLink>
+          <RouterLink to="/signup" class="inline-block px-6 py-2 mx-auto mt-4 text-white transition rounded-full bg-primary-dark hover:bg-primary">立即註冊</RouterLink>
         </div>
         <div class="flex flex-col gap-3 mt-6 md:flex-row-reverse md:justify-around">
           <img id="headerImg1" class="rounded-xl h-full w-10/12 md:w-[30%]" :src="headImageUrl01" alt="圖片01">
@@ -84,7 +84,7 @@
           <img :src="logoImageUrl" alt="選集LOGO" class="w-14 md:w-36 ">
           <div>
             <h3 class="text-xl leading-relaxed  pb-2 mt-4 md:mt-[unset] md:pb-4 md:text-2xl ">輕鬆建立投票所，讓您的聲音成為決定力量。</h3>
-            <RouterLink to="/login" class="px-6 py-2 mt-4 inline-block mx-auto md:mt-[unset]
+            <RouterLink to="/signup" class="px-6 py-2 mt-4 inline-block mx-auto md:mt-[unset]
             rounded-full bg-primary-dark text-white  hover:bg-primary
             transition">立即註冊</RouterLink>
           </div>
