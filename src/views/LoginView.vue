@@ -39,7 +39,7 @@
               disabled:bg-gray-2 disabled:opacity-50 disabled:cursor-not-allowed" :disabled="isLoading">
               登入
             </button>
-            <p class="mb-4">使用以下方式登入</p>
+            <!-- <p class="mb-4">使用以下方式登入</p>
             <div class="flex items-center gap-2">
               <a class="text-white bg-gray-1 rounded-full
               text-base w-1/4 sm:w-auto py-3.5 hover:bg-primary
@@ -49,7 +49,7 @@
               :href="`${baseUrl}/api/auth/${item.url}`" :disabled="isLoading">
                 <i :class="`bi ${item.icon}`"></i>
               </a>
-            </div>
+            </div> -->
           </VForm>
         </div>
       </div>
