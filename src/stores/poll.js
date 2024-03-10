@@ -9,6 +9,7 @@ export const usePollStore = defineStore('pollStore', {
     selectedSort: '-totalVoters',
     query: '',
     createdBy: '',
+    status: '',
   }),
   getters: {
     visiblePages() {
@@ -36,13 +37,19 @@ export const usePollStore = defineStore('pollStore', {
   actions: {
     async getPolls(page = 1) {
       const baseUrl = import.meta.env.VITE_APP_API_URL;
-      const path = `/api/poll?status=active&page=${page}${this.selectedSort && `&sort=${this.selectedSort}`}${
+      const path = `/api/poll?page=${page}${
+        this.status && `&status=${this.status}`
+      }${this.selectedSort && `&sort=${this.selectedSort}`}${
         this.query && `&q=${this.query}`
       }${this.createdBy && `&createdBy=${this.createdBy}`}`;
       const { data } = await axios.get(`${baseUrl}${path}`);
       this.allPolls = data.polls;
       this.totalPage = data.totalPages;
       this.currentPage = data.page;
+    },
+    updateStatus(status) {
+      this.status = status;
+      this.getPolls(1); // 更新篩選後，重新取得第一頁資料
     },
     updateSelectedSort(sort) {
       this.selectedSort = sort;

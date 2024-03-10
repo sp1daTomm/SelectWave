@@ -71,8 +71,10 @@ const closeModal = () => {
 };
 
 async function getMemberPolls(page = 1) {
+  poll.updateStatus('');
   poll.updateCreatedBy(memberId.value);
   await poll.getPolls(page);
+  resultPolls.value = poll.allPolls;
 }
 
 async function getTags() {
@@ -167,8 +169,8 @@ async function submitFunction(result) {
       message: `${data.message}`,
     });
     message.showToast(true);
-    await getMemberPolls();
-    resultPolls.value = memberPolls.value.polls;
+    await poll.getPolls(1);
+    resultPolls.value = poll.allPolls;
   } else {
     message.setMessage({
       message: `${data.message}`,
@@ -198,7 +200,7 @@ const delPoll = async () => {
         message: '刪除成功',
       });
       message.showToast(true);
-      await getMemberPolls();
+      await poll.getPolls(1);
       resultPolls.value = memberPolls.value;
     }
   } catch (error) {
@@ -257,6 +259,9 @@ const linkToPollDetail = (id) => {
 onMounted(async () => {
   const status = await getInitialize();
   if (status) resultPolls.value = memberPolls.value;
+  await poll.getPolls();
+  console.log('resultPolls', resultPolls.value);
+  console.log('memberPolls', memberPolls.value);
 });
 
 function filterPoll(status) {

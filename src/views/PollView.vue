@@ -2,7 +2,6 @@
 import {
   computed, onMounted, ref, watchEffect,
 } from 'vue';
-import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -30,9 +29,6 @@ export default {
     });
 
     const poll = usePollStore();
-    const message = useMessageStore();
-
-    const router = useRouter();
 
     const allPolls = computed(() => poll.allPolls);
     const sort = ref('-totalVoters');
@@ -95,65 +91,6 @@ export default {
       poll.updateSelectedSort(sort.value);
     });
 
-    async function handleDeletePoll(id) {
-      const baseUrl = import.meta.env.VITE_APP_API_URL;
-      try {
-        const { data } = await axios.delete(`${baseUrl}/api/poll/${id}`, {
-          headers: {
-            Authorization: `Bearer ${getCookie('selectWaveToken')}`,
-          },
-        });
-        if (data.success) {
-          this.message.setMessage({
-            message: data.message,
-          });
-          this.message.showToast(true);
-          this.getUserPolls();
-        }
-      } catch (error) {
-        this.message.setMessage({
-          message: error.response.data.message,
-        });
-        this.message.showToast(true, 'error');
-      }
-    }
-
-    async function handleDropDown(type, id) {
-      const Url = `${window.location.href.split('#')[0]}#/voting/${id}`;
-      switch (type) {
-        case 'ShowDetail':
-          router.push(`/voting/${id}`);
-          break;
-        case 'CopyLink':
-          if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(Url)
-              .then(() => {
-                message.setMessage({
-                  message: '複製成功',
-                });
-                message.showToast(true);
-              })
-              .catch(() => {
-                message.setMessage({
-                  message: '複製失敗',
-                });
-                message.showToast(true, 'error');
-              });
-          }
-          break;
-        case 'DelPoll':
-          message.setMessage({
-            title: '刪除投票',
-            message: '確定要刪除此投票嗎？',
-          });
-          message.showConfirm(
-            await handleDeletePoll(id),
-          );
-          break;
-        default:
-          break;
-      }
-    }
     onMounted(async () => {
       isLoading.value = true;
       getPolls.value = await updatePage();
@@ -173,7 +110,6 @@ export default {
       updatePage,
       searchQuery,
       handleSearchFiler,
-      handleDropDown,
       isLoading,
     };
   },
@@ -229,7 +165,7 @@ export default {
       }
     },
     openNewModal() {
-      this.pollData.value = {
+      this.pollData = {
         title: '',
         description: '',
         imageUrl: 'https://i.imgur.com/df933Ux.png',
@@ -241,6 +177,62 @@ export default {
       };
       this.showPollModal = true;
     },
+    async handleDeletePoll(id) {
+      const baseUrl = import.meta.env.VITE_APP_API_URL;
+      try {
+        const { data } = await axios.delete(`${baseUrl}/api/poll/${id}`, {
+          headers: {
+            Authorization: `Bearer ${getCookie('selectWaveToken')}`,
+          },
+        });
+        if (data.status) {
+          this.message.setMessage({
+            message: data.message,
+          });
+          this.message.showToast(true);
+          this.getUserPolls();
+        }
+      } catch (error) {
+        this.message.setMessage({
+          message: error.response.data.message,
+        });
+        this.message.showToast(true, 'error');
+      }
+    },
+    async handleDropDown(type, id) {
+      const Url = `${window.location.href.split('#')[0]}#/voting/${id}`;
+      switch (type) {
+        case 'ShowDetail':
+          this.$router.push(`/voting/${id}`);
+          break;
+        case 'CopyLink':
+          if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(Url)
+              .then(() => {
+                this.message.setMessage({
+                  message: '複製成功',
+                });
+                this.message.showToast(true);
+              })
+              .catch(() => {
+                this.message.setMessage({
+                  message: '複製失敗',
+                });
+                this.message.showToast(true, 'error');
+              });
+          }
+          break;
+        case 'DelPoll':
+          this.message.setMessage({
+            title: '刪除投票',
+            message: '確定要刪除此投票嗎？',
+          });
+          this.message.showConfirm(this.handleDeletePoll(id));
+          break;
+        default:
+          break;
+      }
+    },
     async handleCreatePoll(result) {
       const baseUrl = import.meta.env.VITE_APP_API_URL;
       const { data } = await axios.post(`${baseUrl}/api/poll`, result, {
@@ -248,13 +240,18 @@ export default {
           Authorization: `Bearer ${getCookie('selectWaveToken')}`,
         },
       });
-      if (data.success) {
+      if (data.status) {
         this.message.setMessage({
           message: data.message,
         });
         this.message.showToast(true);
         this.getUserPolls();
         this.showPollModal = false;
+      } else {
+        this.message.setMessage({
+          message: data.message,
+        });
+        this.message.showToast(true, 'error');
       }
     },
     closePollModal() {
