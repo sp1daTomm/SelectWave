@@ -73,14 +73,14 @@
         <ul class="flex flex-col gap-3">
           <li v-for="(option, idx) in thisPollData.options" :key="option.id"
            >
-            <div class="relative flex items-center p-3 overflow-hidden border-2 rounded-3xl border-gray-3"
+            <div class="relative flex items-center p-3 border-2 overflow-clip rounded-3xl border-gray-3"
             :class="{ 'border-primary': isSelectedRadio(option.id) }">
               <input type="radio" :disabled="!isCanVoting || thisPollData.status!=='active' || isVoted(option.voters)"  name="flexRadioDefault" :value="option.id" :id="'flexCheckDefault'+idx" class="focus:ring-primary text-primary" v-model="selectedRadio">
               <label :for="'flexCheckDefault'+idx" class="flex items-center justify-between w-full gap-3">
                 <p class="flex-grow pl-3"><span class="pr-2">{{ idx+1 }}.</span>{{ option.title }}</p><p class="flex-shrink-0 text-gray-2" >{{option.voters.length}} 票</p>
               </label>
-              <div v-if="option.voters.length>0" class="absolute inset-y-0 right-0 z-[-1] w-full origin-right transition duration-300 ease-in-out"
-              :class="( option.voters.length / thisPollData.totalVoters )*100 >= 50 ? 'bg-primary/75' : ( option.voters.length / thisPollData.totalVoters )*100 >= 80 ? 'bg-primary/90' : 'bg-gray-3/50'"
+              <div v-if="option.voters.length>0" class="absolute inset-y-0 right-0 z-[-1] w-[105%] h-[105%] origin-right transition duration-300 ease-in-out"
+              :class="( option.voters.length / thisPollData.totalVoters )*100 >= 50 && ( option.voters.length / thisPollData.totalVoters )*100 < 80 ? 'bg-primary/75' : ( option.voters.length / thisPollData.totalVoters )*100 >= 80 ? 'bg-primary-dark/75' : 'bg-gray-3/50'"
               :style="{
                 transform:
                   `scaleX( ${(option.voters.length / thisPollData.totalVoters * 100)}%)`
@@ -159,7 +159,7 @@
 </template>
 <script>
 import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -176,6 +176,7 @@ export default {
     SwiperSlide,
   },
   setup() {
+    const router = useRouter();
     const route = useRoute();
     const pollId = route.params.id;
     const memberStore = useMemberStore();
@@ -327,6 +328,14 @@ export default {
       return false;
     }
     function doVoting(id) {
+      if (!memberId) {
+        message.setMessage({
+          message: '請先登入',
+        });
+        message.showToast(true, 'error');
+        router.push('/login');
+        return;
+      }
       if (isCanVoting.value === false) {
         message.setMessage({
           message: '投票失敗',

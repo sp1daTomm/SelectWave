@@ -1,18 +1,24 @@
 <template>
-  <RouterView />
+  <div ref="appRef" id="provider">
+    <RouterView />
+  </div>
 </template>
 
 <script setup>
-import { inject, onMounted } from 'vue';
+import {
+  inject, onMounted, provide, ref,
+} from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { useMemberStore } from '@/stores/member';
 import { getCookie, setCookie } from '@/utils';
 
 const swal = inject('$swal');
-
+const appRef = ref(null);
 const member = useMemberStore();
 const route = useRoute();
+
+provide('appRef', appRef);
 
 const checkToken = () => {
   const token = getCookie('selectWaveToken');
