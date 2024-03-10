@@ -111,7 +111,7 @@ export default {
           if (data.status) {
             const { authToken, member } = data;
             setCookie('selectWaveToken', authToken, 7);
-            this.$router.push('/admin');
+            this.$router.push('/');
             this.$swal({
               icon: 'success',
               title: '登入成功',
