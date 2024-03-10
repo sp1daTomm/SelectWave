@@ -7,6 +7,7 @@ import axios from 'axios';
 import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import PollModal from '@/components/backend/PollModal.vue';
+import LoadingComponent from '@/components/LoadingComponent.vue';
 import Pagination from '@/components/PaginationView.vue';
 import { useMemberStore } from '@/stores/member';
 import { useMessageStore } from '@/stores/message';
@@ -20,6 +21,7 @@ export default {
     SwiperSlide,
     Pagination,
     PollModal,
+    LoadingComponent,
   },
   setup() {
     const navigation = ref({
@@ -40,6 +42,7 @@ export default {
     const allTags = ref([]);
     const filterStatus = ref('active');
     const searchQuery = ref('');
+    const isLoading = ref(false);
 
     const updatePage = async (page = 1) => {
       await poll.getPolls(page);
@@ -152,8 +155,10 @@ export default {
       }
     }
     onMounted(async () => {
+      isLoading.value = true;
       getPolls.value = await updatePage();
       await getAllTags();
+      isLoading.value = false;
     });
 
     return {
@@ -169,6 +174,7 @@ export default {
       searchQuery,
       handleSearchFiler,
       handleDropDown,
+      isLoading,
     };
   },
   data() {
@@ -393,11 +399,11 @@ export default {
               <input id="search" type="text" class="z-0 px-4 transition duration-150 rounded search-input focus:border-primary focus:shadow focus:outline-none focus:ring-2 focus:ring-primary" v-model="searchQuery"
                      placeholder="搜尋投票" />
               <label for="search" class="absolute top-2 right-4">
-                <i v-if="!searchQuery" class="z-20 text-gray-2 hover:text-gray-3 bi bi-search-heart" />
+                <i v-if="!searchQuery" class="z-20 text-gray-2 hover:text-gray-3 bi bi-search" />
               </label>
             </div>
               <button type="button" class="px-3 py-2 ml-2 transition duration-150 rounded-lg cursor-pointer hover:bg-primary-dark bg-gray-1 text-gray-4 hover:text-white" @click="handleSearchFiler">
-                <i class="bi bi-box-search" />
+                <i class="bi bi-search-heart" />
               </button>
           </div>
         </div>
@@ -432,6 +438,7 @@ export default {
               :propsPollData="pollData" :selectedTagsProps="pollData.tags" :allTags="allTags"
               @submitFunction="handleCreatePoll" @closeModal="closePollModal"
               />
+    <LoadingComponent v-if="isLoading" :showAnimation="isLoading" />
 </template>
 
 <style scoped>
