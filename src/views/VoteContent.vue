@@ -159,7 +159,7 @@
 </template>
 <script>
 import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -176,6 +176,7 @@ export default {
     SwiperSlide,
   },
   setup() {
+    const router = useRouter();
     const route = useRoute();
     const pollId = route.params.id;
     const memberStore = useMemberStore();
@@ -327,6 +328,14 @@ export default {
       return false;
     }
     function doVoting(id) {
+      if (!memberId) {
+        message.setMessage({
+          message: '請先登入',
+        });
+        message.showToast(true, 'error');
+        router.push('/login');
+        return;
+      }
       if (isCanVoting.value === false) {
         message.setMessage({
           message: '投票失敗',
