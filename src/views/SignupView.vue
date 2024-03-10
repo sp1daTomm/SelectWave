@@ -1,6 +1,5 @@
 <template>
-  <div class="grid max-w-screen-lg min-h-full px-3 mx-auto py-7 md:py-20">
-    <div class="flex items-center justify-center h-full">
+    <div class="flex items-center justify-center h-full max-w-screen-lg min-h-screen px-3 mx-auto py-7 md:py-20">
       <div class="hidden basis-1/2 md:block">
         <img src="/images/signupCover.svg" alt="註冊頁面">
       </div>
@@ -64,7 +63,6 @@
         </VForm>
       </div>
     </div>
-  </div>
 </template>
 <script>
 import { setCookie } from '@/utils';

@@ -1,6 +1,5 @@
 <template>
-  <div class="grid min-h-full pt-6 pb-12">
-    <div class="flex">
+    <div class="flex max-h-screen pt-6 pb-12">
       <div class="hidden min-h-screen bg-center bg-no-repeat bg-cover basis-1/2 min-w-screen md:block" style="background-image: url('./images/loginCover.png');">
       </div>
       <div class="px-3 basis-full md:basis-1/2">
@@ -39,7 +38,7 @@
               disabled:bg-gray-2 disabled:opacity-50 disabled:cursor-not-allowed" :disabled="isLoading">
               登入
             </button>
-            <p class="mb-4">使用以下方式登入</p>
+            <!-- <p class="mb-4">使用以下方式登入</p>
             <div class="flex items-center gap-2">
               <a class="text-white bg-gray-1 rounded-full
               text-base w-1/4 sm:w-auto py-3.5 hover:bg-primary
@@ -49,12 +48,11 @@
               :href="`${baseUrl}/api/auth/${item.url}`" :disabled="isLoading">
                 <i :class="`bi ${item.icon}`"></i>
               </a>
-            </div>
+            </div> -->
           </VForm>
         </div>
       </div>
     </div>
-  </div>
 </template>
 <script>
 import { useMemberStore } from '@/stores/member';
