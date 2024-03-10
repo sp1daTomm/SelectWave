@@ -93,6 +93,7 @@ export default {
 
     onMounted(async () => {
       isLoading.value = true;
+      poll.updateStatus('active');
       getPolls.value = await updatePage();
       await getAllTags();
       isLoading.value = false;
@@ -223,11 +224,12 @@ export default {
           }
           break;
         case 'DelPoll':
+          this.handleDeletePoll(id);
           this.message.setMessage({
             title: '刪除投票',
-            message: '確定要刪除此投票嗎？',
+            message: '已成功刪除投票',
           });
-          this.message.showConfirm(this.handleDeletePoll(id));
+          this.message.showModal(true);
           break;
         default:
           break;
