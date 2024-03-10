@@ -259,7 +259,6 @@ const linkToPollDetail = (id) => {
 onMounted(async () => {
   const status = await getInitialize();
   if (status) resultPolls.value = memberPolls.value;
-  await poll.getPolls();
   console.log('resultPolls', resultPolls.value);
   console.log('memberPolls', memberPolls.value);
 });

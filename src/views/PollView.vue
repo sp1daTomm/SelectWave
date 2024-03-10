@@ -41,6 +41,7 @@ export default {
     const isLoading = ref(false);
 
     const updatePage = async (page = 1) => {
+      poll.updateCreatedBy('');
       await poll.getPolls(page);
     };
 
@@ -94,7 +95,8 @@ export default {
     onMounted(async () => {
       isLoading.value = true;
       poll.updateStatus('active');
-      getPolls.value = await updatePage();
+      poll.updateCreatedBy('');
+      getPolls.value = await poll.getPolls();
       await getAllTags();
       isLoading.value = false;
     });

@@ -68,7 +68,7 @@
         <div class="flex items-center py-6">
           <div :style="{ backgroundImage:'url('+thisPollData.createdBy?.avatar+')'}" class="w-8 h-8 bg-cover rounded-full"></div>
           <p class="pl-3 pr-4 font-medium" :data-userId="thisPollData.createdBy?.id">{{ thisPollData.createdBy?.name }}</p>
-          <div class="px-3 py-1 border border-2 rounded-full border-gray-2 text-gray-2">發起人</div>
+          <div class="px-3 py-1 border-2 rounded-full border-gray-2 text-gray-2">發起人</div>
         </div>
         <ul class="flex flex-col gap-3">
           <li v-for="(option, idx) in thisPollData.options" :key="option.id"
@@ -113,7 +113,7 @@
         </div>
       </div>
       <ul class="flex flex-col gap-3 md:w-8/12">
-        <li v-if="isLogin && commentData.length === 0" class="flex flex-col px-4 py-3 border border-2 rounded-3xl md:py-5" data-message="send">
+        <li v-if="isLogin && commentData.length === 0" class="flex flex-col px-4 py-3 border-2 rounded-3xl md:py-5" data-message="send">
           <div class="flex items-center pb-2 md:pb-6">
             <div :style="{ backgroundImage:'url('+ memberImg +')'}" class="w-8 h-8 bg-cover rounded-full"></div>
             <p class="pl-3 pr-4 font-medium">{{ memberName }}</p>
@@ -121,7 +121,7 @@
           <input v-model="messageComment" type="text" class="block w-full px-4 py-2 mb-2 border-0 rounded-full focus:ring-primary focus:bg-white bg-gray-4 md:mb-4 placeholder:text-gray-3" placeholder="請輸入評論...">
           <button type="button" class="px-6 py-2 ml-auto text-white transition bg-black border-2 rounded-full hover:border-gray-2 hover:bg-gray-2" @click="sentComment('message')">送出</button>
         </li>
-        <li v-if="commentData.length > 0" class="flex flex-col px-4 py-3 border border-2 rounded-3xl md:py-5">
+        <li v-if="commentData.length > 0" class="flex flex-col px-4 py-3 border-2 rounded-3xl md:py-5">
           <div v-for="comment in commentData" :key="comment.id" class="flex" data-message="one">
             <div :style="{ backgroundImage:'url('+comment.author.avatar+')'}" class="w-8 h-8 bg-cover rounded-full shrink"></div>
             <div class="grow">
@@ -145,7 +145,7 @@
               </div>
             </div>
             <div class="flex flex-col">
-              <button :class="show ? '' : 'hidden'"  @click="show = !show" type="button" class="w-full px-4 py-2 text-left bg-white border border-2 rounded-3xl"><i class="mr-3 bi bi-arrow-90deg-left"></i>回覆</button>
+              <button :class="show ? '' : 'hidden'"  @click="show = !show" type="button" class="w-full px-4 py-2 text-left bg-white border-2 rounded-3xl"><i class="mr-3 bi bi-arrow-90deg-left"></i>回覆</button>
               <input v-model="replyComment" :class="show ? 'hidden' : ''" type="text" class="block w-full px-4 py-2 mb-2 bg-white border-0 rounded-full focus:ring-primary focus:bg-white md:mb-4 placeholder:text-gray-3" placeholder="請輸入評論...">
               <button type="button" class="px-6 py-2 ml-auto text-white transition bg-black border-2 rounded-full hover:border-gray-2 hover:bg-gray-2" :class="show ? 'hidden' : ''" @click="sentComment('reply')">送出</button>
             </div>
@@ -232,7 +232,7 @@ export default {
         message: '已完成留言',
       });
       message.showToast(true, 'success');
-      fetchCommentData();
+      await fetchCommentData();
     }
     function sentComment(state) {
       if (state === 'reply') {
