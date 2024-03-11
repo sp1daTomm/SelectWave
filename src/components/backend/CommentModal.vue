@@ -1,6 +1,8 @@
 <script setup>
 import {
-  defineProps, onMounted, ref,
+  defineProps, inject,
+  onMounted, ref,
+  watchEffect,
 } from 'vue';
 import axios from 'axios';
 import { ErrorMessage, Field, Form } from 'vee-validate';
@@ -99,6 +101,17 @@ const delComment = async () => {
   closeDelModal();
 };
 
+const appRef = inject('appRef');
+
+watchEffect(() => {
+  if (props.openModal) {
+    appRef.value.style.height = '100dvh';
+    appRef.value.style.overflow = 'clip';
+  } else {
+    appRef.value.style.height = 'auto';
+  }
+});
+
 </script>
 
 <template>
@@ -142,7 +155,7 @@ const delComment = async () => {
             </div>
           </div>
           <h2 class="pb-2 text-xl font-semibold leading-normal border-b">此投票專案中您的所有評論</h2>
-          <ul class="flex flex-col gap-2">
+          <ul class="flex flex-col gap-2 h-[50dvh] overflow-y-auto">
             <li v-for="item in commentData" :key="item.id" class="flex flex-wrap items-start justify-between p-3 mb-4 bg-gray-4 rounded-2xl md:rounded-3xl md:p-8">
             <h3 class="relative text-xl font-medium leading-normal">
               {{ item.content }}

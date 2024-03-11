@@ -42,12 +42,13 @@ const getComments = async (page = 1) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    userComments.value = data.result;
+    userComments.value = data.result.filter((item, index, arr) => {
+      return arr.findIndex((poll) => poll.pollId.id === item.pollId.id) === index;
+    });
     currentPage.value = data.page;
     perPage.value = data.limit;
     totalMemberComments.value = data.total;
     totalPage.value = Math.ceil(totalMemberComments.value / perPage.value);
-    console.log('totalPage', totalPage.value);
   } catch (error) {
     message.setMessage({ message: error.response.data.message });
     message.showToast(true, 'error');

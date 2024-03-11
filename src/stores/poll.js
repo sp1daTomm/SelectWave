@@ -49,19 +49,15 @@ export const usePollStore = defineStore('pollStore', {
     },
     updateStatus(status) {
       this.status = status;
-      this.getPolls(1); // 更新篩選後，重新取得第一頁資料
     },
     updateSelectedSort(sort) {
       this.selectedSort = sort;
-      this.getPolls(1); // 更新篩選後，重新取得第一頁資料
     },
     updateQuery(query) {
       this.query = query;
-      this.getPolls(1); // 更新篩選後，重新取得第一頁資料
     },
     updateCreatedBy(createdBy) {
       this.createdBy = createdBy;
-      this.getPolls(1); // 更新篩選後，重新取得第一頁資料
     },
   },
 });
