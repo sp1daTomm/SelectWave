@@ -80,7 +80,7 @@
                 <p class="flex-grow pl-3"><span class="pr-2">{{ idx+1 }}.</span>{{ option.title }}</p><p class="flex-shrink-0 text-gray-2" >{{option.voters.length}} 票</p>
               </label>
               <div v-if="option.voters.length>0" class="absolute inset-y-0 right-0 z-[-1] w-[105%] h-[105%] origin-right transition duration-300 ease-in-out"
-              :class="( option.voters.length / thisPollData.totalVoters )*100 >= 50 && ( option.voters.length / thisPollData.totalVoters )*100 < 80 ? 'bg-primary/75' : ( option.voters.length / thisPollData.totalVoters )*100 >= 80 ? 'bg-primary-dark/75' : 'bg-gray-3/50'"
+              :class="( option.voters.length / thisPollData.totalVoters )*100 >= 50 && ( option.voters.length / thisPollData.totalVoters )*100 < 80 ? 'bg-primary-light' : ( option.voters.length / thisPollData.totalVoters )*100 >= 80 ? 'bg-primary-dark' : 'bg-gray-4'"
               :style="{
                 transform:
                   `scaleX( ${(option.voters.length / thisPollData.totalVoters * 100)}%)`
@@ -92,7 +92,7 @@
           </li>
         </ul>
         <div class="flex gap-4 px-3 py-3">
-          <button class="w-10 h-10 rounded-full bg-gray-4" type="button"><i class="bi bi-link"></i></button>
+          <button @click="share" class="w-10 h-10 rounded-full bg-gray-4" type="button"><i class="bi bi-link"></i></button>
           <button v-if="thisPollData.status==='active'" type="button" @click="doVoting(selectedRadio)" class="px-6 py-2 text-white transition bg-black border-2 rounded-full hover:border-gray-2 hover:bg-gray-2 grow">
             {{ doNotVotingText }}
           </button>
@@ -197,6 +197,18 @@ export default {
     const votedAll = ref(false);
     const isLogin = ref(false);
     const commentData = ref([]);
+    function share() {
+      const url = window.location.href;
+      navigator.clipboard.writeText(url)
+        .then(() => {
+          message.setMessage({
+            message: '已複製',
+          });
+          message.showToast(true, 'success');
+        })
+        .catch((error) => console.log(error));
+    }
+
     async function fetchCommentData() {
       try {
         const api = `${import.meta.env.VITE_APP_API_URL}/api/poll/${pollId}/comment`;
@@ -328,7 +340,7 @@ export default {
       return false;
     }
     function doVoting(id) {
-      if (!memberId) {
+      if (isLogin.value === false) {
         message.setMessage({
           message: '請先登入',
         });
@@ -409,6 +421,7 @@ export default {
       memberImg,
       isLogin,
       dateForm,
+      share,
     };
   },
 };
