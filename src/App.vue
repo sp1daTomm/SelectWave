@@ -8,7 +8,6 @@
 import {
   inject, onMounted, provide, ref,
 } from 'vue';
-import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { useMemberStore } from '@/stores/member';
 import { getCookie, setCookie } from '@/utils';
@@ -16,14 +15,13 @@ import { getCookie, setCookie } from '@/utils';
 const swal = inject('$swal');
 const appRef = ref(null);
 const member = useMemberStore();
-const route = useRoute();
 
 provide('appRef', appRef);
 
 const checkToken = () => {
   const token = getCookie('selectWaveToken');
-  if (token) {
-    return true;
+  if (token !== '' && token !== null && token !== undefined) {
+    return token;
   }
   return false;
 };
@@ -43,48 +41,36 @@ const userModal = (data) => swal({
               </div>`,
 });
 
-const checkUser = async (path, token) => {
-  const { data } = await axios.get(path, {
+const authCheck = async (propsToken) => {
+  const baseUrl = import.meta.env.VITE_APP_API_URL;
+  const api = `${baseUrl}/api/auth/check`;
+  const { data } = await axios.get(api, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${propsToken}`,
     },
   });
   if (data.status) {
-    setCookie('selectWaveToken', token, 7);
+    setCookie('selectWaveToken', propsToken, 7);
     userModal(data);
     member.setMemberLoginStatus(true);
     member.setMemberStatus(true);
     member.setMemberData(data.result);
-    return member;
-  }
-  member.setMemberLoginStatus(false);
-  member.setMemberStatus(false);
-  member.setMemberData({});
-  return member;
-};
-
-const authCheck = async (token) => {
-  const baseUrl = import.meta.env.VITE_APP_API_URL;
-  const api = `${baseUrl}/api/auth/check`;
-  if (token) {
-    await checkUser(api, token);
-  } if (checkToken()) {
-    const cookieToken = getCookie('selectWaveToken');
-    await checkUser(api, cookieToken);
   } else {
     member.setMemberLoginStatus(false);
     member.setMemberStatus(false);
     member.setMemberData({});
   }
-  return member;
 };
 
-onMounted(() => {
-  const { token } = route.query;
-  if (token !== undefined && token !== null && token !== '') {
-    authCheck(token);
+onMounted(async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlToken = urlParams.get('token');
+  if (urlToken !== '' && urlToken !== null && urlToken !== undefined) {
+    await authCheck(urlToken);
+  } else {
+    const checkedToken = checkToken();
+    await authCheck(checkedToken);
   }
-  authCheck(getCookie('selectWaveToken'));
 });
 
 </script>

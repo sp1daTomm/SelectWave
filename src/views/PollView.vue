@@ -226,12 +226,16 @@ export default {
           }
           break;
         case 'DelPoll':
-          this.handleDeletePoll(id);
           this.message.setMessage({
             title: '刪除投票',
             message: '已成功刪除投票',
           });
-          this.message.showModal(true);
+          (async () => {
+            const result = await this.message.showConfirm();
+            if (result) {
+              this.handleDeletePoll(id);
+            }
+          })();
           break;
         default:
           break;
@@ -313,7 +317,8 @@ export default {
                   :navigation="myPolls.length >= 4 ? navigation : false">
             <swiper-slide v-for="poll in myPolls" :key="poll.id">
               <div
-                   class="relative flex flex-col overflow-hidden bg-white border-2 border-gray-300 rounded-3xl group">
+                  @click="handleDropDown('ShowDetail', poll.id)"
+                   class="relative flex flex-col overflow-hidden bg-white border-2 border-gray-300 rounded-3xl group hover:cursor-pointer">
                 <div class="relative">
                   <div
                        :class="`absolute z-10 ${showCollapse === poll.id ? 'block' : 'hidden'} shadow-lg top-16 right-2 w-44 animate-fade-down animate-once animate-ease-in-out rounded-2xl overflow-hidden`">

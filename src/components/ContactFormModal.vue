@@ -153,10 +153,10 @@ onMounted(() => {
          class="fixed bg-gray-1/35 backdrop-blur z-50 w-full p-4
          overflow-x-hidden overflow-y-auto inset-0 h-[calc(100%-1rem)] max-h-full"
          :class="props.isShowModal ? '' : 'hidden'" @click="clickOutsideModal" @keydown.esc="props.isShowModal && props.closeModal()">
-        <div id="modal" class="relative w-full max-h-full mx-auto transition duration-300 max-w-7xl">
+        <div id="modal" class="relative w-full max-w-screen-lg max-h-full mx-auto transition duration-300">
 
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-            <div class="flex items-center justify-between p-4 rounded-t md:p-5 dark:border-gray-600">
+            <div class="flex items-center justify-between p-4 border-b rounded-t md:p-5 dark:border-gray-600">
               <button type="button"
               class="inline-flex items-center justify-center w-8 h-8 text-sm text-gray-400 bg-transparent rounded-lg hover:bg-gray-200 hover:text-gray-900 ms-auto dark:hover:bg-gray-600 dark:hover:text-white"
               data-modal-hide="extralarge-modal" @click="props.closeModal">
@@ -169,7 +169,7 @@ onMounted(() => {
           </button>
         </div>
         <div
-        class="flex flex-col items-center gap-12 p-10 md:flex-row-reverse md:justify-between md:p-20">
+        class="flex flex-col items-center gap-12 p-5 md:flex-row-reverse md:justify-between md:p-10">
         <div class="md:mr-12">
           <img src="/img_components/contact-header.svg" alt="Contact us" class="h-auto w-96" />
         </div>

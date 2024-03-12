@@ -25,7 +25,6 @@
           :pagination="{
             clickable: true,
           }"
-          :navigation="navigation"
           :modules="modules"
         >
         <swiper-slide>
@@ -112,8 +111,8 @@
           <p class="text-gray-1">{{commentData.length}}則留言</p>
         </div>
       </div>
-      <ul class="flex flex-col gap-3 md:w-8/12">
-        <li v-if="isLogin && commentData.length === 0" class="flex flex-col px-4 py-3 border-2 rounded-3xl md:py-5" data-message="send">
+      <ul class="flex flex-col gap-6 md:w-8/12">
+        <li v-if="memberName" class="flex flex-col px-4 py-3 border-2 rounded-3xl md:py-5" data-message="send">
           <div class="flex items-center pb-2 md:pb-6">
             <div :style="{ backgroundImage:'url('+ memberImg +')'}" class="w-8 h-8 bg-cover rounded-full"></div>
             <p class="pl-3 pr-4 font-medium">{{ memberName }}</p>
@@ -121,36 +120,36 @@
           <input v-model="messageComment" type="text" class="block w-full px-4 py-2 mb-2 border-0 rounded-full focus:ring-primary focus:bg-white bg-gray-4 md:mb-4 placeholder:text-gray-3" placeholder="請輸入評論...">
           <button type="button" class="px-6 py-2 ml-auto text-white transition bg-black border-2 rounded-full hover:border-gray-2 hover:bg-gray-2" @click="sentComment('message')">送出</button>
         </li>
-        <li v-if="commentData.length > 0" class="flex flex-col px-4 py-3 border-2 rounded-3xl md:py-5">
-          <div v-for="comment in commentData" :key="comment.id" class="flex" data-message="one">
-            <div :style="{ backgroundImage:'url('+comment.author.avatar+')'}" class="w-8 h-8 bg-cover rounded-full shrink"></div>
-            <div class="grow">
-              <div class="flex justify-between">
-                <p class="pt-1 pl-3 pr-4 font-medium">{{comment.author.name}}</p>
-                <p class="text-gray-2">{{dateForm(comment.createdTime)}}</p>
-              </div>
-              <p class="py-2 pl-3 leading-normal">{{ comment.content }}</p>
-            </div>
-          </div>
-          <div v-if="isLogin" class="px-4 py-3 rounded-lg bg-gray-4">
-            <div class="flex" data-message="list">
-              <div :style="{ backgroundImage:'url('+ memberImg +')'}" class="w-8 h-8 bg-cover rounded-full shrink"></div>
+        <template v-if="commentData.length > 0">
+          <li v-for="(comment) in commentData" :key="comment.id" class="flex flex-col gap-3 px-4 py-3 border-2 md:gap-5 rounded-3xl md:py-5">
+              <div class="flex border-b-gray-4" data-message="one">
+              <div :style="{ backgroundImage:'url('+comment.author.avatar+')'}" class="w-8 h-8 bg-cover rounded-full shrink"></div>
               <div class="grow">
-                <div class="flex items-center">
-                  <p class="pl-3 pr-4 font-medium">{{ memberName }}</p>
-                  <!-- <div class="px-3 py-1 bg-white border border-2 rounded-full border-gray-2 text-gray-2">發起人</div> -->
-                  <p class="ml-auto text-gray-2">{{ dateForm(new Date()) }}</p>
+                <div class="flex justify-between mb-3">
+                  <p class="pt-1 pl-3 pr-4 font-medium">{{comment.author.name}}</p>
+                  <p class="text-gray-2">{{dateForm(comment.createdTime)}}</p>
                 </div>
-                <p class="py-2 pl-3 leading-normal md:pb-3"></p>
+                <p class="py-2 pl-3 leading-normal">{{ comment.content }}</p>
               </div>
             </div>
-            <div class="flex flex-col">
-              <button :class="show ? '' : 'hidden'"  @click="show = !show" type="button" class="w-full px-4 py-2 text-left bg-white border-2 rounded-3xl"><i class="mr-3 bi bi-arrow-90deg-left"></i>回覆</button>
-              <input v-model="replyComment" :class="show ? 'hidden' : ''" type="text" class="block w-full px-4 py-2 mb-2 bg-white border-0 rounded-full focus:ring-primary focus:bg-white md:mb-4 placeholder:text-gray-3" placeholder="請輸入評論...">
-              <button type="button" class="px-6 py-2 ml-auto text-white transition bg-black border-2 rounded-full hover:border-gray-2 hover:bg-gray-2" :class="show ? 'hidden' : ''" @click="sentComment('reply')">送出</button>
+            <div v-if="isLogin" class="px-4 py-3 rounded-lg bg-gray-4">
+              <div class="flex" data-message="list">
+                <div :style="{ backgroundImage:'url('+ memberImg +')'}" class="w-8 h-8 bg-cover rounded-full shrink"></div>
+                <div class="grow">
+                  <div class="flex items-center">
+                    <p class="pl-3 pr-4 font-medium">{{ memberName }}</p>
+                  </div>
+                  <p class="py-2 pl-3 leading-normal md:pb-3"></p>
+                </div>
+              </div>
+              <div class="flex flex-col">
+                <button :class="show ? '' : 'hidden'"  @click="show = !show" type="button" class="w-full px-4 py-2 text-left bg-white border-2 rounded-3xl"><i class="mr-3 bi bi-arrow-90deg-left"></i>回覆</button>
+                <input v-model="replyComment" :class="show ? 'hidden' : ''" type="text" class="block w-full px-4 py-2 mb-2 bg-white border-0 rounded-full focus:ring-primary focus:bg-white md:mb-4 placeholder:text-gray-3" placeholder="請輸入評論...">
+                <button type="button" class="px-6 py-2 ml-auto text-white transition bg-black border-2 rounded-full hover:border-gray-2 hover:bg-gray-2" :class="show ? 'hidden' : ''" @click="sentComment('reply')">送出</button>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
+        </template>
       </ul>
     </div>
     </section>
@@ -158,17 +157,16 @@
   </main>
 </template>
 <script>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
+import { useMemberStore } from '@/stores/member';
 import { useMessageStore } from '@/stores/message';
 import { getCookie } from '@/utils';
-import { useMemberStore } from '../stores/member';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import 'swiper/css/navigation';
 
 export default {
   components: {
@@ -180,23 +178,25 @@ export default {
     const route = useRoute();
     const pollId = route.params.id;
     const memberStore = useMemberStore();
-    const memberId = memberStore.member.id;
-    const memberName = memberStore.member.name;
-    const memberImg = memberStore.member.avatar;
-    const show = ref(true);
-    const bgPersonImg = 'url("/images/loginCover.png")';
+    const message = useMessageStore();
     const bgImg = 'url("/images/bg-01.svg")';
+    const bgPersonImg = 'url("/images/loginCover.png")';
+
+    const isLogin = ref(memberStore.isLogin);
+    const memberId = ref(memberStore.member.id);
+    const memberName = ref(memberStore.member.name);
+    const memberImg = ref(memberStore.member.avatar);
+    const show = ref(true);
     const selectedRadio = ref(null);
     const replyComment = ref('');
     const messageComment = ref('');
     const widthIsShow = true;
     const isCanVoting = ref(false);
     const doNotVotingText = ref('');
-    const message = useMessageStore();
     const thisPollData = ref([]);
     const votedAll = ref(false);
-    const isLogin = ref(false);
     const commentData = ref([]);
+
     function share() {
       const url = window.location.href;
       navigator.clipboard.writeText(url)
@@ -206,7 +206,13 @@ export default {
           });
           message.showToast(true, 'success');
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          message.setMessage({
+            title: '複製失敗',
+            message: error,
+          });
+          message.showToast(true, 'error');
+        });
     }
 
     async function fetchCommentData() {
@@ -217,8 +223,10 @@ export default {
           commentData.value = data.result;
         }
       } catch (error) {
-
-        // console.error('Error fetching poll data:', error);
+        message.setMessage({
+          message: error.response.data.message,
+        });
+        message.showToast(true, 'error');
       }
     }
     async function pushComment(state) {
@@ -271,7 +279,6 @@ export default {
       }
     }
     function dateForm(date) {
-      // const date = '2024-03-09T16:16:56.548Z';
       const utcDate = new Date(date);
 
       const options = {
@@ -303,7 +310,7 @@ export default {
       let num = 0;
       options.forEach((option) => {
         option.voters.forEach((user) => {
-          if (user.user.id === memberId) {
+          if (user.user.id === memberId.value) {
             num += 1;
           }
         });
@@ -325,14 +332,16 @@ export default {
         thisPollData.value = response.data.poll;
         votedNum(thisPollData.value.options);
       } catch (error) {
-
-        // console.error('Error fetching poll data:', error);
+        message.setMessage({
+          message: error.response.data.message,
+        });
+        message.showToast(true, 'error');
       }
     }
 
     function isVoted(voters) {
       const isMe = voters.filter((userId) => {
-        return userId.user.id === memberId;
+        return userId.user.id === memberId.value;
       });
       if (isMe.length > 0) {
         return true;
@@ -382,15 +391,17 @@ export default {
         });
     }
 
+    watch(() => memberStore, (newVal) => {
+      isLogin.value = newVal.isLogin;
+      memberId.value = newVal.member.id;
+      memberName.value = newVal.member.name;
+      memberImg.value = newVal.member.avatar;
+    });
+
     onMounted(() => {
-      const token = getCookie('selectWaveToken');
-      if (token) {
-        isLogin.value = true;
-        isCanVoting.value = true;
+      if (isLogin.value) {
         doNotVotingText.value = '送出投票';
       } else {
-        isLogin.value = false;
-        isCanVoting.value = false;
         doNotVotingText.value = '登入後即可投票';
       }
       fetchPollData();
