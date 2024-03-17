@@ -58,10 +58,31 @@
       <section class="max-w-screen-lg px-3 py-8 md:py-4">
         <h1 class="text-2xl font-semibold leading-normal md:text-3xl md:leading-relaxed">{{thisPollData.title}}</h1>
         <p class="py-3 md:text-xl text-gray-2 md:py-4">{{thisPollData.description}}</p>
-        <ul class="flex flex-wrap gap-3">
+        <ul class="flex flex-wrap gap-3 mb-3">
           <li v-for="tag in thisPollData.tags" :key="tag.id">
             <span class="pr-1 font-bold text-primary">#</span>
             {{ tag.name }}
+          </li>
+        </ul>
+        <ul class="flex flex-col gap-2">
+          <!-- <li class="text-sm">{{ thisPollData.totalVoters }} 人參與投票</li> -->
+          <li class="pb-2 text-sm border-b">
+            <div  class="py-2">投票時間</div>
+            <div class="flex items-center justify-between">
+              <div>{{ turnDate(thisPollData.startDate) }}</div>
+              <div>
+                {{ turnDate(thisPollData.endDate) }}
+              </div>
+            </div>
+            </li>
+          <li class="pb-2 text-sm border-b" v-if="thisPollData.endDate !== null">
+            <div class="flex items-center justify-between">
+              <div class="py-2">投票進度</div>
+              <div>{{ progressPercentage }}%</div>
+            </div>
+            <div class="relative w-full h-2 rounded-full bg-gray-4">
+              <div class="h-2 rounded-full bg-primary" :style="{ width: progressPercentage + '%' }"></div>
+            </div>
           </li>
         </ul>
         <div class="flex items-center py-6">
@@ -102,69 +123,24 @@
 
       </section>
     </div>
-    <section class="relative">
-      <div :style="{ backgroundImage:bgImg}" class="bg-no-repeat bg-right absolute inset-0 bg-40% hidden z-[-1] md:block"></div>
-      <div class="max-w-screen-lg gap-4 px-3 py-6 mx-auto ">
-      <div class="flex md:w-8/12">
-        <div class="flex items-center justify-between w-full">
-          <h2 class="pt-6 pb-4 text-xl font-semibold leading-normal text-center text-gray-1 md:text-3xl md:pb-8">討論區</h2>
-          <p class="text-gray-1">{{commentData.length}}則留言</p>
-        </div>
-      </div>
-      <ul class="flex flex-col gap-6 md:w-8/12">
-        <li v-if="memberName" class="flex flex-col px-4 py-3 border-2 rounded-3xl md:py-5" data-message="send">
-          <div class="flex items-center pb-2 md:pb-6">
-            <div :style="{ backgroundImage:'url('+ memberImg +')'}" class="w-8 h-8 bg-cover rounded-full"></div>
-            <p class="pl-3 pr-4 font-medium">{{ memberName }}</p>
-          </div>
-          <input v-model="messageComment" type="text" class="block w-full px-4 py-2 mb-2 border-0 rounded-full focus:ring-primary focus:bg-white bg-gray-4 md:mb-4 placeholder:text-gray-3" placeholder="請輸入評論...">
-          <button type="button" class="px-6 py-2 ml-auto text-white transition bg-black border-2 rounded-full hover:border-gray-2 hover:bg-gray-2" @click="sentComment('message')">送出</button>
-        </li>
-        <template v-if="commentData.length > 0">
-          <li v-for="(comment) in commentData" :key="comment.id" class="flex flex-col gap-3 px-4 py-3 border-2 md:gap-5 rounded-3xl md:py-5">
-              <div class="flex border-b-gray-4" data-message="one">
-              <div :style="{ backgroundImage:'url('+comment.author.avatar+')'}" class="w-8 h-8 bg-cover rounded-full shrink"></div>
-              <div class="grow">
-                <div class="flex justify-between mb-3">
-                  <p class="pt-1 pl-3 pr-4 font-medium">{{comment.author.name}}</p>
-                  <p class="text-gray-2">{{dateForm(comment.createdTime)}}</p>
-                </div>
-                <p class="py-2 pl-3 leading-normal">{{ comment.content }}</p>
-              </div>
-            </div>
-            <div v-if="isLogin" class="px-4 py-3 rounded-lg bg-gray-4">
-              <div class="flex" data-message="list">
-                <div :style="{ backgroundImage:'url('+ memberImg +')'}" class="w-8 h-8 bg-cover rounded-full shrink"></div>
-                <div class="grow">
-                  <div class="flex items-center">
-                    <p class="pl-3 pr-4 font-medium">{{ memberName }}</p>
-                  </div>
-                  <p class="py-2 pl-3 leading-normal md:pb-3"></p>
-                </div>
-              </div>
-              <div class="flex flex-col">
-                <button :class="show ? '' : 'hidden'"  @click="show = !show" type="button" class="w-full px-4 py-2 text-left bg-white border-2 rounded-3xl"><i class="mr-3 bi bi-arrow-90deg-left"></i>回覆</button>
-                <input v-model="replyComment" :class="show ? 'hidden' : ''" type="text" class="block w-full px-4 py-2 mb-2 bg-white border-0 rounded-full focus:ring-primary focus:bg-white md:mb-4 placeholder:text-gray-3" placeholder="請輸入評論...">
-                <button type="button" class="px-6 py-2 ml-auto text-white transition bg-black border-2 rounded-full hover:border-gray-2 hover:bg-gray-2" :class="show ? 'hidden' : ''" @click="sentComment('reply')">送出</button>
-              </div>
-            </div>
-          </li>
-        </template>
-      </ul>
-    </div>
-    </section>
+    <CommentComponent
+    :pollId="pollId" :memberName="memberName" :memberImg="memberImg" :memberId="memberId" :isLogin="isLogin" />
 
   </main>
 </template>
 <script>
-import { onMounted, ref, watch } from 'vue';
+import {
+  computed,
+  onMounted, ref, watch,
+} from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { Autoplay, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
+import CommentComponent from '@/components/CommentComponent.vue';
 import { useMemberStore } from '@/stores/member';
 import { useMessageStore } from '@/stores/message';
-import { getCookie } from '@/utils';
+import { getCookie, turnDate } from '@/utils';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
@@ -172,6 +148,7 @@ export default {
   components: {
     Swiper,
     SwiperSlide,
+    CommentComponent,
   },
   setup() {
     const router = useRouter();
@@ -186,16 +163,23 @@ export default {
     const memberId = ref(memberStore.member.id);
     const memberName = ref(memberStore.member.name);
     const memberImg = ref(memberStore.member.avatar);
-    const show = ref(true);
     const selectedRadio = ref(null);
-    const replyComment = ref('');
-    const messageComment = ref('');
     const widthIsShow = true;
     const isCanVoting = ref(false);
     const doNotVotingText = ref('');
     const thisPollData = ref([]);
     const votedAll = ref(false);
-    const commentData = ref([]);
+
+    const progressPercentage = computed(() => {
+      if (thisPollData.value.endDate === null) {
+        return 0;
+      }
+      const start = new Date(thisPollData.value.startDate).getTime();
+      const end = new Date(thisPollData.value.endDate).getTime();
+      const now = new Date().getTime();
+      const progress = ((now - start) / (end - start)) * 100;
+      return Math.min(Math.max(progress, 0), 100).toFixed(2);
+    });
 
     function share() {
       const url = window.location.href;
@@ -215,87 +199,6 @@ export default {
         });
     }
 
-    async function fetchCommentData() {
-      try {
-        const api = `${import.meta.env.VITE_APP_API_URL}/api/poll/${pollId}/comment`;
-        const { data } = await axios.get(api);
-        if (data.status) {
-          commentData.value = data.result;
-        }
-      } catch (error) {
-        message.setMessage({
-          message: error.response.data.message,
-        });
-        message.showToast(true, 'error');
-      }
-    }
-    async function pushComment(state) {
-      let stateValue = null;
-      if (state === 'message') {
-        stateValue = messageComment.value;
-      } else if (state === 'reply') {
-        stateValue = replyComment.value;
-      }
-
-      const token = getCookie('selectWaveToken');
-      const api = `${import.meta.env.VITE_APP_API_URL}/api/comment`;
-      const postComment = {
-        pollId,
-        content: stateValue,
-      };
-      axios.post(api, postComment, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      message.setMessage({
-        message: '已完成留言',
-      });
-      message.showToast(true, 'success');
-      await fetchCommentData();
-    }
-    function sentComment(state) {
-      if (state === 'reply') {
-        const trimmedComment = replyComment.value.trim();
-        if (trimmedComment.length === 0) {
-          replyComment.value = '';
-          return;
-        }
-        if (replyComment.value.trim() !== '') {
-          pushComment('reply');
-          show.value = !show.value;
-          replyComment.value = '';
-        }
-      } else if (state === 'message') {
-        const trimmedComment = messageComment.value.trim();
-        if (trimmedComment.length === 0) {
-          messageComment.value = '';
-          return;
-        }
-        if (messageComment.value.trim() !== '' && trimmedComment.length > 0) {
-          pushComment('message');
-          messageComment.value = '';
-        }
-      }
-    }
-    function dateForm(date) {
-      const utcDate = new Date(date);
-
-      const options = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false, // 使用 24 小時制
-        timeZone: 'Asia/Taipei', // 設定時區為 UTC
-      };
-
-      const formatter = new Intl.DateTimeFormat('en-US', options);
-      const formattedDate = formatter.format(utcDate);
-
-      return formattedDate.replace(',', '');
-    }
     function isSelectedRadio(value) {
       return selectedRadio.value === value;
     }
@@ -405,19 +308,14 @@ export default {
         doNotVotingText.value = '登入後即可投票';
       }
       fetchPollData();
-      fetchCommentData();
     });
 
     return {
-      show,
       bgPersonImg,
       selectedRadio,
-      replyComment,
-      messageComment,
-      modules: [Autoplay, Pagination, Navigation],
+      modules: [Autoplay, Pagination],
       widthIsShow,
       bgImg,
-      sentComment,
       isSelectedRadio,
       thisPollData,
       isCanVoting,
@@ -427,12 +325,12 @@ export default {
       memberId,
       pollId,
       isVoted,
-      commentData,
       memberName,
       memberImg,
       isLogin,
-      dateForm,
+      turnDate,
       share,
+      progressPercentage,
     };
   },
 };

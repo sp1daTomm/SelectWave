@@ -228,7 +228,7 @@ export default {
         case 'DelPoll':
           this.message.setMessage({
             title: '刪除投票',
-            message: '已成功刪除投票',
+            message: '確認是否刪除投票',
           });
           (async () => {
             const result = await this.message.showConfirm();

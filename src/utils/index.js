@@ -30,6 +30,41 @@ export function turnDate(time) {
   return formattedDate;
 }
 
+export function turnDateTime(dateTime) {
+  const now = new Date();
+  const target = new Date(dateTime);
+  const diff = now - target;
+  const hoursDiff = Math.floor(diff / (1000 * 60 * 60));
+  const underOneHour = Math.floor(diff / (1000 * 60));
+
+  if (underOneHour < 60) {
+    return `${underOneHour} 分鐘前`;
+  }
+
+  if (hoursDiff < 24) {
+    return `${hoursDiff} 小時前`;
+  }
+
+  if (hoursDiff >= 24 && hoursDiff < 24 * 7) {
+    return `${Math.floor(hoursDiff / 24)} 天前`;
+  }
+
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false, // 使用 24 小時制
+    timeZone: 'Asia/Taipei', // 設定時區為 UTC
+  };
+
+  const formatter = new Intl.DateTimeFormat('en-US', options);
+  const formattedDate = formatter.format(target);
+
+  return formattedDate.replace(',', '');
+}
+
 export function isFileSizeValid(files, maxSize) {
   let valid = true;
   if (files) {
