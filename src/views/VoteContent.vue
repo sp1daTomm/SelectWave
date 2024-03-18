@@ -95,7 +95,7 @@
            >
             <div class="relative flex items-center p-3 border-2 overflow-clip rounded-3xl border-gray-3"
             :class="{ 'border-primary': isSelectedRadio(option.id) }">
-              <input type="radio" :disabled="!isCanVoting || thisPollData.status!=='active' || isVoted(option.voters)"  name="flexRadioDefault" :value="option.id" :id="'flexCheckDefault'+idx" class="focus:ring-primary text-primary" v-model="selectedRadio">
+              <input type="radio" :disabled="!isCanVoting || thisPollData.status !== 'active' || isVoted(option.voters)"  name="flexRadioDefault" :value="option.id" :id="'flexCheckDefault'+idx" class="focus:ring-primary text-primary" v-model="selectedRadio">
               <label :for="'flexCheckDefault'+idx" class="flex items-center justify-between w-full gap-3">
                 <p class="flex-grow pl-3"><span class="pr-2">{{ idx+1 }}.</span>{{ option.title }}</p><p class="flex-shrink-0 text-gray-2" >{{option.voters.length}} 票</p>
               </label>
@@ -304,6 +304,7 @@ export default {
     onMounted(() => {
       if (isLogin.value) {
         doNotVotingText.value = '送出投票';
+        isCanVoting.value = true;
       } else {
         doNotVotingText.value = '登入後即可投票';
       }

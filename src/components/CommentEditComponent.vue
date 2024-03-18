@@ -18,7 +18,8 @@
       </div>
     </div>
     <div v-else-if="!localIsEditing && !isSubReply" class="flex justify-end w-full">
-      <button @click="startEditing" type="button" class="w-full px-4 py-2 text-left bg-white border-2 md:w-auto rounded-3xl">
+      <button
+      @click="startEditing" type="button" class="w-full px-4 py-2 text-left bg-white border-2 md:w-auto rounded-3xl">
         <i class="mr-3 bi bi-arrow-90deg-left" />
         回覆
       </button>
@@ -32,6 +33,10 @@ import {
 } from 'vue';
 
 const props = defineProps({
+  originalTarget: {
+    type: String,
+    default: '',
+  },
   originalContent: {
     type: String,
     default: '',
@@ -50,7 +55,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['submitted', 'cancelEdit']);
+const emit = defineEmits(['submitted', 'cancelEdit', 'state']);
 
 const localIsEditing = ref(props.isEditing);
 
@@ -62,6 +67,7 @@ watch(() => props.isEditing, (newVal) => {
 
 function startEditing() {
   localIsEditing.value = true;
+  emit('state', { target: props.originalTarget, type: 'reply' });
 }
 
 function handleSubmit() {

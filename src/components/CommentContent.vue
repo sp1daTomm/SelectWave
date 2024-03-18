@@ -6,9 +6,13 @@ import { turnDateTime } from '@/utils';
 
 const showDropDown = ref(false);
 
-const emit = defineEmits(['editReply', 'handleDeleteComment']);
+const emit = defineEmits(['editReply', 'handleDeleteComment', 'state']);
 
 const props = defineProps({
+  memberId: {
+    type: String,
+    default: '',
+  },
   data: {
     type: Object,
     default: () => ({}),
@@ -55,11 +59,13 @@ onBeforeMount(() => {
             class="grid w-8 h-8 transition duration-300 rounded-full place-content-center hover:bg-gray-2/50 text-gray-2 hover:text-gray-1"
             type="button"
             data-dropdown="replyMenu"
+            v-if="memberId === data.author.id"
             @click="showDropDown = !showDropDown"
           >
             <i class="text-2xl bi bi-three-dots-vertical" />
           </button>
           <div
+            v-if="memberId === data.author.id"
             data-dropdown="replyMenu"
             :class="`absolute z-10 ${
               showDropDown ? 'block' : 'hidden'
@@ -71,6 +77,10 @@ onBeforeMount(() => {
                 class="block py-2 px-7 hover:text-primary"
                 @click="
                   emit('editReply');
+                  emit('state', {
+                    target: data.id,
+                    type: 'update'
+                  });
                 "
               >
                 編輯

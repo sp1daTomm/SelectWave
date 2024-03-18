@@ -24,7 +24,10 @@ const isMobile = ref(window.innerWidth < 768);
 const commentData = ref([]);
 
 const editTarget = ref('');
-
+const stateType = ref({
+  target: '',
+  type: '',
+});
 const newComment = ref('');
 const modifyComment = ref({});
 
@@ -194,43 +197,58 @@ onMounted(() => {
           <template v-for="(comment) in commentData" :key="comment.id">
           <li v-if="!comment.isReply" class="flex flex-col gap-3 px-4 py-3 transition duration-300 bg-white border-2 md:gap-5 rounded-3xl md:py-5">
             <CommentContent :data="comment"
+            :memberId="memberId"
             @editReply="editTarget = comment.id"
+            @state="content => stateType = content"
             @handleDeleteComment="handleDeleteComment(comment)"
             >
               <CommentEditComponent
                 v-if="editTarget === comment.id"
                 :placeholder="comment.content"
                 :is-editing="editTarget === comment.id"
+                :originalTarget="comment.id"
                 @cancelEdit="editTarget = ''"
-                @submitted="content => handleCommentSubmitted('update', comment.id, content)"
+                @state="content => stateType = content"
+                @submitted="content => handleCommentSubmitted(
+                  (stateType.target === comment.id ? stateType.type : ''), comment.id, content)"
               />
           </CommentContent>
-            <ul v-if="comment.replies.length > 0">
+            <ul class="space-y-3" v-if="comment.replies.length > 0">
               <li v-for="reply in comment.replies" :key="reply.id" class="px-4 py-3 transition duration-300 rounded-lg bg-gray-4">
                 <CommentContent :data="reply"
+                :memberId="memberId"
                 @editReply="editTarget = reply.id"
+                @state="content => stateType = content"
                 @handleDeleteComment="handleDeleteComment(reply)"
                 >
               <CommentEditComponent
                 v-if="isLogin"
-                :placeholder="(editTarget === reply.id && reply.content) || '請輸入評論...'"
+                :placeholder="editTarget === reply.id ? reply.content : '請輸入評論...'"
                 :is-editing="editTarget === reply.id"
+                :originalTarget="reply.id"
                 @cancelEdit="editTarget = ''"
-                @submitted="content => handleCommentSubmitted('reply', reply.id, content)"
+                @state="content => stateType = content"
+                @submitted="content => handleCommentSubmitted(
+                  (stateType.target === reply.id ? stateType.type : ''), reply.id, content)"
               />
               <ul class="pt-5 ml-10" v-if="reply.replies.length > 0">
                   <li v-for="subReply in reply.replies" :key="subReply.id" class="px-4 py-3 transition duration-300 border-t rounded-lg bg-gray-4">
                     <CommentContent :data="subReply"
+                    :memberId="memberId"
                     @editReply="editTarget = subReply.id"
+                    @state="content => stateType = content"
                     @handleDeleteComment="handleDeleteComment(subReply)"
                     >
                     <CommentEditComponent
                       v-if="isLogin"
-                      :placeholder="editTarget === subReply.id && subReply.content"
+                      :placeholder="editTarget === subReply.id ? subReply.content : ''"
                       :is-editing="editTarget === subReply.id"
                       :is-subReply="true"
+                      :originalTarget="subReply.id"
+                      @state="content => stateType = content"
                       @cancelEdit="editTarget = ''"
-                      @submitted="content => handleCommentSubmitted('update', subReply.id, content)"
+                      @submitted="content => handleCommentSubmitted(
+                        (stateType.target === subReply.id ? stateType.type : ''), subReply.id, content)"
                     />
                     </CommentContent>
                   </li>
