@@ -192,7 +192,7 @@ onMounted(() => {
         </li>
         <template v-if="commentData.length > 0">
           <template v-for="(comment) in commentData" :key="comment.id">
-          <li v-if="!comment.isReply" class="flex flex-col gap-3 px-4 py-3 bg-white border-2 md:gap-5 rounded-3xl md:py-5">
+          <li v-if="!comment.isReply" class="flex flex-col gap-3 px-4 py-3 transition duration-300 bg-white border-2 md:gap-5 rounded-3xl md:py-5">
             <CommentContent :data="comment"
             @editReply="editTarget = comment.id"
             @handleDeleteComment="handleDeleteComment(comment)"
@@ -206,7 +206,7 @@ onMounted(() => {
               />
           </CommentContent>
             <ul v-if="comment.replies.length > 0">
-              <li v-for="reply in comment.replies" :key="reply.id" class="px-4 py-3 rounded-lg bg-gray-4">
+              <li v-for="reply in comment.replies" :key="reply.id" class="px-4 py-3 transition duration-300 rounded-lg bg-gray-4">
                 <CommentContent :data="reply"
                 @editReply="editTarget = reply.id"
                 @handleDeleteComment="handleDeleteComment(reply)"
@@ -218,8 +218,8 @@ onMounted(() => {
                 @cancelEdit="editTarget = ''"
                 @submitted="content => handleCommentSubmitted('reply', reply.id, content)"
               />
-              <ul class="ml-10 pt-5" v-if="reply.replies.length > 0">
-                  <li v-for="subReply in reply.replies" :key="subReply.id" class="px-4 py-3 rounded-lg bg-gray-4 border-t">
+              <ul class="pt-5 ml-10" v-if="reply.replies.length > 0">
+                  <li v-for="subReply in reply.replies" :key="subReply.id" class="px-4 py-3 transition duration-300 border-t rounded-lg bg-gray-4">
                     <CommentContent :data="subReply"
                     @editReply="editTarget = subReply.id"
                     @handleDeleteComment="handleDeleteComment(subReply)"
@@ -238,10 +238,12 @@ onMounted(() => {
                 </CommentContent>
               </li>
             </ul>
-            <CommentEditComponent
-            v-if="isLogin"
-              @submitted="content => handleCommentSubmitted('reply', comment.id, content)"
-            />
+            <div class="grow">
+              <CommentEditComponent
+              v-if="isLogin"
+                @submitted="content => handleCommentSubmitted('reply', comment.id, content)"
+              />
+            </div>
           </li>
           </template>
         </template>

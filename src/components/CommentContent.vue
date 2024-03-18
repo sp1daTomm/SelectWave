@@ -46,7 +46,7 @@ onBeforeMount(() => {
       :style="{ backgroundImage: 'url(' + data.author.avatar + ')' }"
       class="w-8 h-8 bg-cover rounded-full shrink"
     ></div>
-    <div class="grow">
+    <div class="transition duration-300 grow">
       <div class="flex items-center justify-between mb-3">
         <p class="pl-3 pr-4 font-medium">{{ data.author.name }}</p>
         <div class="relative flex items-center gap-4">
