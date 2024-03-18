@@ -7,12 +7,15 @@
     leave-to-class="opacity-0"
     leave-from-class="opacity-100"
     >
-    <div v-if="isEditing" class="flex items-center justify-between gap-4 px-3 py-2 rounded-xl bg-gray-4">
-      <input v-model="modifiedContent" type="text" class="w-full px-4 py-2 bg-white border-0 rounded-full focus:ring-2 focus:ring-primary focus:bg-white placeholder:text-gray-3" :placeholder="placeholder">
-      <button type="button" class="px-6 py-2 ml-auto text-white transition border-2 rounded-full bg-gray-1 whitespace-nowrap"
-      :class="modifiedContent?.length === 0 ? 'border-0 hover:bg-gray-1 opacity-80 cursor-auto' : 'hover:border-primary-dark hover:bg-primary-dark'" @click="handleSubmit">{{ modifiedContent && modifiedContent.length > 0 ? '送出' : '關閉'}}</button>
+    <div class="flex items-center gap-4" v-if="localIsEditing">
+      <input v-model="modifiedContent" type="text" class="block w-full px-4 py-2 mb-2 border-0 rounded-full ring-gray-3 ring-1 focus:ring-2 focus:ring-primary bg-gray-4 md:mb-0 placeholder:text-gray-3" :placeholder="placeholder">
+      <button type="button" class="px-6 py-2 ml-auto text-white transition border-2 rounded-full border-gray-1 bg-gray-1 whitespace-nowrap disabled:hover:border-transparent disabled:hover:bg-gray-1 disabled:opacity-50 disabled:cursor-auto hover:border-primary-dark hover:bg-primary-dark"
+      :disabled="modifiedContent?.length === 0"
+      @click="handleSubmit">送出</button>
+      <button type="button" class="px-6 py-2 ml-auto transition border-2 rounded-full text-gray-1 border-gray-1 whitespace-nowrap hover:bg-gray-1 hover:text-white"
+      @click="emit('cancelEdit'); localIsEditing = false">關閉</button>
     </div>
-    <div v-else-if="!isEditing && isReply" class="flex justify-end">
+    <div v-else-if="!localIsEditing && !isSubReply" class="flex justify-end">
       <button @click="startEditing" type="button" class="px-4 py-2 text-left bg-white border-2 rounded-3xl">
         <i class="mr-3 bi bi-arrow-90deg-left" />
         回覆
@@ -22,13 +25,11 @@
 </template>
 
 <script setup>
-import { defineEmits, defineProps, ref } from 'vue';
+import {
+  defineEmits, defineProps, ref, watch,
+} from 'vue';
 
 const props = defineProps({
-  isReply: {
-    type: Boolean,
-    default: false,
-  },
   originalContent: {
     type: String,
     default: '',
@@ -37,24 +38,38 @@ const props = defineProps({
     type: String,
     default: '請輸入評論...',
   },
+  isEditing: {
+    type: Boolean,
+    default: false,
+  },
+  isSubReply: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const emit = defineEmits(['submitted']);
+const emit = defineEmits(['submitted', 'cancelEdit']);
 
-const isEditing = ref(false);
+const localIsEditing = ref(props.isEditing);
+
 const modifiedContent = ref(props.originalContent);
 
+watch(() => props.isEditing, (newVal) => {
+  localIsEditing.value = newVal;
+});
+
 function startEditing() {
-  isEditing.value = true;
+  localIsEditing.value = true;
 }
 
 function handleSubmit() {
   if (modifiedContent.value.trim().length === 0) {
-    isEditing.value = false;
+    localIsEditing.value = false;
     modifiedContent.value = props.originalContent;
+    emit('cancelEdit');
   } else {
     emit('submitted', modifiedContent.value);
-    isEditing.value = false;
+    localIsEditing.value = false;
     modifiedContent.value = props.originalContent;
   }
 }
