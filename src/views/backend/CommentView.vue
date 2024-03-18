@@ -1,4 +1,3 @@
-<!-- eslint-disable no-unused-vars -->
 <script setup>
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
