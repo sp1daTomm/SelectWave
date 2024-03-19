@@ -10,7 +10,7 @@ import {
 } from 'vue';
 import axios from 'axios';
 import { useMemberStore } from '@/stores/member';
-import { getCookie, setCookie } from '@/utils';
+import { deleteCookie, getCookie, setCookie } from '@/utils';
 
 const swal = inject('$swal');
 const appRef = ref(null);
@@ -20,7 +20,7 @@ provide('appRef', appRef);
 
 const checkToken = () => {
   const token = getCookie('selectWaveToken');
-  if (token !== '' && token !== null && token !== undefined) {
+  if (token !== '' && token !== null && token !== undefined && token !== false) {
     return token;
   }
   return false;
@@ -59,6 +59,7 @@ const authCheck = async (propsToken) => {
     member.setMemberLoginStatus(false);
     member.setMemberStatus(false);
     member.setMemberData({});
+    deleteCookie('selectWaveToken');
   }
 };
 
