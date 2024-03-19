@@ -1,7 +1,6 @@
-<!-- eslint-disable no-unused-vars -->
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 import CommentModal from '@/components/backend/CommentModal.vue';
 import Pagination from '@/components/PaginationView.vue';
@@ -35,22 +34,26 @@ const linkToPollDetail = (id) => {
 
 const getComments = async (page = 1) => {
   const token = getCookie('selectWaveToken');
-  const apiUrl = `${baseUrl}/api/comment?createdBy=${memberId.value}&page=${page}`;
+  const apiUrl = `${baseUrl}/api/comment/?createdBy=${memberId.value}&page=${page}`;
   try {
     const { data } = await axios.get(apiUrl, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    userComments.value = data.result.filter((item, index, arr) => {
-      return arr.findIndex((poll) => poll.pollId.id === item.pollId.id) === index;
-    });
+    userComments.value = data.result.reduce((acc, item) => {
+      if (!acc.some((result) => result.pollId.id === item.pollId.id)) {
+        acc.push(item);
+      }
+      return acc;
+    }, []);
     currentPage.value = data.page;
     perPage.value = data.limit;
     totalMemberComments.value = data.total;
     totalPage.value = Math.ceil(totalMemberComments.value / perPage.value);
   } catch (error) {
-    message.setMessage({ message: error.response.data.message });
+    const errorMessage = error.response?.data?.message || error.message;
+    message.setMessage({ message: errorMessage });
     message.showToast(true, 'error');
   }
 };
@@ -97,7 +100,7 @@ onMounted(() => {
     <div class="outline outline-1 outline-gray-3 rounded-2xl md:rounded-3xl
     pt-5 pb-10 md:pt-4 md:pb-16 px-3.5 md:px-5 mb-10 min-h-[45dvh]">
       <div class="flex justify-between mb-7 md:mb-8">
-        <!-- <div class="relative">
+        <div class="relative">
           <button type="button" class="flex items-center justify-center px-6 py-3 text-base font-medium bg-white rounded-full text-gray-1 outline outline-2 outline-gray-1 hover:outline-primary hover:text-primary" @click="collapseModal.toggle()">
             篩選
           </button>
@@ -120,17 +123,13 @@ onMounted(() => {
               </li>
             </ul>
           </div>
-        </div> -->
+        </div>
       </div>
-      <!-- table -->
       <table class="w-full text-base text-center text-gray-1">
         <thead class="uppercase text-gray-2">
           <tr class="border-b">
             <th scope="col" class="px-6 py-3 font-medium text-left">
               投票標題
-            </th>
-            <th scope="col" class="px-6 py-3 font-medium">
-              討論人數
             </th>
             <th scope="col" class="hidden px-6 py-3 font-medium lg:table-cell">
               開始日期
@@ -150,13 +149,9 @@ onMounted(() => {
           <tr class="bg-white hover:bg-primary-light/35 text-gray-1" :class="userComments.length - 1 !== index && 'border-b'" v-for="(item, index) in userComments" :key="item.id">
                 <th scope="row" class="px-6 py-4 font-medium text-left whitespace-nowrap lg:text-center">
                   <p class="text-left">{{ item.pollId.title }}</p>
-                  <p class="block lg:hidden">人數：{{ item.pollId.comments.length }}</p>
                   <p class="block lg:hidden">開始：{{ turnDate(item.startDate) }}</p>
                   <p class="block lg:hidden">結束：{{ turnDate(item.endDate) }}</p>
                 </th>
-                <td class="hidden px-6 py-4 lg:table-cell">
-                  {{ item.pollId.comments.length }}
-                </td>
                 <td class="hidden px-6 py-4 lg:table-cell">
                   {{ turnDate(item.startDate) }}
                 </td>

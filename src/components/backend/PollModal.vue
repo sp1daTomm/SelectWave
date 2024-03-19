@@ -149,7 +149,6 @@ async function uploadOptionFile(event, index) {
   isLoading.value = false;
 }
 function createOption() {
-  console.log('createOption', pollData.value);
   pollData.value.options.push({ title: '', imageUrl: defaultOptionImage });
 }
 function changeTag() {
@@ -190,7 +189,6 @@ function handlePollAction(action) {
 
 watchEffect(() => {
   if (props.propsPollData) {
-    console.log('propsPollData', props.propsPollData);
     pollData.value = { ...props.propsPollData };
     const [startDate] = props.propsPollData.startDate ? props.propsPollData.startDate.split('T')[0] : '';
     pollData.value.startDate = startDate;

@@ -109,6 +109,7 @@ watchEffect(() => {
     appRef.value.style.overflow = 'clip';
   } else {
     appRef.value.style.height = 'auto';
+    appRef.value.style.overflow = 'auto';
   }
 });
 

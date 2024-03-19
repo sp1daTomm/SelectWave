@@ -1,16 +1,11 @@
 <template>
   <nav class="sticky top-0 z-10 px-3 py-3 bg-white">
     <div class="flex items-center justify-between max-w-screen-lg mx-auto">
-      <div class="flex items-center">
+      <div class="flex items-center gap-20">
       <RouterLink :to="{name:'HomeDefault'}">
         <img class="w-12 md:w-16" :src="logoImageUrl" alt="選集">
       </RouterLink>
       <ul class="hidden gap-2 pl-6 md:flex">
-        <li class="relative group">
-          <RouterLink :to="{name: 'About'}" :class="[ isActive('About') ? 'text-primary' : '']" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">關於我們</RouterLink>
-          <div :class="[ isActive('About') ? 'after:absolute after:bottom-0 after:rounded after:left-1/2 after:-translate-x-1/2 after:w-4 after:h-1 after:bg-primary' : '']"
-          class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
-        </li>
         <li class="relative group">
           <RouterLink :to="{name:'Poll'}" :class="[ isActive('Poll') ? 'text-primary' : '']" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">開始投票</RouterLink>
           <div :class="[ isActive('Poll') ? 'after:absolute after:bottom-0 after:rounded after:left-1/2 after:-translate-x-1/2 after:w-4 after:h-1 after:bg-primary' : '']"
@@ -20,6 +15,11 @@
           <RouterLink :to="{name:'FAQ'}" :class="[ isActive('FAQ') ? 'text-primary' : '']" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">常見問題</RouterLink>
           <div
           :class="[ isActive('FAQ') ? 'after:absolute after:bottom-0 after:rounded after:left-1/2 after:-translate-x-1/2 after:w-4 after:h-1 after:bg-primary' : '']"
+          class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
+        </li>
+        <li class="relative group">
+          <RouterLink :to="{name: 'About'}" :class="[ isActive('About') ? 'text-primary' : '']" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">關於我們</RouterLink>
+          <div :class="[ isActive('About') ? 'after:absolute after:bottom-0 after:rounded after:left-1/2 after:-translate-x-1/2 after:w-4 after:h-1 after:bg-primary' : '']"
           class="group-hover:after:absolute group-hover:after:bottom-0 group-hover:after:rounded group-hover:after:left-1/2 group-hover:after:-translate-x-1/2 group-hover:after:w-4 group-hover:after:h-1 group-hover:after:bg-primary"></div>
         </li>
       </ul>
@@ -66,9 +66,9 @@
       </button>
     </div>
     <ul class="gap-2">
-      <li><RouterLink to="/about" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">關於我們</RouterLink></li>
       <li><RouterLink to="/none" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">開始投票</RouterLink></li>
       <li><RouterLink to="/faq" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">常見問題</RouterLink></li>
+      <li><RouterLink to="/about" type="button" class="block w-full px-4 py-2 text-left transition hover:text-primary">關於我們</RouterLink></li>
     </ul>
     <div class="my-4 border-b-2" v-if="isMember"></div>
     <button type="button" class="w-full px-4 py-2 text-left transition hover:text-primary" v-if="isMember" @click="doLogout()">登出</button>

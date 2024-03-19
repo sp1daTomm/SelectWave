@@ -52,7 +52,6 @@ const pollData = ref({
 
 const allTags = ref([]);
 
-const openModal = ref(false);
 const closeModal = () => {
   showModal.value = '';
   pollData.value = {
@@ -66,8 +65,6 @@ const closeModal = () => {
     options: [],
     status: 'pending',
   };
-  console.log('closeModal', pollData.value);
-  console.log('closeModal', openModal.value);
 };
 
 async function getMemberPolls(page = 1) {
@@ -81,16 +78,17 @@ async function getTags() {
   const apiUrl = `${baseUrl}/api/tag`;
   try {
     const { data } = await axios.get(apiUrl);
-    console.log('所有標籤', data.result);
     allTags.value = data.result.flatMap((tag) => tag.name);
   } catch (err) {
-    console.log(err);
+    message.setMessage({
+      message: `${err.response.data.message}`,
+    });
+    message.showToast(true, 'error');
   }
 }
 
 async function getInitialize() {
   const verify = await member.verifyToken();
-  console.log('verify', verify);
   if (verify.status) {
     const { id } = verify.result;
     memberId.value = id;
@@ -126,7 +124,6 @@ function openNewModal() {
 async function openPollModal(item) {
   functionType.value = '編輯';
   const apiUrl = `${baseUrl}/api/poll/${item.id}`;
-  console.log('編輯modal', item.title);
   try {
     const { data } = await axios.get(apiUrl);
     pollData.value = {
@@ -134,19 +131,15 @@ async function openPollModal(item) {
       tags: data.poll.tags && data.poll.tags.map((tag) => tag.name),
     };
   } catch (err) {
-    console.log(err);
     message.setMessage({
       title: `${err.response.data.message}`,
     });
     message.showToast(true, 'error');
   }
   showModal.value = 'poll';
-  console.log('編輯modal', pollData.value);
-  console.log('編輯modal', openModal.value);
 }
 
 async function submitFunction(result) {
-  console.log('submitFunction', result);
   let data = {};
   const apiUrl = `${baseUrl}/api/poll/`;
   if (functionType.value === '新增') {
@@ -259,8 +252,6 @@ const linkToPollDetail = (id) => {
 onMounted(async () => {
   const status = await getInitialize();
   if (status) resultPolls.value = memberPolls.value;
-  console.log('resultPolls', resultPolls.value);
-  console.log('memberPolls', memberPolls.value);
 });
 
 function filterPoll(status) {

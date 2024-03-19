@@ -32,8 +32,8 @@ export const useMessageStore = defineStore('messageStore', {
         text: this.message,
       });
     },
-    showConfirm(callback) {
-      Swal.fire({
+    showConfirm() {
+      return Swal.fire({
         title: this.title,
         text: this.message,
         icon: 'warning',
@@ -43,9 +43,7 @@ export const useMessageStore = defineStore('messageStore', {
         confirmButtonText: '是的',
         cancelButtonText: '取消',
       }).then((result) => {
-        if (result.isConfirmed && callback) {
-          callback();
-        }
+        return result.isConfirmed;
       });
     },
     resetMessage() {
