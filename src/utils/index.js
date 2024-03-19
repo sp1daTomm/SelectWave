@@ -109,7 +109,6 @@ export function formatImage(file) {
         // 使用toBlob方法轉換為blob並解析Promise
         canvas.toBlob((blob) => {
           if (blob.size > 2 * 1024 * 1024) {
-            console.error('檔案大小超過2MB');
             reject(new Error('檔案大小超過2MB'));
           }
           resolve(blob);

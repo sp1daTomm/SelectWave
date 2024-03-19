@@ -55,7 +55,7 @@
               </div>
               <p class="text-sm text-primary-dark" v-if="errors['agreePrivacy']">{{ errors['agreePrivacy'] && '請同意使用規範及隱私權政策' }}</p>
             </div>
-          <button type="submit" class="text-white bg-gray-1 hover:bg-primary focus:ring-4
+          <button type="submit" class="text-white bg-gray-1 hover:bg-primary-dark focus:ring-4
             focus:outline-none focus:ring-primary-light font-medium rounded-full
             text-base w-full sm:w-auto px-5 py-2.5 text-center" :disabled="isLoading">
             註冊帳號

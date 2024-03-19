@@ -63,8 +63,13 @@ const authCheck = async (propsToken) => {
 };
 
 onMounted(async () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const urlToken = urlParams.get('token');
+  let urlToken = null;
+  const { hash } = window.location;
+  if (hash.includes('?')) {
+    const hashParams = new URLSearchParams(hash.split('?')[1]);
+    urlToken = hashParams.get('token');
+  }
+
   if (urlToken !== '' && urlToken !== null && urlToken !== undefined) {
     await authCheck(urlToken);
   } else {

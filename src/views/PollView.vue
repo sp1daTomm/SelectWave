@@ -74,6 +74,7 @@ export default {
           break;
       }
       poll.updateSelectedSort(sort.value);
+      poll.getPolls();
     };
 
     function toggleDropdown() {
