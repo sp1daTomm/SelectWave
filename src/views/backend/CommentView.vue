@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import CommentModal from '@/components/backend/CommentModal.vue';
@@ -9,6 +9,7 @@ import { useMessageStore } from '@/stores/message';
 import { getCookie, turnDate } from '@/utils';
 
 const baseUrl = import.meta.env.VITE_APP_API_URL;
+const appRef = inject('appRef');
 
 const member = useMemberStore();
 const message = useMessageStore();
@@ -26,6 +27,8 @@ const openCommentModal = ref(false);
 
 const closeModal = () => {
   openCommentModal.value = false;
+  appRef.value.style.height = 'auto';
+  appRef.value.style.overflow = 'auto';
 };
 
 const linkToPollDetail = (id) => {
