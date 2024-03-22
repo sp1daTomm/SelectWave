@@ -1,14 +1,17 @@
 <template>
-  <Navbar />
-  <NavbarBackend />
-  <router-view v-if="status" />
-  <ComponentFooter />
+  <div v-if="status">
+    <Navbar />
+    <NavbarBackend />
+    <router-view />
+    <ComponentFooter />
+  </div>
 </template>
 <script>
 import NavbarBackend from '@/components/backend/NavbarBackend.vue';
 import ComponentFooter from '@/components/ComponentFooter.vue';
 import Navbar from '@/components/NavbarEl.vue';
 import { useMemberStore } from '@/stores/member';
+import { deleteCookie } from '@/utils';
 
 export default {
   components: {
@@ -39,7 +42,8 @@ export default {
       this.status = true;
     } else {
       this.status = false;
-      this.$router.push('/login');
+      window.location.href = '/login';
+      deleteCookie('selectWaveToken');
     }
   },
 };

@@ -32,23 +32,23 @@
             <router-link class="block mb-6 text-sm text-right text-gray-2 hover:text-primary" to="">
               忘記密碼 ?
             </router-link>
-            <button type="submit" class="text-white bg-gray-1 hover:bg-primary focus:ring-4
+            <button type="submit" class="text-white bg-gray-1 hover:bg-primary-dark focus:ring-4
               focus:outline-none focus:ring-primary-light font-medium rounded-full
               text-base w-full sm:w-auto px-5 py-2.5 text-center mb-6
               disabled:bg-gray-2 disabled:opacity-50 disabled:cursor-not-allowed" :disabled="isLoading">
               登入
             </button>
-            <!-- <p class="mb-4">使用以下方式登入</p>
+            <p class="mb-4">使用以下方式登入</p>
             <div class="flex items-center gap-2">
               <a class="text-white bg-gray-1 rounded-full
-              text-base w-1/4 sm:w-auto py-3.5 hover:bg-primary
+              text-base w-1/4 sm:w-auto py-3.5 hover:bg-primary-dark
               grid place-items-center text-center transition duration-150
               disabled:bg-gray-2 disabled:opacity-50 disabled:cursor-not-allowed"
               v-for="item in thirdParty" :key="item.name"
               :href="`${baseUrl}/api/auth/${item.url}`" :disabled="isLoading">
                 <i :class="`bi ${item.icon}`"></i>
               </a>
-            </div> -->
+            </div>
           </VForm>
         </div>
       </div>

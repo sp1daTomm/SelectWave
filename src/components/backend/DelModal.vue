@@ -7,11 +7,11 @@ defineProps({
   contentType: String,
 });
 
-const emits = defineEmits(['closeModal', 'delFunction']);
+const emit = defineEmits(['closeModal', 'delFunction']);
 
 const clickOutsideModal = (event) => {
   if (event.target.dataset.modal === 'backdrop') {
-    emits('closeModal');
+    emit('closeModal');
   }
 };
 
@@ -27,7 +27,7 @@ const clickOutsideModal = (event) => {
           <button type="button"
             class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-red-200
             hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center
-            items-center" @click.prevent="emits('closeModal')">
+            items-center" @click.prevent="emit('closeModal')">
             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
               stroke-width="2"
@@ -44,11 +44,11 @@ const clickOutsideModal = (event) => {
               </h3>
             </div>
             <button type="button"
-              class="px-6 py-3 text-sm font-medium text-center text-white transition duration-150 bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 rounded-3xl" @click="emits('delFunction')">
+              class="px-6 py-3 text-sm font-medium text-center text-white transition duration-150 bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 rounded-3xl" @click="emit('delFunction')">
               確定刪除
             </button>
             <button type="button"
-              class="px-6 py-3 text-base font-medium text-red-500 transition duration-150 bg-white border border-red-500 hover:bg-gray-02 focus:ring-4 focus:outline-none focus:ring-gray-02 rounded-3xl border-gray-02 hover:text-gray-1 hover:border-gray-2 hover:bg-gray-3 focus:z-10" @click.prevent="emits('closeModal')">取消</button>
+              class="px-6 py-3 text-base font-medium text-red-500 transition duration-150 bg-white border border-red-500 hover:bg-gray-02 focus:ring-4 focus:outline-none focus:ring-gray-02 rounded-3xl border-gray-02 hover:text-gray-1 hover:border-gray-2 hover:bg-gray-3 focus:z-10" @click.prevent="emit('closeModal')">取消</button>
           </div>
         </div>
       </div>

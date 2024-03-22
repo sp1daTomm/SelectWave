@@ -1,6 +1,6 @@
 <script setup>
 import {
-  defineProps, inject,
+  defineEmits, defineProps, inject,
   onMounted, ref,
   watchEffect,
 } from 'vue';
@@ -17,6 +17,8 @@ const props = defineProps({
   openModal: Boolean,
 });
 
+const emit = defineEmits(['getComments']);
+
 const baseUrl = import.meta.env.VITE_APP_API_URL;
 
 const message = useMessageStore();
@@ -27,9 +29,13 @@ const targetId = ref('');
 const delContent = ref('');
 const openEdit = ref(false);
 
+const appRef = inject('appRef');
+
 const clickOutsideModal = (event) => {
   if (event.target.dataset.modal === 'backdrop') {
     props.closeModal();
+    appRef.value.style.height = 'auto';
+    appRef.value.style.overflow = 'auto';
   }
 };
 
@@ -70,6 +76,8 @@ const handleEditContent = (item) => {
 
 const closeDelModal = () => {
   showDel.value = false;
+  appRef.value.style.height = 'auto';
+  appRef.value.style.overflow = 'auto';
 };
 
 function openDelModal(item) {
@@ -91,6 +99,11 @@ const delComment = async () => {
         message: '刪除成功',
       });
       message.showToast(true);
+      showDel.value = false;
+      appRef.value.style.height = 'auto';
+      appRef.value.style.overflow = 'auto';
+      props.closeModal();
+      emit('getComments');
     }
   } catch (catchError) {
     message.setMessage({
@@ -100,8 +113,6 @@ const delComment = async () => {
   }
   closeDelModal();
 };
-
-const appRef = inject('appRef');
 
 watchEffect(() => {
   if (props.openModal) {
@@ -194,6 +205,6 @@ watchEffect(() => {
       </div>
     </div>
   </div>
-  <DelModal v-if="showDel" :openModal="showDel" :closeModal="closeDelModal" :delPoll="delComment"
+  <DelModal v-if="showDel" :openModal="showDel" @closeModal="closeDelModal" @delFunction="delComment"
   :delContent="delContent" :contentType="'評論'" />
 </template>

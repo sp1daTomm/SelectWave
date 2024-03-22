@@ -129,7 +129,7 @@ export default {
             title: `${res.data.message}`,
           });
           deleteCookie('selectWaveToken');
-          this.$router.push('/');
+          window.location.href = '/';
         })
         .catch(() => {
         });

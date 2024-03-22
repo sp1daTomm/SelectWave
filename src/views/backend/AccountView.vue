@@ -126,7 +126,7 @@ export default {
             this.$swal({
               title: '登入失敗，請重新登入',
             });
-            this.$router.push('/login');
+            window.location.href = '/login';
           }
         })
         .catch((err) => {
