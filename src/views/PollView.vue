@@ -84,8 +84,10 @@ export default {
     function handleSearchFiler() {
       if (searchQuery.value === '') {
         poll.updateQuery('');
+        poll.getPolls();
       } else {
         poll.updateQuery(searchQuery.value);
+        poll.getPolls();
       }
     }
 
@@ -403,7 +405,7 @@ export default {
           </div>
           <div class="flex justify-end items-enter">
             <div class="relative">
-              <input id="search" type="text" class="z-0 px-4 transition duration-150 rounded search-input focus:border-primary focus:shadow focus:outline-none focus:ring-2 focus:ring-primary" v-model="searchQuery"
+              <input id="search" type="text" class="z-0 px-4 transition duration-150 rounded search-input focus:border-primary focus:shadow focus:outline-none focus:ring-2 focus:ring-primary" v-model="searchQuery" @keyup.enter="handleSearchFiler"
                      placeholder="搜尋投票" />
               <label for="search" class="absolute top-2 right-4">
                 <i v-if="!searchQuery" class="z-20 text-gray-2 hover:text-gray-3 bi bi-search" />
