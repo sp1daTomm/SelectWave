@@ -39,6 +39,7 @@ export default {
     const filterStatus = ref('active');
     const searchQuery = ref('');
     const isLoading = ref(false);
+    const doSort = ref(false);
 
     const updatePage = async (page = 1) => {
       poll.updateCreatedBy('');
@@ -73,6 +74,7 @@ export default {
         default:
           break;
       }
+      doSort.value = true;
       poll.updateSelectedSort(sort.value);
       poll.getPolls();
     };
@@ -85,7 +87,9 @@ export default {
       if (searchQuery.value === '') {
         poll.updateQuery('');
         poll.getPolls();
+        doSort.value = true;
       } else {
+        doSort.value = true;
         poll.updateQuery(searchQuery.value);
         poll.getPolls();
       }
@@ -109,6 +113,7 @@ export default {
       modules: [Navigation],
       allPolls,
       sort,
+      doSort,
       sortPolls,
       selectedSort,
       isDropdownOpen,
@@ -441,6 +446,7 @@ export default {
           </div>
         </div>
       </div>
+      <p class="text-2xl text-center" v-if="allPolls.length === 0 && (doSort || searchQuery )">沒有符合搜尋的投票</p>
       <Pagination @updatePage="updatePage" />
     </section>
     <PollModal v-if="showPollModal" :openModal="showPollModal" :functionType="'新增'"
