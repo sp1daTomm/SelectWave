@@ -125,7 +125,7 @@
     </div>
     <CommentComponent
     :pollId="pollId" :memberName="memberName" :memberImg="memberImg" :memberId="memberId" :isLogin="isLogin" />
-
+    <LoadingComponent v-if="isLoading" :showAnimation="isLoading" />
   </main>
 </template>
 <script>
@@ -138,6 +138,7 @@ import axios from 'axios';
 import { Autoplay, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import CommentComponent from '@/components/CommentComponent.vue';
+import LoadingComponent from '@/components/LoadingComponent.vue';
 import { useMemberStore } from '@/stores/member';
 import { useMessageStore } from '@/stores/message';
 import { getCookie, turnDate } from '@/utils';
@@ -149,6 +150,7 @@ export default {
     Swiper,
     SwiperSlide,
     CommentComponent,
+    LoadingComponent,
   },
   setup() {
     const router = useRouter();
@@ -169,6 +171,7 @@ export default {
     const doNotVotingText = ref('');
     const thisPollData = ref([]);
     const votedAll = ref(false);
+    const isLoading = ref(false);
 
     const progressPercentage = computed(() => {
       if (thisPollData.value.endDate === null) {
@@ -229,16 +232,19 @@ export default {
     }
 
     async function fetchPollData() {
+      isLoading.value = true;
       try {
         const api = `${import.meta.env.VITE_APP_API_URL}/api/poll/${pollId}`;
         const response = await axios.get(api);
         thisPollData.value = response.data.poll;
         votedNum(thisPollData.value.options);
+        isLoading.value = false;
       } catch (error) {
         message.setMessage({
           message: error.response.data.message,
         });
         message.showToast(true, 'error');
+        isLoading.value = false;
       }
     }
 
@@ -312,6 +318,7 @@ export default {
     });
 
     return {
+      isLoading,
       bgPersonImg,
       selectedRadio,
       modules: [Autoplay, Pagination],

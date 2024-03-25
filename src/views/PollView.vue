@@ -6,6 +6,7 @@ import axios from 'axios';
 import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import PollModal from '@/components/backend/PollModal.vue';
+import FollowButton from '@/components/followButton.vue';
 import LoadingComponent from '@/components/LoadingComponent.vue';
 import Pagination from '@/components/PaginationView.vue';
 import { useMemberStore } from '@/stores/member';
@@ -21,6 +22,7 @@ export default {
     Pagination,
     PollModal,
     LoadingComponent,
+    FollowButton,
   },
   setup() {
     const navigation = ref({
@@ -79,6 +81,10 @@ export default {
       poll.getPolls();
     };
 
+    function handleGetAllPolls(page) {
+      poll.getPolls(page);
+    }
+
     function toggleDropdown() {
       isDropdownOpen.value = !isDropdownOpen.value;
     }
@@ -111,6 +117,7 @@ export default {
     return {
       navigation,
       modules: [Navigation],
+      poll,
       allPolls,
       sort,
       doSort,
@@ -122,6 +129,7 @@ export default {
       searchQuery,
       handleSearchFiler,
       isLoading,
+      handleGetAllPolls,
     };
   },
   data() {
@@ -210,10 +218,11 @@ export default {
         this.message.showToast(true, 'error');
       }
     },
-    async handleDropDown(type, id) {
+    async handleDropDown(type, id, event) {
       const Url = `${window.location.href.split('#')[0]}#/voting/${id}`;
       switch (type) {
         case 'ShowDetail':
+          if (event.target.tagName === 'I' || event.target.tagName === 'BUTTON') return;
           this.$router.push(`/voting/${id}`);
           break;
         case 'CopyLink':
@@ -425,7 +434,7 @@ export default {
       <div class="grid grid-cols-2 gap-x-3 gap-y-6 md:gap-x-6 md:gap-y-12 md:grid-cols-4">
         <div v-for="poll in allPolls" :key="poll.id"
              class="relative flex flex-col h-full overflow-hidden transition duration-300 bg-white border-2 border-gray-300 rounded-3xl hover:shadow hover:cursor-pointer group"
-             @click="handleDropDown('ShowDetail', poll.id)">
+             @click="handleDropDown('ShowDetail', poll.id, $event)">
           <div class="relative">
             <div class="overflow-hidden">
               <img :src="poll.imageUrl"
@@ -434,6 +443,9 @@ export default {
                    <div
                        class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
             </div>
+            <FollowButton v-if="isLogin" :pollId="poll.id"
+            :isFollowed="poll.followers.includes(memberData.id)"
+            @handleIsFollowed="handleGetAllPolls(page)" />
             <p class="absolute text-white bottom-3 left-3">
               {{ poll.endDate === null ? turnDate(poll.endDate) : `${turnDate(poll.endDate)} 止` }}
             </p>
