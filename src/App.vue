@@ -18,12 +18,12 @@ const member = useMemberStore();
 
 provide('appRef', appRef);
 
-const checkToken = () => {
-  const token = getCookie('selectWaveToken');
-  if (token !== '' && token !== null && token !== undefined && token !== false) {
-    return token;
+const checkToken = async () => {
+  const token = await getCookie('selectWaveToken');
+  if (token === '' || token === null || token === undefined || token === 'false') {
+    return false;
   }
-  return false;
+  return token;
 };
 const userModal = (data) => swal({
   toast: true,
@@ -70,11 +70,11 @@ onMounted(async () => {
     const hashParams = new URLSearchParams(hash.split('?')[1]);
     urlToken = hashParams.get('token');
   }
-
   if (urlToken !== '' && urlToken !== null && urlToken !== undefined) {
     await authCheck(urlToken);
   } else {
-    const checkedToken = checkToken();
+    const checkedToken = await checkToken();
+    if (!checkedToken) return;
     await authCheck(checkedToken);
   }
 });

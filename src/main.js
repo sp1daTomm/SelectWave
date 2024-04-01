@@ -21,6 +21,7 @@ import router from './router';
 import './assets/main.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'emoji-mart-vue-fast/css/emoji-mart.css';
 
 // vee-validate 定義驗證規則(規則啟用)
 Object.keys(rules).forEach((rule) => {
