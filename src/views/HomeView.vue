@@ -26,7 +26,7 @@
         <div :style="{ backgroundImage: bgImgGraphic02 }" class=" z-[-1] bg-no-repeat bg-contain absolute top-0 right-0 w-1/4 h-full"></div>
       </section>
       <section ref="ChartSection" class="max-w-screen-lg px-3 py-8 mx-auto">
-        <div class="flex flex-col gap-5 md:flex-row-reverse ">
+        <div class="flex flex-col gap-5 overflow-hidden md:flex-row-reverse">
           <div ref="ChartCard1" class="px-[7%] pb-4 md:w-1/2 relative md:px-6">
             <img :src="chartImage01" alt="即時結果">
             <h2 class="py-4 text-2xl font-semibold leading-normal md:text-3xl md:py-6">即時結果</h2>
@@ -53,7 +53,7 @@
           </li>
         </ul>
       </section>
-      <section ref="ServerSection" class="max-w-screen-lg px-3 pb-8 mx-auto md:py-20">
+      <section class="max-w-screen-lg px-3 pb-8 mx-auto md:py-20">
         <div class="flex flex-col gap-3 md:flex-row md:items-center">
           <img :src="signupCover" alt="選集的服務" class="md:w-5/12">
           <div class="grow">
@@ -105,7 +105,6 @@ const featTitle = ref(null);
 const ChartSection = ref(null);
 const ChartCard1 = ref(null);
 const ChartCard2 = ref(null);
-const ServerSection = ref(null);
 const ScenarioSection = ref(null);
 
 const triggers = ScrollTrigger.getAll();
@@ -133,7 +132,6 @@ const scrollTl = (trigger, ease = 'power1.inOut') => gsap.timeline({
 
 const chartTl = scrollTl(ChartSection.value);
 const featTl = scrollTl(featSection.value, 'power4.Out');
-const serverTl = scrollTl(ServerSection.value, 'power4.in');
 const scenarioTl = scrollTl(ScenarioSection.value, 'power4.in');
 
 const gsapSet = () => {
@@ -187,6 +185,37 @@ const gsapSet = () => {
         duration: 0.3,
         delay: 2,
       });
+      scenarioTl.addLabel('start')
+        .fromTo(ScenarioSection.value, {
+          opacity: 0,
+        }, {
+          opacity: 1,
+          duration: 0.3,
+          scrollTrigger: {
+            trigger: ScenarioSection.value,
+            start: 'top center',
+            end: 'top 100px',
+            scrub: 1,
+            invalidateOnResize: true,
+          },
+        })
+        .fromTo('.ScenarioCard', {
+          opacity: 0,
+          y: -100,
+        }, {
+          opacity: 1,
+          y: 0,
+          duration: 0.3,
+          stagger: 0.2,
+          scrollTrigger: {
+            trigger: '.ScenarioCard',
+            start: 'top center',
+            end: 'top 100px',
+            scrub: 1,
+            invalidateOnResize: true,
+          },
+        })
+        .addLabel('end');
     } else {
       gsap.fromTo(headerTitle.value, {
         opacity: 0,
@@ -306,69 +335,6 @@ const gsapSet = () => {
       stagger: 0.5,
       scrollTrigger: {
         trigger: '.featCard',
-        start: 'top center',
-        end: 'top 100px',
-        scrub: 1,
-        invalidateOnResize: true,
-      },
-    })
-    .addLabel('end');
-
-  serverTl.addLabel('start')
-    .fromTo(ServerSection.value, {
-      opacity: 0,
-    }, {
-      opacity: 1,
-      duration: 0.3,
-      scrollTrigger: {
-        trigger: ServerSection.value,
-        start: 'top center',
-        end: 'top 100px',
-        pin: true,
-        scrub: 1,
-        invalidateOnResize: true,
-      },
-    })
-    .fromTo('.comment', {
-      opacity: 0,
-      rotate: 60,
-    }, {
-      opacity: 1,
-      rotate: 0,
-      duration: 0.3,
-      stagger: 0.2,
-      scrollTrigger: {
-        trigger: '.comment',
-        start: 'top center',
-        end: 'top 100px',
-        scrub: 1,
-        invalidateOnResize: true,
-      },
-    });
-  scenarioTl.addLabel('start')
-    .fromTo(ScenarioSection.value, {
-      opacity: 0,
-    }, {
-      opacity: 1,
-      duration: 0.3,
-      scrollTrigger: {
-        trigger: ScenarioSection.value,
-        start: 'top center',
-        end: 'top 100px',
-        scrub: 1,
-        invalidateOnResize: true,
-      },
-    })
-    .fromTo('.ScenarioCard', {
-      opacity: 0,
-      y: -100,
-    }, {
-      opacity: 1,
-      y: 0,
-      duration: 0.3,
-      stagger: 0.2,
-      scrollTrigger: {
-        trigger: '.ScenarioCard',
         start: 'top center',
         end: 'top 100px',
         scrub: 1,
